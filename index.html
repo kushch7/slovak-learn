@@ -205,7 +205,7 @@ td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
 .modacts{margin-left:auto;display:flex;flex-wrap:wrap;gap:8px}.modbtn{font:inherit;font-size:13px;font-weight:800;padding:7px 12px;min-height:36px;border:1.5px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer}.modbtn:hover{background:var(--accent);color:var(--accent-ink)}.modbtn.warnb{background:var(--accent);color:var(--accent-ink)}
 .tdet{display:block}.tdet summary{cursor:pointer}.trev tr.x td{background:var(--bad-bg)}.trev tr.h td{background:var(--warn-bg)}.trev td{vertical-align:top;font-size:13px}
 .pres{gap:12px;margin-bottom:14px;border-top:6px solid var(--accent)}.pres-h{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap}.pres-h h3{font-size:20px}.pres-v{background:#0B1630;aspect-ratio:16/9;width:100%}.pres-v img{width:100%;height:100%;object-fit:contain;display:block}.pres-c{display:flex;align-items:center;justify-content:center;gap:16px}
-.stu{display:grid;grid-template-columns:250px minmax(0,1fr);gap:24px;align-items:start}.stu-main{min-width:0}
+.stuw{display:grid;grid-template-columns:250px minmax(0,1fr);gap:24px;align-items:start}.stu-main{min-width:0}
 .side{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto;background:var(--surface);border:1px solid var(--line)}
 .side-d>summary{display:none}.side-b{display:flex;flex-direction:column;padding:8px}
 .side button{font:inherit;text-align:left;background:none;border:0;color:var(--ink);cursor:pointer;width:100%}
@@ -214,7 +214,7 @@ td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
 .side ul{list-style:none;margin:0;padding:0 0 4px}.side-l{display:flex;align-items:center;gap:8px;padding:7px 10px;font-size:13px;line-height:1.3}.side-l .sn{flex:none;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;background:var(--hdr);color:#fff;font-size:11px;font-weight:800}
 .side-l:hover{background:var(--soft)}.side-l.on{background:var(--soft);font-weight:800;box-shadow:inset 3px 0 0 var(--accent)}.side-l.off{color:var(--muted)}.side-l.off .sn{background:var(--line);color:var(--muted)}.side-l .ico{margin-left:auto;flex:none}
 .side-l.rv .sn{background:var(--accent);color:var(--accent-ink)}.side-l.tt .sn{background:var(--accent);color:var(--accent-ink)}.side-l.tt{font-weight:700}
-@media (max-width:900px){.stu{grid-template-columns:1fr;gap:14px}.side{position:static;max-height:none}.side-d>summary{display:block;padding:12px 14px;font-weight:800;cursor:pointer;color:var(--navy)}}
+@media (max-width:900px){.stuw{grid-template-columns:1fr;gap:14px}.side{position:static;max-height:none}.side-d>summary{display:block;padding:12px 14px;font-weight:800;cursor:pointer;color:var(--navy)}}
 .modh{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;padding:10px 14px;background:var(--hdr);color:#fff}.modh b{color:var(--accent);font-size:13px;letter-spacing:.4px;text-transform:uppercase}.modh span{font-weight:700}
 .grid .modh{grid-column:1/-1}
 .smat{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
@@ -921,7 +921,7 @@ function loadTeacher(){
 }
 function progOf(id){return T.progress[id]||normProg({});}
 function summary(acc){
-  var p=progOf(acc.id),ids=Object.keys(p.results).filter(function(k){return SETS[k];});
+  var p=progOf(acc.id),ids=Object.keys(p.results).filter(function(k){return SETS[k]&&SETS[k].type!=="test";});
   var avg=ids.length?Math.round(ids.reduce(function(s,k){return s+p.results[k].best;},0)/ids.length):null;
   var done=ids.filter(function(k){return p.results[k].best>=80;}).length;
   var tries=Object.keys(p.results).reduce(function(s,k){return s+(p.results[k].tries||0);},0);
@@ -934,9 +934,9 @@ function advice(account){
   if(!s.last){out.push({k:"warn",t:"Ще не виконав жодної вправи. Перевірте, чи отримав учень логін і пароль, і покажіть, як увійти, на найближчому уроці."});return out;}
   if(s.inactive>=7)out.push({k:"bad",t:"Не займався "+s.inactive+" дн. Напишіть коротке нагадування й дайте одну легку вправу (наприклад, картки), щоб повернутися в ритм."});
   else if(s.inactive>=3)out.push({k:"warn",t:"Остання активність "+ago(s.last)+". М’яко нагадайте про щоденні 5 хвилин."});
-  var weak=Object.keys(p.results).filter(function(k){return SETS[k]&&p.results[k].best<60;}).sort(function(a,b){return p.results[a].best-p.results[b].best;}).slice(0,3);
+  var weak=Object.keys(p.results).filter(function(k){return SETS[k]&&SETS[k].type!=="test"&&p.results[k].best<60;}).sort(function(a,b){return p.results[a].best-p.results[b].best;}).slice(0,3);
   weak.forEach(function(k){var st=SETS[k];out.push({k:"bad",t:"Слабка тема «"+st.title+"» (урок "+st.lesson+") — "+p.results[k].best+" %. Повторіть 5 хвилин на початку уроку, дайте шпаргалку уроку "+st.lesson+" і попросіть пройти вправу ще раз."});});
-  var mid=Object.keys(p.results).filter(function(k){return SETS[k]&&p.results[k].best>=60&&p.results[k].best<80;});
+  var mid=Object.keys(p.results).filter(function(k){return SETS[k]&&SETS[k].type!=="test"&&p.results[k].best>=60&&p.results[k].best<80;});
   if(mid.length)out.push({k:"warn",t:"Майже засвоєно: "+mid.map(function(k){return "«"+SETS[k].title+"»";}).join(", ")+". Ще одна спроба — і тема закрита."});
   if(p.stats.dia>=3)out.push({k:"warn",t:"Часто пропускає діакритику ("+p.stats.dia+" раз, за такі відповіді — 0,5 бала). Наголосіть на довгих голосних і м’яких приголосних; давайте більше вправ на письмо."});
   var aL=accType("listen",p),aC=accType("choice",p),aT=accType("type",p);
@@ -947,7 +947,7 @@ function advice(account){
   var allOpenDone=un.every(function(n){return LESSONS[n-1].sets.every(function(st){return p.results[st.id]&&p.results[st.id].best>=80;});});
   var nextL=ALL_LESSONS.find(function(n){return un.indexOf(n)<0;});
   if(allOpenDone&&nextL)out.push({k:"good",t:"Усі відкриті вправи пройдено на 80 %+. Після уроку "+nextL+" відкрийте учню вправи до нього."});
-  TESTS.forEach(function(t){var r=p.results[t.id];if(setOpenFor(account.unlocked,t)){if(!r)out.push({k:"info",t:t.title+" відкрито, але учень ще не проходив його."});else out.push({k:r.best>=80?"good":r.best>=60?"warn":"bad",t:t.title+": "+r.best+" % (спроб: "+r.tries+")."+(r.best<60?" Розберіть помилки на уроці перед новим модулем.":"")});}
+  TESTS.forEach(function(t){var r=p.results[t.id];if(setOpenFor(account.unlocked,t)){if(!r)out.push({k:"info",t:t.title+" відкрито, але учень ще не проходив його."});else out.push({k:r.best>=80?"good":r.best>=60?"warn":"bad",t:t.title+": "+r.best+" % (спроб: "+r.tries+")."+(r.best<80?" Розбір тесту — у картці учня; обговоріть помилки на уроці перед новим модулем.":"")});}
     else if(un.indexOf(t.lesson)>=0)out.push({k:"info",t:"Урок повторення "+t.lesson+" відкрито. Коли учень буде готовий — відкрийте йому "+t.title+"."});});
   if(s.streak>=5)out.push({k:"good",t:s.streak+" днів поспіль — похваліть учня на уроці."});
   if(!out.length)out.push({k:"good",t:"Все йде добре: регулярні заняття й стабільні результати."});
@@ -1120,7 +1120,7 @@ function render(){
   else if(v==="t-new")h=viewTNew();
   else if(v==="t-student")h=viewTStudent();
   else if(v==="t-settings")h=viewTSettings();
-  if((v==="home"||v==="lesson")&&S.session&&S.session.role!=="teacher")h='<div class="stu">'+sideNav()+'<div class="stu-main">'+h+'</div></div>';
+  if((v==="home"||v==="lesson")&&S.session&&S.session.role!=="teacher")h='<div class="stuw">'+sideNav()+'<div class="stu-main">'+h+'</div></div>';
   app.innerHTML=h;
 }
 app.addEventListener("submit",function(e){
