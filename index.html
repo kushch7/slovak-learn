@@ -196,6 +196,7 @@ td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
 .lock.ghost{cursor:default;background:var(--soft);border-color:var(--soft);color:var(--navy)}
 .mat{display:flex;flex-wrap:wrap;gap:6px}
 .matbtn{border:1.5px solid var(--blue);color:var(--blue);font-weight:700;font-size:13px;padding:7px 10px;text-decoration:none;white-space:nowrap;min-height:36px;display:inline-flex;align-items:center}
+.smat{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
 .matbtn:hover{background:var(--soft);color:var(--blue)}
 details>summary{cursor:pointer;min-height:28px}
 .themebtn{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1.5px solid rgba(255,255,255,.35);color:var(--hdr-ink);font-weight:700;font-size:13px;padding:6px 10px;min-height:40px;cursor:pointer}
@@ -684,11 +685,16 @@ function viewHome(){
   if(S.unlocked.length>=2)h+='<button class="card mix" type="button" data-start="mix"><div class="row"><span class="num" style="background:var(--accent);color:var(--accent-ink)">∑</span>'+(S.data.results.mix?'<span class="pill done">'+S.data.results.mix.best+' %</span>':'')+'</div><h3>Opakovanie</h3><span class="muted">10 випадкових завдань з відкритих уроків</span></button>';
   return h+'</div></section>';
 }
+var ST_MAT={deck:"Prezentácia z hodiny",cheat:"Ťahák",hw:"Domáca úloha"};
+function studentMat(n){var m=MATERIALS[n];if(!m||!S.session||S.session.role!=="student")return "";var b="";
+  ["deck","cheat","hw"].forEach(function(k){if(m[k])b+='<a class="matbtn" href="'+MAT+m[k]+'.pdf" target="_blank" rel="noopener">'+ST_MAT[k]+' · PDF</a>';});
+  if(!b)return "";return '<div class="card smat"><b style="color:var(--navy)">Materiály k lekcii</b><span class="muted" style="font-size:13px">Матеріали уроку: можна переглянути, завантажити або роздрукувати.</span><div class="mat">'+b+'</div></div>';}
 function viewLesson(){
   var l=LESSONS[S.lesson-1];
   var h='<button class="back" type="button" data-home>← Všetky lekcie</button>';
   if(!isOpen(l.n))return h+'<div class="card empty">Цей урок ще закритий. Його відкриє лектор після заняття.</div>';
-  h+='<div class="sec-h"><div><span class="eyebrow">Lekcia '+l.n+'</span><h2 class="h2">'+esc(l.title)+'</h2></div><span class="muted">'+lessonDone(l)+' / '+l.sets.length+' hotovo</span></div><div class="list">';
+  h+='<div class="sec-h"><div><span class="eyebrow">Lekcia '+l.n+'</span><h2 class="h2">'+esc(l.title)+'</h2></div><span class="muted">'+lessonDone(l)+' / '+l.sets.length+' hotovo</span></div>';
+  h+=studentMat(l.n)+'<div class="list">';
   l.sets.forEach(function(s){var r=S.data.results[s.id];var n=s.items?s.items.length:s.pairs.length;
     h+='<div class="li"><div class="t"><b>'+esc(s.title)+'</b><span class="muted">'+esc(s.ua)+' · '+n+' '+(s.type==="match"?"пар":"завдань")+(r?' · спроб: '+r.tries:'')+'</span></div><span class="pill type">'+TYPE_LABEL[s.type]+'</span>'+setStatus(s.id)+'<button class="btn sm" type="button" data-start="'+s.id+'">'+(r?"Znova":"Začať")+'</button></div>';});
   return h+'</div>';
@@ -929,7 +935,7 @@ function viewTStudent(){
   return h+'</details>';
 }
 function viewTMaterials(){
-  var h='<div><span class="eyebrow">Kabinet lektora</span><h2 class="h2">Materiály</h2><p class="muted" style="margin-top:6px">Презентації, шпаргалки й домашні завдання до кожного уроку. PDF-файли відкриваються в новій вкладці — їх можна завантажити, роздрукувати або надіслати учню. Учні цього розділу не бачать.</p></div><div class="list">';
+  var h='<div><span class="eyebrow">Kabinet lektora</span><h2 class="h2">Materiály</h2><p class="muted" style="margin-top:6px">Презентації, шпаргалки й домашні завдання до кожного уроку. PDF-файли відкриваються в новій вкладці — їх можна завантажити, роздрукувати або надіслати учню. Учень бачить презентацію, шпаргалку й домашнє завдання лише тих уроків, які ви йому відкрили; тест і ключ — тільки тут.</p></div><div class="list">';
   LESSONS.forEach(function(l){h+='<div class="li lrow"><span class="num">'+l.n+'</span><div class="t"><b>'+esc(l.title)+'</b><span class="muted" style="font-size:13px">'+l.sets.length+' онлайн-вправ на платформі</span></div>'+matLinks(l.n)+'</div>';});
   h+='</div>';
   h+='<section class="sec"><h2 class="h3">Довідники</h2><div class="mat"><a class="matbtn" href="'+MAT+GUIDES.student+'.pdf" target="_blank" rel="noopener">Довідник для учнів · PDF</a><a class="matbtn" href="'+MAT+GUIDES.teacher+'.pdf" target="_blank" rel="noopener">Довідник для лекторів · PDF</a></div></section>';
