@@ -95,7 +95,12 @@ function verify(header) {
 const DAY = 86400000;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const publicAcc = (a) => ({ id: a.id, name: a.name, login: a.login, createdAt: a.createdAt, note: a.note || "", unlocked: a.unlocked || [1], demo: !!a.demo });
-const cleanLessons = (arr) => [...new Set((Array.isArray(arr) ? arr : []).map(Number).filter((n) => LESSONS.includes(n)))].sort((a, b) => a - b);
+const cleanLessons = (arr) => {
+  const list = Array.isArray(arr) ? arr : [];
+  const lessons = [...new Set(list.map(Number).filter((n) => LESSONS.includes(n)))].sort((a, b) => a - b);
+  const tests = [...new Set(list.filter((x) => typeof x === "string" && /^t\d{1,2}$/.test(x)))].sort();
+  return [...lessons, ...tests];
+};
 const validLogin = (l) => /^[a-z0-9._-]{3,30}$/.test(l);
 function cleanProgress(p) {
   p = p && typeof p === "object" ? p : {};
