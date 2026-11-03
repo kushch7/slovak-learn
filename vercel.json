@@ -1,7 +1,33 @@
 {
-  "rewrites": [{ "source": "/lektor", "destination": "/index.html" }],
+  "rewrites": [
+    {
+      "source": "/lektor",
+      "destination": "/index.html"
+    }
+  ],
   "headers": [
-    { "source": "/", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },
-    { "source": "/lektor", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] }
-  ]
+    {
+      "source": "/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
+    },
+    {
+      "source": "/lektor",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
+    }
+  ],
+  "functions": {
+    "api/file.js": {
+      "includeFiles": "api/_files/**"
+    }
+  }
 }

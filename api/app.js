@@ -93,6 +93,15 @@ function verify(header) {
   } catch { return null; }
 }
 const DAY = 86400000;
+/* короткий токен лише для відкриття PDF-матеріалів (посилання в новій вкладці) */
+const fileToken = (r, id, pv) => sign({ r, id, pv, f: 1, exp: Date.now() + DAY });
+function verifyFileToken(t) {
+  const [body, sig] = String(t || "").split(".");
+  if (!SECRET || !body || !sig) return null;
+  const want = crypto.createHmac("sha256", SECRET).update(body).digest("base64url");
+  if (sig.length !== want.length || !crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(want))) return null;
+  try { const p = JSON.parse(Buffer.from(body, "base64url").toString("utf8")); return p.f === 1 && p.exp > Date.now() ? p : null; } catch { return null; }
+}
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const publicAcc = (a) => ({ id: a.id, name: a.name, login: a.login, createdAt: a.createdAt, note: a.note || "", unlocked: a.unlocked || [1], demo: !!a.demo });
 const cleanLessons = (arr) => {
@@ -154,6 +163,8 @@ function send(res, code, obj) {
   res.end(JSON.stringify(obj));
 }
 
+export { verifyFileToken, findAccount, teacherConfig };
+
 export default async function handler(req, res) {
   try {
     if (req.method === "GET") {
@@ -183,12 +194,12 @@ export default async function handler(req, res) {
       if (body.role === "teacher") {
         const cfg = await teacherConfig();
         if (login !== cfg.login || !checkPass(pass, cfg.pass)) { await sleep(600); return send(res, 401, { error: "bad" }); }
-        return send(res, 200, { role: "teacher", login: cfg.login, token: sign({ r: "t", v: cfg.v || 1, exp: Date.now() + 14 * DAY }) });
+        return send(res, 200, { role: "teacher", login: cfg.login, token: sign({ r: "t", v: cfg.v || 1, exp: Date.now() + 14 * DAY }), ft: fileToken("t", null, cfg.v || 1) });
       }
       const acc = (await allAccounts()).find((a) => a.login === login);
       if (!acc || !checkPass(pass, acc.pass)) { await sleep(600); return send(res, 401, { error: "bad" }); }
       const progress = await readOne(progPath(acc.id));
-      return send(res, 200, { role: "student", id: acc.id, name: acc.name, unlocked: acc.unlocked || [1], progress, token: sign({ r: "s", id: acc.id, pv: acc.pv || 1, exp: Date.now() + 60 * DAY }) });
+      return send(res, 200, { role: "student", id: acc.id, name: acc.name, unlocked: acc.unlocked || [1], progress, token: sign({ r: "s", id: acc.id, pv: acc.pv || 1, exp: Date.now() + 60 * DAY }), ft: fileToken("s", acc.id, acc.pv || 1) });
     }
 
     if (!auth) return send(res, 401, { error: "auth" });
@@ -199,7 +210,7 @@ export default async function handler(req, res) {
       if (!acc || (acc.pv || 1) !== auth.pv) return send(res, 401, { error: "auth" });
       if (action === "me") {
         const progress = await readOne(progPath(acc.id));
-        return send(res, 200, { role: "student", id: acc.id, name: acc.name, unlocked: acc.unlocked || [1], progress });
+        return send(res, 200, { role: "student", id: acc.id, name: acc.name, unlocked: acc.unlocked || [1], progress, ft: fileToken("s", acc.id, acc.pv || 1) });
       }
       if (action === "saveProgress") {
         const data = cleanProgress(body.progress);
@@ -215,7 +226,7 @@ export default async function handler(req, res) {
     const cfg = await teacherConfig();
     if ((cfg.v || 1) !== auth.v) return send(res, 401, { error: "auth" });
 
-    if (action === "me") return send(res, 200, { role: "teacher", login: cfg.login });
+    if (action === "me") return send(res, 200, { role: "teacher", login: cfg.login, ft: fileToken("t", null, cfg.v || 1) });
     if (action === "teacherLoad") {
       const [accs, prog] = await Promise.all([allAccounts(), readGroup("progress/")]);
       return send(res, 200, { accounts: accs.map(publicAcc), progress: prog });
@@ -259,7 +270,7 @@ export default async function handler(req, res) {
       if (!validLogin(login) || pass.length < 8) return send(res, 400, { error: "invalid" });
       const next = { login, pass: hashPass(pass), v: (cfg.v || 1) + 1 };
       await writeOne("config/teacher/", next);
-      return send(res, 200, { role: "teacher", login, token: sign({ r: "t", v: next.v, exp: Date.now() + 14 * DAY }) });
+      return send(res, 200, { role: "teacher", login, token: sign({ r: "t", v: next.v, exp: Date.now() + 14 * DAY }), ft: fileToken("t", null, next.v) });
     }
     return send(res, 400, { error: "unknown" });
   } catch (e) {
