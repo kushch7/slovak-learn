@@ -557,7 +557,34 @@ var LESSONS=[
   {id:"l9-vety",type:"order",title:"Máš čas?",ua:"Складіть речення зі слів",items:[
    {ua:"Маєш час у суботу?",a:"Máš čas v sobotu?"},{ua:"Котра зараз година?",a:"Koľko je teraz hodín?"},
    {ua:"Фільм о пʼятій.",a:"Film je o piatej."},{ua:"У четвер увечері я вдома.",a:"Vo štvrtok večer som doma."},
-   {ua:"Я працюю з восьмої до четвертої.",a:"Pracujem od ôsmej do štvrtej."}]}]}
+   {ua:"Я працюю з восьмої до четвертої.",a:"Pracujem od ôsmej do štvrtej."}]}]},
+ {n:10,mod:2,title:"V obchode",sets:[
+  {id:"l10-potraviny",type:"cards",title:"Potraviny",ua:"Картки: знаю / ще ні",items:[
+   {sk:"chlieb",g:"ten",ua:"хліб",ex:"Prosím si chlieb."},{sk:"mlieko",g:"to",ua:"молоко",ex:"Liter mlieka stojí jedno euro."},
+   {sk:"syr",g:"ten",ua:"сир",ex:"Máte syr?"},{sk:"maslo",g:"to",ua:"масло",ex:"Kupujem maslo."},
+   {sk:"voda",g:"tá",ua:"вода",ex:"Prosím si vodu."},{sk:"káva",g:"tá",ua:"кава",ex:"Káva stojí päť eur."},
+   {sk:"šunka",g:"tá",ua:"шинка",ex:"Máte šunku?"},{sk:"vajce",g:"to",ua:"яйце",ex:"Kupujem desať vajec."},
+   {sk:"zelenina",g:"tá",ua:"овочі",ex:"Zelenina je čerstvá."},{sk:"pokladňa",g:"tá",ua:"каса",ex:"Platím pri pokladni."}]},
+  {id:"l10-eura",type:"choice",title:"euro · eurá · eur",ua:"Виберіть правильну форму",opts:["euro","eurá","eur"],items:[
+   {q:"1 € → jedno ___",a:"euro",why:"1 → euro"},{q:"3 € → tri ___",a:"eurá",why:"2, 3, 4 → eurá"},
+   {q:"5 € → päť ___",a:"eur",why:"5+ → eur"},{q:"2 € → dve ___",a:"eurá",why:"2 → eurá"},
+   {q:"10 € → desať ___",a:"eur",why:"10 → eur"},{q:"4 € → štyri ___",a:"eurá",why:"4 → eurá"},
+   {q:"20 € → dvadsať ___",a:"eur",why:"20 → eur"},{q:"8 € → osem ___",a:"eur",why:"8 → eur"}]},
+  {id:"l10-prosim",type:"type",title:"Prosím si…",ua:"Напишіть слово в правильній формі",items:[
+   {q:"Prosím si ___.",hint:"voda",a:["vodu"],why:"tá -a → -u: vodu"},
+   {q:"Kupujem ___.",hint:"chlieb",a:["chlieb"],why:"ten — без змін"},
+   {q:"Máte ___?",hint:"káva",a:["kávu"],why:"tá -a → -u: kávu"},
+   {q:"Prosím si ___.",hint:"mlieko",a:["mlieko"],why:"to — без змін"},
+   {q:"Kupujem ___.",hint:"šunka",a:["šunku"],why:"tá -a → -u: šunku"},
+   {q:"Máte ___?",hint:"syr",a:["syr"],why:"ten — без змін"},
+   {q:"Prosím si ___.",hint:"zelenina",a:["zeleninu"],why:"tá -a → -u: zeleninu"},
+   {q:"Kupujem ___.",hint:"maslo",a:["maslo"],why:"to — без змін"}]},
+  {id:"l10-mnozstvo",type:"match",title:"Koľko?",ua:"З’єднайте пари",labels:["Slovensky","Po ukrajinsky"],pairs:[
+   ["kilo jabĺk","кілограм яблук"],["liter mlieka","літр молока"],["fľaša vody","пляшка води"],["balenie kávy","упаковка кави"],["desať vajec","десять яєць"],["Platím kartou.","Плачу карткою."],["To je všetko.","Це все."]]},
+  {id:"l10-vety",type:"order",title:"Pri pokladni",ua:"Складіть речення зі слів",items:[
+   {ua:"Будь ласка, хліб і молоко.",a:"Prosím si chlieb a mlieko."},{ua:"Скільки це коштує?",a:"Koľko to stojí?"},
+   {ua:"Сир коштує два євро.",a:"Syr stojí dve eurá."},{ua:"Так, це все.",a:"Áno, to je všetko."},
+   {ua:"Плачу карткою.",a:"Platím kartou."}]}]}
 ];
 var TYPE_LABEL={chyby:"Chyby",choice:"Výber",type:"Písanie",match:"Spájanie",order:"Poradie slov",listen:"Počúvanie",cards:"Kartičky",mixed:"Mix",test:"Test"};
 var MODULES=[{n:1,level:"A1",title:"Prvé kroky",ua:"Перші кроки"},{n:2,level:"A1",title:"V meste",ua:"У місті"}];
@@ -1066,7 +1093,7 @@ function statusPill(account){var a=advice(account),s=summary(account);
 /* ================= teacher: views ================= */
 var CL="https://claude.ai/artifact/";
 /* Матеріали: PDF видає захищений сервер (/api/file) — учень отримує лише шпаргалку й ДЗ відкритих уроків, лектор — усе */
-var MATERIALS={};[1,2,3,4,5,7,8,9].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};
+var MATERIALS={};[1,2,3,4,5,7,8,9,10].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};
 var TEST_MAT={t1:{test:"test1",key:"test1-kluc"}};
 var MAT="materials/";function fileHref(name){return API.fileUrl?API.fileUrl(name):MAT+name+".pdf";}
 var GUIDES={student:"prirucka-student",teacher:"prirucka-lektor"};
