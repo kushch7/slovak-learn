@@ -231,7 +231,6 @@ details>summary{cursor:pointer;min-height:28px}
 .themebtn:hover{border-color:var(--accent)}
 @media (max-width:520px){.themebtn span{display:none}}
 .menu{display:flex;align-items:center;gap:10px;margin-left:auto;flex-wrap:wrap}.menubtn{display:none}
-.modtog{grid-column:1/-1;font:inherit;font-weight:800;font-size:14px;text-align:left;padding:12px 14px;min-height:44px;background:var(--surface);border:1px solid var(--line);color:var(--blue);cursor:pointer}
 @media (max-width:640px){
  .menubtn{display:inline-flex;align-items:center;gap:8px;margin-left:auto;background:transparent;border:1.5px solid rgba(255,255,255,.35);color:var(--hdr-ink);font:inherit;font-weight:700;font-size:14px;padding:8px 12px;min-height:44px;cursor:pointer}
  .menu{display:none;flex-basis:100%;flex-direction:column;align-items:stretch;gap:6px;padding:6px 0 4px}
@@ -242,7 +241,8 @@ details>summary{cursor:pointer;min-height:28px}
  .grid{gap:8px}
  .grid>.card:not(.test){flex-direction:row;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:12px 14px}
  .grid>.card:not(.test) .row{display:contents}
- .grid>.card:not(.test) h3{flex:1 1 0;min-width:0;font-size:16px;order:1}
+ .grid>.card:not(.test) h3{flex:1 1 120px;min-width:0;font-size:16px;order:1;overflow-wrap:anywhere}
+ .grid>.card:not(.test) .pill.revp{display:none}
  .grid>.card:not(.test) .num{order:0;width:32px;height:32px}
  .grid>.card:not(.test) .muted{order:2;font-size:13px;white-space:nowrap}
  .grid>.card:not(.test) .pill{order:2}
@@ -829,7 +829,6 @@ function renderNav(){
   if(r)h+='<button class="tab" type="button" data-logout>Odhlásiť</button>';
   nav.innerHTML=h;
 }
-var MOB=window.matchMedia("(max-width:640px)");try{MOB.addEventListener("change",function(){if(S.view==="home")render();});}catch(e){}
 function setMenu(o){var bar=document.querySelector(".bar"),mb=document.getElementById("menubtn");bar.classList.toggle("open",!!o);mb.setAttribute("aria-expanded",o?"true":"false");}
 document.getElementById("menubtn").addEventListener("click",function(){setMenu(!document.querySelector(".bar").classList.contains("open"));});
 document.getElementById("nav").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;setMenu(false);if(b.hasAttribute("data-logout"))return logout();var v=b.getAttribute("data-nav");if(v){T.creds=null;T.confirm=null;T.msg="";go(v);}});
@@ -893,12 +892,8 @@ function viewHome(){
   else h+='<div class="go done"><span class="go-t"><span class="go-k">Усі відкриті вправи пройдено на 80 %+</span><b>Výborne! Чекайте наступний урок.</b></span>'+(nums(S.unlocked).length>=2?'<button class="go-b" type="button" data-start="mix">Opakovanie →</button>':'')+'</div>';
   h+='<span class="sync" id="sync">'+esc(guest?"Режим без входу: прогрес лише в цьому браузері":(S.sync||""))+'</span></div><img src="img/wave.webp" alt="Персонаж Slovak Learn махає рукою"></section>';
   h+='<section class="sec"><div class="sec-h"><h2>Lekcie</h2><span class="muted">Нові уроки відкриває лектор після заняття</span></div><div class="grid">';
-  var mob=MOB.matches,cur=nx&&SETS[nx.id]?setMod(SETS[nx.id]):null;if(!cur){var de=defaultExp();cur=+Object.keys(de)[0]||1;}
-  if(!S.homeExp)S.homeExp={};
-  var lastMod=null,hide=false;LESSONS.forEach(function(l){
-    if(l.mod!==lastMod){lastMod=l.mod;h+=modRowStudent(l.mod);hide=mob&&l.mod!==cur&&!S.homeExp[l.mod];
-      if(hide){var ls=LESSONS.filter(function(x){return x.mod===l.mod;}),op=ls.filter(function(x){return isOpen(x.n);}).length;h+='<button class="modtog" type="button" data-homemod="'+l.mod+'">▸ Zobraziť lekcie · '+op+' / '+ls.length+' otvorené</button>';}}
-    if(hide)return;
+  var lastMod=null;LESSONS.forEach(function(l){
+    if(l.mod!==lastMod){lastMod=l.mod;h+=modRowStudent(l.mod);}
     h+=lessonCard(l);if(lastOfMod(l))testsOf(l.mod).forEach(function(t){h+=testCard(t);});});
   return h+'</div></section>';
 }
@@ -1297,7 +1292,6 @@ app.addEventListener("click",function(e){
   var P=S.play,a;
   if(b.hasAttribute("data-tostudent")){S.loginErr="";S.lgLogin="";if(location.pathname.replace(/\/+$/,"")==="/lektor"){location.href="/";return;}try{history.replaceState(null,"",location.pathname+location.search);}catch(e){location.hash="";}return render();}
   if(b.hasAttribute("data-guest")){S.session={role:"guest",name:""};S.unlocked=ALL_KEYS.slice();lsSet(LS_SESSION,S.session);S.data=normProg(lsGet(progKey()));return go("home");}
-  if(b.hasAttribute("data-homemod")){if(!S.homeExp)S.homeExp={};S.homeExp[+b.getAttribute("data-homemod")]=true;return render();}
   if(b.hasAttribute("data-start"))return start(b.getAttribute("data-start"));
   if(b.hasAttribute("data-lesson"))return go("lesson",{lesson:+b.getAttribute("data-lesson")});
   if(b.hasAttribute("data-home"))return go("home");
