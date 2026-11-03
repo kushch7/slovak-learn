@@ -3,7 +3,7 @@ import crypto from "node:crypto";
 
 const SECRET = process.env.SESSION_SECRET || "";
 const KEY = crypto.createHash("sha256").update(process.env.DATA_KEY || "").digest();
-const LESSONS = [1, 2, 3, 4, 5, 6];
+const LESSONS = Array.from({ length: 60 }, (_, i) => i + 1);
 
 /* ---------- encryption: every stored record is AES-256-GCM encrypted ---------- */
 function enc(obj) {

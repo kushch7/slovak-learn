@@ -196,6 +196,9 @@ td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
 .lock.ghost{cursor:default;background:var(--soft);border-color:var(--soft);color:var(--navy)}
 .mat{display:flex;flex-wrap:wrap;gap:6px}
 .matbtn{border:1.5px solid var(--blue);color:var(--blue);font-weight:700;font-size:13px;padding:7px 10px;text-decoration:none;white-space:nowrap;min-height:36px;display:inline-flex;align-items:center}
+.umod{flex-basis:100%;font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-top:6px}
+.modh{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;padding:10px 14px;background:var(--hdr);color:#fff}.modh b{color:var(--accent);font-size:13px;letter-spacing:.4px;text-transform:uppercase}.modh span{font-weight:700}
+.grid .modh{grid-column:1/-1}
 .smat{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
 .matbtn:hover{background:var(--soft);color:var(--blue)}
 details>summary{cursor:pointer;min-height:28px}
@@ -221,7 +224,7 @@ details>summary{cursor:pointer;min-height:28px}
 /* ================= content: lessons 1–5 (5 sets each) ================= */
 var TXT9="9 · Прочитайте текст. Pravda чи nepravda? — «Volám sa Iryna Melnyk. Som z Ukrajiny, z Poltavy. Teraz bývam na Slovensku, v Nitre. Mám tridsaťdva rokov. Som účtovníčka, ale teraz pracujem v obchode. Hovorím po ukrajinsky a trochu po slovensky.»";
 var LESSONS=[
- {n:1,title:"Pozdravy a zoznámenie",sets:[
+ {n:1,mod:1,title:"Pozdravy a zoznámenie",sets:[
   {id:"l1-byt",type:"type",title:"Sloveso byť",ua:"Доповніть форму дієслова byť",items:[
    {q:"Ja ___ Taras.",a:["som"],why:"ja som · ty si · on/ona je · my sme · vy ste · oni sú"},
    {q:"Ty ___ z Ukrajiny?",a:["si"],why:"ty → si"},
@@ -250,7 +253,7 @@ var LESSONS=[
    {ua:"Мене звати Тарас.",a:"Volám sa Taras."},{ua:"Я з України.",a:"Som z Ukrajiny."},
    {ua:"Як справи? (офіційно)",a:"Ako sa máte?"},{ua:"Дуже приємно.",a:"Teší ma."},
    {ua:"Добре, дякую. А ви?",a:"Dobre, ďakujem. A vy?"}]}]},
- {n:2,title:"Odkiaľ som a kde bývam",sets:[
+ {n:2,mod:1,title:"Odkiaľ som a kde bývam",sets:[
   {id:"l2-predlozky",type:"choice",title:"z / zo · v / vo / na",ua:"Виберіть прийменник",opts:["z","zo","v","vo","na"],items:[
    {q:"Som ___ Ukrajiny.",a:"z",why:"Odkiaľ? → z + країна"},
    {q:"Som ___ Slovenska.",a:"zo",why:"Перед s, z, š, ž → zo"},
@@ -281,7 +284,7 @@ var LESSONS=[
    {sk:"Slovák",g:"on",ua:"словак",ex:"Peter je Slovák."},{sk:"Slovenka",g:"ona",ua:"словачка",ex:"Jana je Slovenka."},
    {sk:"Čech",g:"on",ua:"чех",ex:"Tomáš je Čech."},{sk:"Češka",g:"ona",ua:"чешка",ex:"Eva je Češka."},
    {sk:"Poliak",g:"on",ua:"поляк",ex:"Marek je Poliak."},{sk:"Nemka",g:"ona",ua:"німкеня",ex:"Anna je Nemka."}]}]},
- {n:3,title:"Čísla a kontakty",sets:[
+ {n:3,mod:1,title:"Čísla a kontakty",sets:[
   {id:"l3-pocuvanie",type:"listen",title:"Počúvanie: čísla",ua:"Послухайте й запишіть число цифрами",items:[
    {say:"trinásť",a:["13"]},{say:"sedemnásť",a:["17"]},{say:"dvadsaťpäť",a:["25"]},{say:"tridsaťosem",a:["38"]},
    {say:"štyridsaťšesť",a:["46"]},{say:"päťdesiatdeväť",a:["59"]},{say:"sedemdesiatdva",a:["72"]},{say:"sto",a:["100"]}]},
@@ -306,7 +309,7 @@ var LESSONS=[
    {q:"Як офіційно спитати номер телефону?",opts:["Aké je vaše telefónne číslo?","Koľko máte rokov?","Kde bývate?"],a:"Aké je vaše telefónne číslo?",why:"Aké je vaše telefónne číslo?"},
    {q:"Як попросити продиктувати по літерах?",opts:["Môžete to hláskovať?","Môžete to zopakovať?","Pomalšie, prosím."],a:"Môžete to hláskovať?",why:"hláskovať — називати по літерах"},
    {q:"Як офіційно спитати вік?",opts:["Koľko máte rokov?","Aký máte e-mail?","Odkiaľ ste?"],a:"Koľko máte rokov?",why:"Koľko máte rokov? — Mám … rokov."}]}]},
- {n:4,title:"Moja práca",sets:[
+ {n:4,mod:1,title:"Moja práca",sets:[
   {id:"l4-profesie",type:"match",title:"On → ona",ua:"З’єднайте чоловічу й жіночу форму",labels:["On","Ona"],pairs:[
    ["učiteľ","učiteľka"],["lekár","lekárka"],["predavač","predavačka"],["kuchár","kuchárka"],["čašník","čašníčka"],["účtovník","účtovníčka"]]},
   {id:"l4-kde",type:"choice",title:"Kde pracuje?",ua:"Виберіть місце роботи",opts:["v nemocnici","v škole","v reštaurácii","v obchode","na úrade","vo fabrike"],items:[
@@ -331,7 +334,7 @@ var LESSONS=[
    {sk:"kuchár",g:"on",ua:"кухар",ex:"Kuchár varí."},{sk:"upratovačka",g:"ona",ua:"прибиральниця",ex:"Upratovačka upratuje."},
    {sk:"vodič",g:"on",ua:"водій",ex:"Vodič šoféruje autobus."},{sk:"opatrovateľka",g:"ona",ua:"доглядальниця",ex:"Opatrovateľka pomáha."},
    {sk:"účtovník",g:"on",ua:"бухгалтер",ex:"Účtovník pracuje v kancelárii."},{sk:"programátorka",g:"ona",ua:"програмістка",ex:"Programátorka pracuje z domu."}]}]},
- {n:5,title:"Na kurze a online",sets:[
+ {n:5,mod:1,title:"Na kurze a online",sets:[
   {id:"l5-rod",type:"choice",title:"Ten, tá, alebo to?",ua:"Визначте рід слова",opts:["ten","tá","to"],items:[
    {q:"zošit",sub:"зошит",a:"ten",why:"Приголосний у кінці → ten"},{q:"kniha",sub:"книга",a:"tá",why:"-a → tá"},
    {q:"pero",sub:"ручка",a:"to",why:"-o → to"},{q:"kamera",sub:"камера",a:"tá",why:"-a → tá"},
@@ -363,7 +366,7 @@ var LESSONS=[
    {ua:"Ви мене чуєте?",a:"Počujete ma?"},{ua:"У вас вимкнений мікрофон.",a:"Máte vypnutý mikrofón."},
    {ua:"Я надішлю вам посилання.",a:"Pošlem vám odkaz."},{ua:"Це не ручка, це олівець.",a:"To nie je pero, to je ceruzka."},
    {ua:"Як сказати словацькою «laptop»?",a:"Ako sa povie po slovensky laptop?"}]}]},
- {n:6,title:"Opakovanie 1",sets:[
+ {n:6,mod:1,title:"Opakovanie 1",sets:[
   {id:"l6-situacie",type:"choice",title:"Čo poviete?",ua:"Повторення уроків 1–5: виберіть правильну фразу",items:[
    {q:"Ви вперше бачите колегу. Як спитати ім’я?",opts:["Ako sa voláte?","Koľko máte rokov?","Kde pracujete?"],a:"Ako sa voláte?",why:"Ako sa voláte? — Volám sa …"},
    {q:"Як спитати, звідки людина?",opts:["Odkiaľ ste?","Kde bývate?","Čo robíte?"],a:"Odkiaľ ste?",why:"Odkiaľ ste? — Som z …"},
@@ -439,9 +442,42 @@ var LESSONS=[
    {t:"choice",h:TXT9,opts:["Pravda","Nepravda"],q:"Iryna má tridsaťdva rokov.",a:"Pravda",why:"Mám tridsaťdva rokov."},
    {t:"choice",h:TXT9,opts:["Pravda","Nepravda"],q:"Iryna pracuje v kancelárii.",a:"Nepravda",why:"Teraz pracujem v obchode."},
    {t:"order",h:"10 · Складіть речення зі слів",a:"Bývam v Bratislave a pracujem v škole.",ua:"Я живу в Братиславі і працюю в школі."},
-   {t:"order",h:"10 · Складіть речення зі слів",a:"Hovoríte po anglicky?",ua:"Ви говорите англійською?"}]}]}
+   {t:"order",h:"10 · Складіть речення зі слів",a:"Hovoríte po anglicky?",ua:"Ви говорите англійською?"}]}]},
+ {n:7,mod:2,title:"Kde je…?",sets:[
+  {id:"l7-miesta",type:"cards",title:"Miesta v meste",ua:"Картки: знаю / ще ні",items:[
+   {sk:"pošta",g:"tá",ua:"пошта",ex:"Pošta je na námestí."},{sk:"banka",g:"tá",ua:"банк",ex:"Som v banke."},
+   {sk:"lekáreň",g:"tá",ua:"аптека",ex:"Lekáreň je vľavo."},{sk:"nemocnica",g:"tá",ua:"лікарня",ex:"Lekár pracuje v nemocnici."},
+   {sk:"stanica",g:"tá",ua:"вокзал",ex:"Čakám na stanici."},{sk:"zastávka",g:"tá",ua:"зупинка",ex:"Zastávka je oproti."},
+   {sk:"námestie",g:"to",ua:"площа",ex:"Sme na námestí."},{sk:"úrad",g:"ten",ua:"установа",ex:"Ráno som na úrade."},
+   {sk:"obchod",g:"ten",ua:"магазин",ex:"Mama je v obchode."},{sk:"kino",g:"to",ua:"кінотеатр",ex:"Večer sme v kine."}]},
+  {id:"l7-v-na",type:"choice",title:"v alebo na?",ua:"Виберіть прийменник",opts:["v","na"],items:[
+   {q:"Som ___ banke.",a:"v",why:"Будівля → v banke"},{q:"Pracujem ___ pošte.",a:"na",why:"na pošte — запам’ятати"},
+   {q:"Čakáme ___ zastávke.",a:"na",why:"Відкрите місце → na zastávke"},{q:"Deti sú ___ škole.",a:"v",why:"v škole"},
+   {q:"Turisti sú ___ námestí.",a:"na",why:"Відкрите місце → na námestí"},{q:"Mama je ___ obchode.",a:"v",why:"v obchode"},
+   {q:"Vlak je ___ stanici.",a:"na",why:"na stanici"},{q:"Sme ___ parku.",a:"v",why:"v parku"},
+   {q:"Otec je ___ úrade.",a:"na",why:"na úrade"},{q:"Bývam ___ hoteli.",a:"v",why:"v hoteli"}]},
+  {id:"l7-lokal",type:"type",title:"Kde? · lokál",ua:"Напишіть слово в правильній формі",items:[
+   {q:"Som v ___.",hint:"banka",a:["banke"],why:"banka → v banke (-a → -e)"},
+   {q:"Pracujem na ___.",hint:"pošta",a:["pošte"],why:"pošta → na pošte"},
+   {q:"Sme v ___.",hint:"park",a:["parku"],why:"Після k → -u: v parku"},
+   {q:"Čakám na ___.",hint:"stanica",a:["stanici"],why:"Після c → -i: na stanici"},
+   {q:"Lekár je v ___.",hint:"nemocnica",a:["nemocnici"],why:"nemocnica → v nemocnici"},
+   {q:"Turisti sú na ___.",hint:"námestie",a:["námestí"],why:"-ie → -í: na námestí"},
+   {q:"Mama je v ___.",hint:"obchod",a:["obchode"],why:"obchod → v obchode (-e)"},
+   {q:"Večer sme v ___.",hint:"reštaurácia",a:["reštaurácii"],why:"-ia → -ii: v reštaurácii"}]},
+  {id:"l7-smer",type:"match",title:"Kde? Kam?",ua:"З’єднайте пари",labels:["Slovensky","Po ukrajinsky"],pairs:[
+   ["vľavo","ліворуч (де)"],["doľava","ліворуч (куди)"],["vpravo","праворуч (де)"],["doprava","праворуч (куди)"],["rovno","прямо"],["oproti","навпроти"],["ďaleko","далеко"]]},
+  {id:"l7-cesta",type:"order",title:"Pýtame sa na cestu",ua:"Складіть речення зі слів",items:[
+   {ua:"Вибачте, де тут пошта?",a:"Prepáčte, kde je tu pošta?"},{ua:"Ідіть прямо, а потім ліворуч.",a:"Choďte rovno a potom doľava."},
+   {ua:"Це далеко? — Ні, це близько.",a:"Je to ďaleko? Nie, je to blízko."},{ua:"Аптека на розі.",a:"Lekáreň je na rohu."},
+   {ua:"Вибачте, я не знаю. Я не звідси.",a:"Prepáčte, neviem. Nie som odtiaľto."}]}]}
 ];
 var TYPE_LABEL={chyby:"Chyby",choice:"Výber",type:"Písanie",match:"Spájanie",order:"Poradie slov",listen:"Počúvanie",cards:"Kartičky",mixed:"Mix",test:"Test"};
+var MODULES=[{n:1,level:"A1",title:"Prvé kroky",ua:"Перші кроки"},{n:2,level:"A1",title:"V meste",ua:"У місті"}];
+function modOf(m){return MODULES.find(function(x){return x.n===m;})||{n:m,level:"",title:"Modul "+m,ua:""};}
+function modLabel(m){var x=modOf(m);return (x.level?x.level+" · ":"")+"Modul "+x.n+" · "+x.title;}
+function modRow(m){var x=modOf(m);return '<div class="modh"><b>'+esc((x.level?x.level+" · ":"")+"Modul "+x.n)+'</b><span>'+esc(x.title)+(x.ua?' · '+esc(x.ua):'')+'</span></div>';}
+function byModule(fn){var out="",cur=null;LESSONS.forEach(function(l){if(l.mod!==cur){cur=l.mod;out+=fn(null,cur);}out+=fn(l,cur);});return out;}
 var SETS={},ITEMS={}; LESSONS.forEach(function(l){l.sets.forEach(function(s){s.lesson=l.n;SETS[s.id]=s;if(s.items&&s.type!=="cards")s.items.forEach(function(it,i){it._k=s.id+"."+i;ITEMS[it._k]={it:it,set:s};});});});
 var ALL_SETS=Object.keys(SETS);
 var ALL_LESSONS=LESSONS.map(function(l){return l.n;});
@@ -677,7 +713,8 @@ function viewHome(){
   h+='<p class="mini">'+doneSets+' з '+open.length+' вправ виконано · '+streak+' '+(streak===1?"день":"дн.")+' поспіль · '+S.data.xp+' XP</p>'+
     '<span class="sync" id="sync">'+esc(guest?"Режим без входу: прогрес лише в цьому браузері":(S.sync||""))+'</span></div><img src="img/wave.webp" alt="Персонаж Slovak Learn махає рукою"></section>';
   h+='<section class="sec"><div class="sec-h"><h2>Lekcie</h2><span class="muted">Нові уроки відкриває лектор після заняття</span></div><div class="grid">';
-  LESSONS.forEach(function(l){
+  var lastMod=null;LESSONS.forEach(function(l){
+    if(l.mod!==lastMod){lastMod=l.mod;h+=modRow(l.mod);}
     if(!isOpen(l.n)){h+='<div class="card locked" aria-label="Lekcia '+l.n+' — zamknutá"><div class="row"><span class="num">'+l.n+'</span><span class="pill type">'+ICON_LOCK+' ZAMKNUTÉ</span></div><h3>'+esc(l.title)+'</h3></div>';return;}
     var d=lessonDone(l),pct=Math.round(d/l.sets.length*100);
     h+='<button class="card" type="button" data-lesson="'+l.n+'"><div class="row"><span class="num">'+l.n+'</span><span class="muted">'+d+' / '+l.sets.length+' hotovo</span></div><h3>'+esc(l.title)+'</h3><div class="prog" aria-label="Pokrok '+pct+' %"><i style="width:'+pct+'%"></i></div></button>';});
@@ -855,6 +892,7 @@ function statusPill(account){var a=advice(account),s=summary(account);
 var CL="https://claude.ai/artifact/";
 var MATERIALS={};[1,2,3,4,5].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});
 MATERIALS[6]={deck:"l6-prezentacia",test:"test1",key:"test1-kluc"};
+MATERIALS[7]={deck:"l7-prezentacia",cheat:"l7-tahak",hw:"l7-domaca-uloha"};
 var MAT="materials/";
 var GUIDES={student:"prirucka-student",teacher:"prirucka-lektor"};
 var MAT_LABEL={deck:"Prezentácia",cheat:"Ťahák",hw:"Domáca úloha",test:"Test 1",key:"Kľúč k testu"};
@@ -883,7 +921,7 @@ function viewTStudents(){
       '<button class="btn sm" type="button" data-tstudent="'+esc(a.id)+'" style="align-self:flex-start">Відкрити →</button></div>';});
   h+='</div>';
   h+='<details class="card"><summary><b>Відкрити урок усім учням</b> <span class="muted">— після заняття з групою</span></summary><div class="lk" style="margin-top:12px">';
-  LESSONS.forEach(function(l){var all=A.every(function(a){return a.unlocked.indexOf(l.n)>=0;});h+='<button type="button" data-unlockall="'+l.n+'"'+(all?' aria-pressed="true" disabled':'')+'>'+(all?"✓ ":"")+'Lekcia '+l.n+'</button>';});
+  var um=null;LESSONS.forEach(function(l){if(l.mod!==um){um=l.mod;h+='<span class="umod">'+esc(modLabel(l.mod))+'</span>';}var all=A.every(function(a){return a.unlocked.indexOf(l.n)>=0;});h+='<button type="button" data-unlockall="'+l.n+'"'+(all?' aria-pressed="true" disabled':'')+'>'+(all?"✓ ":"")+'Lekcia '+l.n+'</button>';});
   return h+'</div></details>';
 }
 function credsBlock(){
@@ -917,7 +955,7 @@ function viewTStudent(){
   advice(a).slice(0,4).forEach(function(x){h+='<div class="'+x.k+'">'+esc(x.t)+'</div>';});
   h+='</div></section>';
   h+='<section class="sec"><div class="sec-h"><h2 class="h3">Уроки й матеріали</h2><span class="muted" style="font-size:13px">Замок — відкрити або закрити учню вправи до уроку</span></div><div class="list">';
-  LESSONS.forEach(function(l){var on=a.unlocked.indexOf(l.n)>=0;
+  var lm=null;LESSONS.forEach(function(l){if(l.mod!==lm){lm=l.mod;h+=modRow(l.mod);}var on=a.unlocked.indexOf(l.n)>=0;
     var done=l.sets.filter(function(st){var r=p.results[st.id];return r&&r.best>=80;}).length;
     var v=l.sets.map(function(st){return p.results[st.id];}).filter(Boolean);var av=v.length?Math.round(v.reduce(function(x,r){return x+r.best;},0)/l.sets.length):null;
     var col=av===null?"var(--soft)":av<60?"var(--bad)":av<80?"var(--warn)":"var(--good)";
@@ -936,7 +974,7 @@ function viewTStudent(){
 }
 function viewTMaterials(){
   var h='<div><span class="eyebrow">Kabinet lektora</span><h2 class="h2">Materiály</h2><p class="muted" style="margin-top:6px">Презентації, шпаргалки й домашні завдання до кожного уроку. PDF-файли відкриваються в новій вкладці — їх можна завантажити, роздрукувати або надіслати учню. Учень бачить презентацію, шпаргалку й домашнє завдання лише тих уроків, які ви йому відкрили; тест і ключ — тільки тут.</p></div><div class="list">';
-  LESSONS.forEach(function(l){h+='<div class="li lrow"><span class="num">'+l.n+'</span><div class="t"><b>'+esc(l.title)+'</b><span class="muted" style="font-size:13px">'+l.sets.length+' онлайн-вправ на платформі</span></div>'+matLinks(l.n)+'</div>';});
+  var mm=null;LESSONS.forEach(function(l){if(l.mod!==mm){mm=l.mod;h+=modRow(l.mod);}h+='<div class="li lrow"><span class="num">'+l.n+'</span><div class="t"><b>'+esc(l.title)+'</b><span class="muted" style="font-size:13px">'+l.sets.length+' онлайн-вправ на платформі</span></div>'+matLinks(l.n)+'</div>';});
   h+='</div>';
   h+='<section class="sec"><h2 class="h3">Довідники</h2><div class="mat"><a class="matbtn" href="'+MAT+GUIDES.student+'.pdf" target="_blank" rel="noopener">Довідник для учнів · PDF</a><a class="matbtn" href="'+MAT+GUIDES.teacher+'.pdf" target="_blank" rel="noopener">Довідник для лекторів · PDF</a></div></section>';
   return h;
