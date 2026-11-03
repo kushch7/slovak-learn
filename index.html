@@ -599,7 +599,7 @@ function E(code){var e=new Error(code);e.code=code;return e;}
 function ClaudeAPI(){
   var db=null;
   function studentFrom(h){return db.doc("logins/"+h).get().then(function(snap){if(!snap.exists)throw E("bad");var d=snap.data();
-    return db.doc("progress/"+d.account).get().then(function(ps){return {role:"student",hash:h,id:d.account,name:d.name||"",unlocked:(d.unlocked&&d.unlocked.length?d.unlocked.slice():[1]),progress:ps.exists?normProg(ps.data()):null};});});}
+    return db.doc("progress/"+d.account).get().then(function(ps){return {role:"student",hash:h,id:d.account,name:d.name||"",unlocked:(Array.isArray(d.unlocked)?d.unlocked.slice():[1]),progress:ps.exists?normProg(ps.data()):null};});});}
   function teacherFrom(h,login){return db.doc("config/teacher").get().then(function(snap){if(!snap.exists||snap.data().hash!==h)throw E("bad");return {role:"teacher",hash:h,login:login||snap.data().login};});}
   return {
     name:"claude",
@@ -609,10 +609,10 @@ function ClaudeAPI(){
     sessionOf:function(r){return {role:r.role,hash:r.hash,id:r.id,name:r.name,login:r.login};},
     saveProgress:function(s,data){return db.doc("progress/"+s.id).set({xp:data.xp,days:data.days,results:data.results,stats:data.stats,mist:data.mist||{},tests:data.tests||{},updatedAt:Date.now()});},
     teacherLoad:function(){return Promise.all([db.collection("accounts").limit(1000).get(),db.collection("progress").limit(1000).get()]).then(function(r){
-      var accounts=r[0].docs.map(function(d){var x=JSON.parse(JSON.stringify(d.data()));x.id=d.id;if(!x.unlocked||!x.unlocked.length)x.unlocked=[1];return x;});
+      var accounts=r[0].docs.map(function(d){var x=JSON.parse(JSON.stringify(d.data()));x.id=d.id;if(!Array.isArray(x.unlocked))x.unlocked=[1];return x;});
       var progress={};r[1].docs.forEach(function(d){progress[d.id]=normProg(d.data());});return {accounts:accounts,progress:progress};});},
-    createStudent:function(o){var id="s_"+rnd(10);return credHash(o.login,o.pass).then(function(h){var acc={name:o.name,login:o.login,loginHash:h,createdAt:Date.now(),note:"",unlocked:[1]};
-      return db.doc("accounts/"+id).set(acc).then(function(){return db.doc("logins/"+h).set({account:id,name:o.name,unlocked:[1]});}).then(function(){acc.id=id;return acc;});});},
+    createStudent:function(o){var id="s_"+rnd(10);return credHash(o.login,o.pass).then(function(h){var acc={name:o.name,login:o.login,loginHash:h,createdAt:Date.now(),note:"",unlocked:[]};
+      return db.doc("accounts/"+id).set(acc).then(function(){return db.doc("logins/"+h).set({account:id,name:o.name,unlocked:[]});}).then(function(){acc.id=id;return acc;});});},
     resetPassword:function(a,pass){return credHash(a.login,pass).then(function(h){var old=a.loginHash;
       return db.doc("logins/"+h).set({account:a.id,name:a.name,unlocked:a.unlocked}).then(function(){return db.doc("accounts/"+a.id).update({loginHash:h});})
         .then(function(){return old&&old!==h?db.doc("logins/"+old).delete():null;}).then(function(){a.loginHash=h;});});},
@@ -803,6 +803,7 @@ function viewHome(){
   var h='<section class="hero"><div class="hero-txt"><h1>'+(first?"Ahoj, "+esc(first)+"!":"Ahoj!")+'</h1>';
   if(nx){var s=SETS[nx.id];
     h+='<button class="go" type="button" data-start="'+nx.id+'"><span class="go-t"><span class="go-k">'+(s.type==="test"?"Modul "+s.mod+" · Test":"Lekcia "+s.lesson+" · "+TYPE_LABEL[s.type])+' · '+esc(nx.why)+'</span><b>'+esc(s.title)+'</b></span><span class="go-b">Pokračovať →</span></button>';}
+  else if(!nums(S.unlocked).length)h+='<div class="go done"><span class="go-t"><span class="go-k">Vitajte v Slovak Learn!</span><b>Перший урок відкриє лектор після заняття.</b></span></div>';
   else h+='<div class="go done"><span class="go-t"><span class="go-k">Усі відкриті вправи пройдено на 80 %+</span><b>Výborne! Чекайте наступний урок.</b></span>'+(nums(S.unlocked).length>=2?'<button class="go-b" type="button" data-start="mix">Opakovanie →</button>':'')+'</div>';
   h+='<span class="sync" id="sync">'+esc(guest?"Режим без входу: прогрес лише в цьому браузері":(S.sync||""))+'</span></div><img src="img/wave.webp" alt="Персонаж Slovak Learn махає рукою"></section>';
   h+='<section class="sec"><div class="sec-h"><h2>Lekcie</h2><span class="muted">Нові уроки відкриває лектор після заняття</span></div><div class="grid">';
@@ -988,7 +989,7 @@ function viewResult(){
 /* ================= teacher: data ================= */
 function loadTeacher(){
   T.loading=true;T.err="";
-  API.teacherLoad().then(function(r){T.accounts=r.accounts.map(function(a){if(!a.unlocked||!a.unlocked.length)a.unlocked=[1];return a;});T.progress=r.progress;T.loaded=true;T.loading=false;render();})
+  API.teacherLoad().then(function(r){T.accounts=r.accounts.map(function(a){if(!Array.isArray(a.unlocked))a.unlocked=[1];return a;});T.progress=r.progress;T.loaded=true;T.loading=false;render();})
     .catch(function(e){T.loading=false;if(e.code==="auth"){logout();return;}T.err="Не вдалося завантажити дані. Оновіть сторінку.";render();});
 }
 function progOf(id){return T.progress[id]||normProg({});}
@@ -1072,7 +1073,7 @@ function credsBlock(){
   var c=T.creds;if(!c)return "";
   var link=API.name==="rest"?location.origin:"";
   var site=link||"https://claude.ai/artifact/6kjRXWSFdZZYYvn7TDmcQg";
-  var text="Ahoj, "+String(c.name).split(" ")[0]+"! 👋\n\n"+(c.reset?"Ваш новий пароль до платформи Slovak Learn:":"Запрошую вас на платформу Slovak Learn — тут онлайн-вправи до наших уроків.")+"\n\n1. Відкрийте "+site+"\n2. Логін: "+c.login+"\n3. Пароль: "+c.pass+"\n\n"+(c.reset?"":"Спочатку відкрито урок 1, наступні я відкриватиму після наших занять. ")+"5 хвилин на день — і словацька йде вперед! Do skorého videnia!";
+  var text="Ahoj, "+String(c.name).split(" ")[0]+"! 👋\n\n"+(c.reset?"Ваш новий пароль до платформи Slovak Learn:":"Запрошую вас на платформу Slovak Learn — тут онлайн-вправи до наших уроків.")+"\n\n1. Відкрийте "+site+"\n2. Логін: "+c.login+"\n3. Пароль: "+c.pass+"\n\n"+(c.reset?"":"Уроки я відкриватиму після наших занять. ")+"5 хвилин на день — і словацька йде вперед! Do skorého videnia!";
   var share=navigator.share?'<button class="btn ghost sm" type="button" data-share="'+esc(text)+'" style="color:#fff;border-color:rgba(255,255,255,.4)">Надіслати…</button>':"";
   return '<div class="creds" role="status"><b style="color:var(--accent)">'+(c.reset?"Новий пароль створено":"Обліковий запис створено")+' — передайте ці дані учню</b><div id="credtext"><dl><dt>Učeň</dt><dd>'+esc(c.name)+'</dd><dt>Login</dt><dd>'+esc(c.login)+'</dd><dt>Heslo</dt><dd>'+esc(c.pass)+'</dd>'+(link?'<dt>Stránka</dt><dd>'+esc(link)+'</dd>':'')+'</dl></div><p style="font-size:13px;color:#DCE6FA">Пароль показано лише зараз. Якщо учень його забуде — створіть новий. Спочатку учню відкрито лише урок 1.</p><div class="acts l"><button class="btn y sm" type="button" data-copy="'+esc(text)+'">Скопіювати запрошення</button>'+share+'<button class="btn ghost sm" type="button" data-closecreds style="color:#fff;border-color:rgba(255,255,255,.4)">Hotovo</button></div></div>';
 }
@@ -1083,7 +1084,7 @@ function viewTNew(){
   h+='<form class="card" id="newform" novalidate style="max-width:520px"><div class="field"><label for="nw-name">Ім’я та прізвище учня</label><input id="nw-name" value="'+esc(T.newName)+'" placeholder="napr. Olena Kovaľ"></div>';
   h+='<div class="field"><label for="nw-login">Логін (підставляється сам)</label><input id="nw-login" value="'+esc(T.newLogin)+'" autocapitalize="off" spellcheck="false" placeholder="olena.k"></div>';
   h+='<div class="field"><label for="nw-pass">Пароль</label><div class="inp"><input id="nw-pass" value="'+esc(T.newPass)+'" autocapitalize="off" spellcheck="false" style="font-size:16px;padding:12px 14px"><button class="btn ghost sm" type="button" data-regen>Інший пароль</button></div></div>';
-  h+='<p class="muted" style="font-size:13px">Новому учню відкрито урок 1. Наступні уроки відкриваєте ви після занять.</p>';
+  h+='<p class="muted" style="font-size:13px">Новому учню всі уроки закриті. Перший урок відкрийте після першого заняття.</p>';
   h+='<button class="btn" type="submit"'+(S.busy?" disabled":"")+'>'+(S.busy?"Vytváram…":"Vytvoriť účet")+'</button></form>';
   return h;
 }
@@ -1135,7 +1136,7 @@ function viewTSettings(){
   var h='<div><span class="eyebrow">Kabinet lektora</span><h2 class="h2">Nastavenia</h2></div>';
   if(T.msg)h+='<div class="'+(T.msgErr?"err":"ok-msg")+'">'+esc(T.msg)+'</div>';
   h+='<form class="card" id="tpassform" novalidate style="max-width:520px"><h3>Мій логін і пароль</h3><div class="field"><label for="tp-login">Логін</label><input id="tp-login" value="'+esc(S.session.login||"lektor")+'" autocapitalize="off" spellcheck="false"></div><div class="field"><label for="tp-pass">Новий пароль (мін. 8 символів)</label><input id="tp-pass" type="password" autocomplete="new-password"></div><div class="field"><label for="tp-pass2">Повторіть пароль</label><input id="tp-pass2" type="password" autocomplete="new-password"></div><button class="btn" type="submit">Зберегти</button></form>';
-  h+='<div class="note" style="max-width:720px">Учні входять за логіном і паролем, які ви створюєте в «Moji študenti». Новому учню відкрито лише урок 1 — наступні уроки відкривайте після занять.'+(API.name==="rest"?' Посилання для учнів: <b>'+esc(location.origin)+'</b>':'')+'</div>';
+  h+='<div class="note" style="max-width:720px">Учні входять за логіном і паролем, які ви створюєте в «Moji študenti». Новому учню всі уроки закриті — відкривайте кожен урок після заняття.'+(API.name==="rest"?' Посилання для учнів: <b>'+esc(location.origin)+'</b>':'')+'</div>';
   return h;
 }
 
@@ -1151,7 +1152,7 @@ function createStudent(form){
   if(pass.length<6){T.msg="Пароль має бути щонайменше 6 символів.";render();return;}
   S.busy=true;render();
   API.createStudent({name:name,login:login,pass:pass}).then(function(acc){
-    if(!acc.unlocked)acc.unlocked=[1];T.accounts.push(acc);T.creds={name:name,login:login,pass:pass};T.newName="";T.newLogin="";T.newPass=genPass();T.autoLogin=true;S.busy=false;render();
+    if(!Array.isArray(acc.unlocked))acc.unlocked=[];T.accounts.push(acc);T.creds={name:name,login:login,pass:pass};T.newName="";T.newLogin="";T.newPass=genPass();T.autoLogin=true;S.busy=false;render();
   }).catch(function(e){tfail(e,e&&e.code==="exists"?"Такий логін уже є. Виберіть інший.":"Не вдалося створити обліковий запис. Спробуйте ще раз.");});
 }
 function resetPass(a){var pass=genPass();API.resetPassword(a,pass).then(function(){T.creds={name:a.name,login:a.login,pass:pass,reset:true};T.msg="";render();window.scrollTo(0,0);}).catch(function(e){tfail(e,"Не вдалося змінити пароль.");});}

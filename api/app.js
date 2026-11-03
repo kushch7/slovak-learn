@@ -237,7 +237,7 @@ export default async function handler(req, res) {
       const accs = await allAccounts();
       if (login === cfg.login || accs.some((a) => a.login === login)) return send(res, 409, { error: "exists" });
       const id = "s_" + Array.from(crypto.randomBytes(10)).map((b) => "abcdefghijkmnpqrstuvwxyz23456789"[b % 32]).join("");
-      const acc = { id, name, login, pass: hashPass(pass), pv: 1, createdAt: Date.now(), note: "", unlocked: [1] };
+      const acc = { id, name, login, pass: hashPass(pass), pv: 1, createdAt: Date.now(), note: "", unlocked: [] };
       await writeOne(accPath(id), acc);
       return send(res, 200, { account: publicAcc(acc) });
     }
