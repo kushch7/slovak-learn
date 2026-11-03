@@ -109,6 +109,14 @@ function cleanProgress(p) {
     days: (Array.isArray(p.days) ? p.days : []).filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d)).slice(-90),
     results: {}, stats: { types: {}, dia: Math.max(0, Number(p.stats && p.stats.dia) || 0) }, mist: {}, updatedAt: Date.now()
   };
+  out.tests = {};
+  for (const [k, t] of Object.entries((p.tests && typeof p.tests === "object") ? p.tests : {}).slice(0, 20)) {
+    if (!/^[a-z0-9-]{2,30}$/.test(k) || !t || !Array.isArray(t.att)) continue;
+    out.tests[k] = { att: t.att.slice(-3).filter((x) => x && typeof x === "object").map((x) => ({
+      at: +x.at || Date.now(), s: Math.max(0, Math.min(500, +x.s || 0)), n: Math.max(0, Math.min(500, Math.round(+x.n || 0))),
+      a: (Array.isArray(x.a) ? x.a : []).slice(0, 200).map((r) => [String(Array.isArray(r) ? r[0] : "").slice(0, 80), Math.max(0, Math.min(1, +(Array.isArray(r) ? r[1] : 0) || 0))])
+    })) };
+  }
   for (const [k, t] of Object.entries((p.mist && typeof p.mist === "object") ? p.mist : {}).slice(0, 300)) {
     if (/^[a-z0-9-]{2,30}\.\d{1,3}$/.test(k) && Number.isFinite(+t)) out.mist[k] = +t;
   }
