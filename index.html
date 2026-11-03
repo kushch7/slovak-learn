@@ -215,6 +215,9 @@ td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
 .side-l:hover{background:var(--soft)}.side-l.on{background:var(--soft);font-weight:800;box-shadow:inset 3px 0 0 var(--accent)}.side-l.off{color:var(--muted)}.side-l.off .sn{background:var(--line);color:var(--muted)}.side-l .ico{margin-left:auto;flex:none}
 .side-l.rv .sn{background:var(--accent);color:var(--accent-ink)}.side-l.tt .sn{background:var(--accent);color:var(--accent-ink)}.side-l.tt{font-weight:700}
 @media (max-width:900px){.stuw{grid-template-columns:1fr;gap:14px}.side{position:static;max-height:none}.side-d>summary{display:block;padding:12px 14px;font-weight:800;cursor:pointer;color:var(--navy)}}
+.tpal{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 14px}.tq{font:inherit;font-size:13px;font-weight:700;width:38px;height:38px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}.tq.ok{background:var(--soft);border-color:var(--blue);color:var(--navy)}.tq.cur{background:var(--hdr);border-color:var(--hdr);color:#fff}
+.opt.sel{background:var(--hdr);border-color:var(--hdr);color:#fff}
+.tnav{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:8px;padding-top:14px;border-top:1px solid var(--line)}
 .modh{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;padding:10px 14px;background:var(--hdr);color:#fff}.modh b{color:var(--accent);font-size:13px;letter-spacing:.4px;text-transform:uppercase}.modh span{font-weight:700}
 .grid .modh{grid-column:1/-1}
 .smat{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
@@ -806,7 +809,7 @@ function start(id){
   else if(SETS[id]&&SETS[id].type==="test"){var ts=SETS[id];if(!setOpenFor(S.unlocked,ts))return go("home");set={id:ts.id,type:"mixed",test:true,title:ts.title,ua:ts.ua,lesson:ts.lesson};
     items=ts.items.map(function(it){return {it:it,set:{type:it.t,ua:it.h,opts:it.opts,nospace:it.nospace}};});}
   else{set=SETS[id];if(!set||!setOpenFor(S.unlocked,set))return go("home");items=set.type==="match"?[]:(set.type==="cards"?shuffle(set.items):shuffle(set.items).map(function(it){return {it:it,set:set};}));}
-  var P={set:set,items:items,i:0,correct:0,wrong:[],answered:false,last:null,input:"",log:[],given:null};
+  var P={set:set,items:items,i:0,correct:0,wrong:[],answered:false,last:null,input:"",log:[],given:null,ans:[],confirm:false};
   if(set.type==="match")initMatch(P);
   if(set.type==="cards"){P.flipped=false;P.known=0;}
   S.play=P;prepItem();go("play");
@@ -816,7 +819,7 @@ function itemType(){var P=S.play;return P.set.type==="mixed"?cur().set.type:P.se
 function prepItem(){
   var P=S.play;P.answered=false;P.last=null;P.input="";
   if(P.set.type==="match"||P.set.type==="cards")return;
-  var c=cur();if(!c)return;var t=itemType();
+  var c=cur();if(!c)return;var t=itemType();if(P.set.test&&c.prep)return;c.prep=true;
   if(t==="choice")c.shown=shuffle(c.it.opts||c.set.opts);
   if(t==="order"){var w=c.it.a.split(" ");c.pool=shuffle(w.map(function(x,i){return {w:x,k:i};}));c.picked=[];if(c.pool.map(function(x){return x.w;}).join(" ")===c.it.a)c.pool.reverse();}
 }
@@ -834,7 +837,38 @@ function sayText(c){var it=c.it,t=c.set.type,a=Array.isArray(it.a)?it.a[0]:it.a;
   return a;}
 function feedback(kind,c,title){var last=S.play.i+1>=S.play.items.length;
   return '<div class="fb '+kind+'"><div class="m"><b>'+esc(title)+'</b>'+(c.it.why?'<span>'+esc(c.it.why)+'</span>':'')+'</div><button class="btn ghost sm sayb" type="button" data-sayfb aria-label="Прослухати правильну відповідь">'+ICON_PLAY+' Vypočuť</button><button class="btn y" type="button" data-next>'+(last?"Výsledok":"Ďalej")+' →</button></div>';}
+function tAnswered(P,i){var c=P.items[i],t=c.set.type;if(t==="order")return c.picked&&c.picked.length>0;var v=P.ans[i];return v!=null&&String(v).trim()!=="";}
+function saveTestInput(){var P=S.play;if(!P||!P.set.test)return;var el=document.getElementById("ans");if(el)P.ans[P.i]=el.value;}
+function testGo(i){var P=S.play;saveTestInput();P.confirm=false;P.i=Math.max(0,Math.min(P.items.length-1,i));prepItem();render();var f=app.querySelector("#ans");if(f)f.focus();}
+function viewTest(){
+  var P=S.play,n=P.items.length,c=cur(),it=c.it,tt=itemType(),done=0;for(var k=0;k<n;k++)if(tAnswered(P,k))done++;
+  var h='<div class="ptop"><button class="back" type="button" data-quit>× Ukončiť</button><div class="t"><span class="eyebrow">Modul '+SETS[P.set.id].mod+' · Test</span><h2 style="font-size:20px;font-weight:800;color:var(--navy)">'+esc(P.set.title)+'</h2></div><span class="cnt">'+(P.i+1)+' / '+n+'</span></div>';
+  h+='<div class="tpal" role="navigation" aria-label="Otázky testu">';for(var j=0;j<n;j++)h+='<button type="button" class="tq'+(tAnswered(P,j)?' ok':'')+(j===P.i?' cur':'')+'" data-tq="'+j+'" aria-label="Otázka '+(j+1)+(tAnswered(P,j)?', zodpovedaná':'')+'"'+(j===P.i?' aria-current="step"':'')+'>'+(j+1)+'</button>';
+  h+='</div><div class="stage">';
+  var ua='<p class="qsub">'+esc(c.set.ua)+'</p>';
+  if(tt==="choice"){h+=ua+'<div class="q">'+blankHtml(it.q)+'</div>'+(it.sub?'<p class="qsub">'+esc(it.sub)+'</p>':'')+'<div class="opts">';
+    c.shown.forEach(function(o){var on=P.ans[P.i]===o;h+='<button class="opt'+(on?' sel':'')+'" type="button" data-tsel="'+esc(o)+'" aria-pressed="'+on+'">'+esc(o)+'</button>';});h+='</div>';}
+  else if(tt==="type"||tt==="listen"){
+    if(tt==="type")h+=ua+'<div class="q">'+blankHtml(it.q)+'</div>'+(it.hint?'<p class="qsub">('+esc(it.hint)+')</p>':'');
+    else h+=ua+'<div class="play"><button class="btn" type="button" data-say>'+ICON_PLAY+' Prehrať</button><button class="btn ghost" type="button" data-say-slow>Pomalšie</button></div>';
+    h+='<div class="inp"><label for="ans" class="muted" style="flex-basis:100%;font-size:13px">Ваша відповідь (можна змінити до відправлення)</label><input id="ans" autocomplete="off" autocapitalize="off" spellcheck="false" value="'+esc(P.ans[P.i]||"")+'"></div>';
+    h+='<div class="keys" aria-label="Словацькі літери">';"á ä č ď é í ĺ ľ ň ó ô ŕ š ť ú ý ž".split(" ").forEach(function(k){h+='<button class="key" type="button" data-key="'+k+'">'+k+'</button>';});h+='</div>';}
+  else if(tt==="order"){h+=ua+'<div class="q" style="font-size:22px">'+esc(it.ua)+'</div><div class="answer tiles" aria-label="Ваше речення">';
+    c.picked.forEach(function(x,i){h+='<button class="tile" type="button" data-unpick="'+i+'">'+esc(x.w)+'</button>';});
+    h+='</div><div class="tiles">';c.pool.forEach(function(x,i){h+='<button class="tile" type="button" data-pick="'+i+'">'+esc(x.w)+'</button>';});h+='</div>';}
+  h+='<div class="tnav"><button class="btn ghost" type="button" data-tprev'+(P.i<=0?' disabled':'')+'>‹ Späť</button><span class="muted">Zodpovedané: <b>'+done+' / '+n+'</b></span>'+(P.i<n-1?'<button class="btn" type="button" data-tnext>Ďalej ›</button>':'<button class="btn y" type="button" data-tsubmit>Odoslať test</button>')+'</div>';
+  if(P.confirm)h+='<div class="confirm"><span style="flex:1 1 240px">Без відповіді: <b>'+(n-done)+'</b> '+((n-done)===1?'питання':'питань')+'. Надіслати тест лектору зараз? Після відправлення змінити відповіді вже не можна.</span><button class="btn y sm" type="button" data-tsubmit-ok>Áno, odoslať</button><button class="btn ghost sm" type="button" data-tsubmit-no>Späť k testu</button></div>';
+  else if(P.i===n-1||done===n)h+='<p class="muted" style="font-size:13px">Перед відправленням можна повернутися до будь-якого питання через номери вгорі.</p>'+(P.i<n-1?'<button class="btn y" type="button" data-tsubmit style="align-self:flex-start">Odoslať test</button>':'');
+  return h+'</div>';}
+function gradeTest(){var P=S.play;saveTestInput();P.log=[];P.correct=0;
+  P.items.forEach(function(c,i){var it=c.it,t=c.set.type,g="",v=0;
+    if(t==="choice"){g=P.ans[i]||"";v=g===it.a?1:0;}
+    else if(t==="order"){g=(c.picked||[]).map(function(x){return x.w;}).join(" ");v=g&&norm(g)===norm(it.a)?1:0;}
+    else{g=P.ans[i]||"";if(String(g).trim()){var ns=t==="listen"||c.set.nospace,nv=norm(g,ns),ans=it.a.map(function(a){return norm(a,ns);});v=ans.indexOf(nv)>=0?1:(ans.map(strip).indexOf(strip(nv))>=0?0.5:0);}}
+    P.log.push([String(g||"—").slice(0,80),v]);P.correct+=v;});
+  finishTest();}
 function viewPlay(){
+  if(S.play.set.test)return viewTest();
   var P=S.play,t=P.set.type,h=header()+'<div class="stage">';
   if(t==="match")h+=renderMatch();
   else if(t==="cards")h+=renderCards();
@@ -1142,7 +1176,7 @@ app.addEventListener("click",function(e){
   if(b.hasAttribute("data-next"))return next();
   if(b.hasAttribute("data-opt")){var o=b.getAttribute("data-opt");return answer(o===cur().it.a?1:0,o);}
   if(b.hasAttribute("data-check"))return checkTyped();
-  if(b.hasAttribute("data-key")){var el=document.getElementById("ans");if(el){var s=el.selectionStart==null?el.value.length:el.selectionStart,en=el.selectionEnd==null?s:el.selectionEnd;el.value=el.value.slice(0,s)+b.getAttribute("data-key")+el.value.slice(en);P.input=el.value;el.focus();el.setSelectionRange(s+1,s+1);}return;}
+  if(b.hasAttribute("data-key")){var el=document.getElementById("ans");if(el){var s=el.selectionStart==null?el.value.length:el.selectionStart,en=el.selectionEnd==null?s:el.selectionEnd;el.value=el.value.slice(0,s)+b.getAttribute("data-key")+el.value.slice(en);P.input=el.value;if(P.set.test)P.ans[P.i]=el.value;el.focus();el.setSelectionRange(s+1,s+1);}return;}
   if(b.hasAttribute("data-say")||b.hasAttribute("data-say-slow"))return speak(cur().it.say,b.hasAttribute("data-say-slow"));
   if(b.hasAttribute("data-pick")){var c=cur();c.picked.push(c.pool.splice(+b.getAttribute("data-pick"),1)[0]);return render();}
   if(b.hasAttribute("data-unpick")){var c2=cur();c2.pool.push(c2.picked.splice(+b.getAttribute("data-unpick"),1)[0]);return render();}
@@ -1153,6 +1187,15 @@ app.addEventListener("click",function(e){
     else{P.mistakes++;P.flash=k;render();setTimeout(function(){if(S.play===P&&P.flash===k){P.flash=null;render();}},700);}return;}
   if(b.hasAttribute("data-flip")){P.flipped=true;return render();}
   if(b.hasAttribute("data-modx")){var mx=+b.getAttribute("data-modx");S.sideExp=S.sideExp||{};S.sideExp[mx]=!S.sideExp[mx];return render();}
+  if(P&&P.set&&P.set.test&&S.view==="play"){
+    if(b.hasAttribute("data-tq"))return testGo(+b.getAttribute("data-tq"));
+    if(b.hasAttribute("data-tprev"))return testGo(P.i-1);
+    if(b.hasAttribute("data-tnext"))return testGo(P.i+1);
+    if(b.hasAttribute("data-tsel")){P.ans[P.i]=b.getAttribute("data-tsel");return render();}
+    if(b.hasAttribute("data-tsubmit")){saveTestInput();var dn=0;for(var q=0;q<P.items.length;q++)if(tAnswered(P,q))dn++;if(dn<P.items.length){P.confirm=true;return render();}return gradeTest();}
+    if(b.hasAttribute("data-tsubmit-ok"))return gradeTest();
+    if(b.hasAttribute("data-tsubmit-no")){P.confirm=false;return render();}
+  }
   if(b.hasAttribute("data-slide"))return moveSlide(+b.getAttribute("data-slide"));
   if(b.hasAttribute("data-sayfb"))return speak(sayText(cur()));
   if(b.hasAttribute("data-say-card"))return speak(P.items[P.i].sk);
@@ -1174,11 +1217,11 @@ app.addEventListener("click",function(e){
   if(b.hasAttribute("data-del")&&a)return deleteStudent(a);
 });
 app.addEventListener("input",function(e){
-  if(e.target.id==="ans"&&S.play)S.play.input=e.target.value;
+  if(e.target.id==="ans"&&S.play){S.play.input=e.target.value;if(S.play.set.test)S.play.ans[S.play.i]=e.target.value;}
   if(e.target.id==="nw-name"){T.newName=e.target.value;var li=document.getElementById("nw-login");if(li&&T.autoLogin){T.newLogin=genLogin(e.target.value);li.value=T.newLogin;}}
   if(e.target.id==="nw-login"){T.newLogin=e.target.value;T.autoLogin=false;}
 });
-app.addEventListener("keydown",function(e){if(e.target.id==="ans"&&e.key==="Enter"){e.preventDefault();checkTyped();}});
+app.addEventListener("keydown",function(e){if(e.target.id==="ans"&&e.key==="Enter"){e.preventDefault();if(S.play&&S.play.set.test){if(S.play.i<S.play.items.length-1)testGo(S.play.i+1);}else checkTyped();}});
 
 /* ================= theme ================= */
 var THEMES=[null,"light","dark"],THEME_LABEL={auto:"Auto",light:"Svetlá",dark:"Tmavá"};
