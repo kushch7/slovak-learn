@@ -177,6 +177,19 @@ td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
 .lk{display:flex;flex-wrap:wrap;gap:8px}
 .lk button{min-width:120px;min-height:48px;border:2px solid var(--line);background:var(--surface);color:var(--muted);font-weight:700;cursor:pointer;padding:8px 12px;display:flex;align-items:center;gap:8px;justify-content:center}
 .lk button[aria-pressed="true"]{background:var(--hdr);border-color:var(--hdr);color:#fff}
+.strip{display:flex;flex-wrap:wrap;gap:8px 22px;background:var(--surface);border:1px solid var(--line);padding:12px 16px;font-size:14px;color:var(--muted)}
+.strip b{font-size:18px;color:var(--navy)}
+.stu .row{align-items:flex-start}
+.tip{margin:0;font-size:14px;line-height:1.45;padding:8px 10px;border-left:4px solid}
+.tip.bad{background:var(--bad-bg);border-color:var(--bad)} .tip.warn{background:var(--warn-bg);border-color:var(--warn)} .tip.good{background:var(--good-bg);border-color:var(--good)} .tip.info{background:var(--soft);border-color:var(--blue)}
+.lrow .prog{display:block;margin-top:6px;max-width:280px}
+.lock{width:44px;height:44px;flex:none;border:2px solid var(--line);background:var(--surface);color:var(--muted);font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.lock[aria-pressed="true"]{background:var(--hdr);border-color:var(--hdr);color:#fff}
+.lock.ghost{cursor:default;background:var(--soft);border-color:var(--soft);color:var(--navy)}
+.mat{display:flex;flex-wrap:wrap;gap:6px}
+.matbtn{border:1.5px solid var(--blue);color:var(--blue);font-weight:700;font-size:13px;padding:7px 10px;text-decoration:none;white-space:nowrap;min-height:36px;display:inline-flex;align-items:center}
+.matbtn:hover{background:var(--soft);color:var(--blue)}
+details>summary{cursor:pointer;min-height:28px}
 .ico{width:20px;height:20px;flex:none}
 .ico.s{width:14px;height:14px}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
@@ -484,7 +497,7 @@ function boot(){
     if(!ok){render();return;}
     return API.restore(sess).then(function(r){
       if(!r){lsSet(LS_SESSION,null);S.loginErr=sess.role==="student"?"Ваші дані для входу змінилися. Увійдіть знову.":"";render();return;}
-      if(r.role==="teacher"){S.session=API.sessionOf(r);lsSet(LS_SESSION,S.session);go("t-overview");}else applyStudent(r);
+      if(r.role==="teacher"){S.session=API.sessionOf(r);lsSet(LS_SESSION,S.session);go("t-students");}else applyStudent(r);
     });
   }).catch(function(){S.ready=true;render();});
 }
@@ -495,7 +508,7 @@ function doLogin(form){
   S.busy=true;S.loginErr="";render();
   API.login(S.loginTab,login,pass).then(function(r){
     S.busy=false;
-    if(r.role==="teacher"){S.session=API.sessionOf(r);lsSet(LS_SESSION,S.session);go("t-overview");}else applyStudent(r);
+    if(r.role==="teacher"){S.session=API.sessionOf(r);lsSet(LS_SESSION,S.session);go("t-students");}else applyStudent(r);
   }).catch(function(e){S.busy=false;
     S.loginErr=e.code==="bad"?(S.loginTab==="teacher"?"Неправильний логін або пароль лектора.":"Неправильний логін або пароль. Перевірте дані, які дав вам лектор."):loginErrText(e.code);render();});
 }
@@ -518,12 +531,12 @@ function speak(text,slow){if(!("speechSynthesis" in window))return;try{window.sp
 /* ================= navigation ================= */
 var app=document.getElementById("app");
 function go(view,extra){S.view=view;if(extra)Object.assign(S,extra);if(view.indexOf("t-")===0&&!T.loaded&&!T.loading)loadTeacher();render();window.scrollTo(0,0);}
-document.getElementById("brand").addEventListener("click",function(){if(!S.session)go("login");else go(S.session.role==="teacher"?"t-overview":"home");});
+document.getElementById("brand").addEventListener("click",function(){if(!S.session)go("login");else go(S.session.role==="teacher"?"t-students":"home");});
 function renderNav(){
   var nav=document.getElementById("nav"),role=document.getElementById("role"),h="",r=S.session&&S.session.role;
   role.textContent=r==="teacher"?"KABINET LEKTORA":(r?"KABINET ŠTUDENTA":"");
   function tab(v,label,match){return '<button class="tab" type="button" data-nav="'+v+'"'+(match.indexOf(S.view)>=0?' aria-current="page"':"")+'>'+label+'</button>';}
-  if(r==="teacher")h=tab("t-overview","Prehľad",["t-overview"])+tab("t-students","Študenti",["t-students","t-student","t-new"])+tab("t-settings","Nastavenia",["t-settings"]);
+  if(r==="teacher")h=tab("t-students","Študenti",["t-students","t-student","t-new"])+tab("t-materials","Materiály",["t-materials"])+tab("t-settings","Nastavenia",["t-settings"]);
   else if(r)h=tab("home","Cvičenia",["home","lesson","play","result"])+'<span class="chip-xp">'+S.data.xp+' XP</span>';
   if(r)h+='<button class="tab" type="button" data-logout>Odhlásiť</button>';
   nav.innerHTML=h;
@@ -721,40 +734,44 @@ function statusPill(account){var a=advice(account),s=summary(account);
   return '<span class="pill done">ДОБРЕ</span>';}
 
 /* ================= teacher: views ================= */
+var CL="https://claude.ai/artifact/";
+var MATERIALS={
+  1:{deck:"Mpee7Gjh8GjGFJd4hVansv",cheat:"WcCDoLzhR98A8t8qVvjRGx",hw:"6hEceHxD18HJehwgiQQvuS"},
+  2:{deck:"WGDKhfoCw9r7mWWSpqdVVj",cheat:"1HRCxzgnG4jdy2kBH9fAEc",hw:"RKHDVbV9ouyAYZnAKYERjM"},
+  3:{deck:"4qqiBMRZoVnhGwaMHwCPNb",cheat:"3wVop1QyWosgT6d1aC4y6k",hw:"JroWPV8nZiURXDbB2WPM4a"},
+  4:{deck:"FdEttSHni3wnY7sTNUedqQ",cheat:"K8caSVXYCY3JtLhatp77PU",hw:"HG1nTQJYVp5YQeZeM85TAQ"},
+  5:{deck:"EKZLcfZbnBrt3NMqkasa55",cheat:"GhfigvDF23SMii8HWaPdxf",hw:"Vfy5RJXijV2kq5WcmrD9fF"},
+  6:{deck:"XjZMg4v8aQWAgcf9i5pGTr",test:"Vfi43PGppJVwijxLxUxPBd"}
+};
+var GUIDES={student:"DUBLPz9xWXuDdvTVY1gunN",teacher:"TtbxcxrLkoPLHR9QirrfY9"};
+var MAT_LABEL={deck:"Prezentácia",cheat:"Ťahák",hw:"Domáca úloha",test:"Test 1"};
+function matLinks(n){var m=MATERIALS[n];if(!m)return "";var h='<div class="mat">';
+  ["deck","cheat","hw","test"].forEach(function(k){if(m[k])h+='<a class="matbtn" href="'+CL+m[k]+'" target="_blank" rel="noopener">'+MAT_LABEL[k]+' ↗</a>';});
+  return h+'</div>';}
 function tGuard(){if(T.err)return '<div class="card empty">'+esc(T.err)+'</div>';if(!T.loaded)return '<div class="card empty">Načítavam…</div>';return "";}
-function tHead(title){return '<div class="sec-h"><div><span class="eyebrow">Kabinet lektora</span><h2 class="h2">'+title+'</h2></div><div class="acts l"><button class="btn ghost sm" type="button" data-reload>Obnoviť</button><button class="btn sm" type="button" data-tnew>+ Nový študent</button></div></div>';}
-function viewTOverview(){
-  var h=tHead("Prehľad"),g=tGuard();if(g)return h+g;
-  var A=T.accounts;
-  if(!A.length)return h+'<div class="card empty">Ще немає учнів. Створіть першого — і отримаєте логін і пароль для нього.</div>';
-  var sums=A.map(function(a){return {a:a,s:summary(a)};});
-  var active=sums.filter(function(x){return x.s.inactive!==null&&x.s.inactive<7;}).length;
-  var avgs=sums.filter(function(x){return x.s.avg!==null;}).map(function(x){return x.s.avg;});
-  var avg=avgs.length?Math.round(avgs.reduce(function(a,b){return a+b;},0)/avgs.length):null;
-  var tries=sums.reduce(function(a,x){return a+x.s.tries;},0);
-  h+='<div class="tiles4"><div class="kpi"><b>'+A.length+'</b><span>учнів</span></div><div class="kpi"><b>'+active+'</b><span>активні за 7 днів</span></div><div class="kpi"><b>'+(avg===null?"—":avg+" %")+'</b><span>середній результат</span></div><div class="kpi"><b>'+tries+'</b><span>спроб вправ усього</span></div></div>';
-  var need=sums.map(function(x){return {a:x.a,adv:advice(x.a).filter(function(v){return v.k==="bad"||v.k==="warn";})};}).filter(function(x){return x.adv.length;});
-  h+='<div class="two"><section class="sec"><h2 class="h3">Potrebujú pozornosť</h2>';
-  if(!need.length)h+='<div class="card empty">Усі учні в ритмі. Чудово!</div>';
-  else{h+='<div class="list">';need.slice(0,6).forEach(function(x){h+='<div class="li"><div class="t"><button class="linkbtn" type="button" data-tstudent="'+esc(x.a.id)+'">'+esc(x.a.name)+'</button><span class="muted" style="font-size:14px">'+esc(x.adv[0].t)+'</span></div>'+statusPill(x.a)+'</div>';});h+='</div>';}
-  h+='</section><section class="sec"><h2 class="h3">Najslabšie témy skupiny</h2>';
-  var topics=ALL_SETS.map(function(id){var v=sums.map(function(x){return x.s.p.results[id];}).filter(Boolean);return {id:id,n:v.length,avg:v.length?Math.round(v.reduce(function(a,r){return a+r.best;},0)/v.length):null};}).filter(function(t){return t.n;}).sort(function(a,b){return a.avg-b.avg;}).slice(0,6);
-  if(!topics.length)h+='<div class="card empty">Ще немає результатів.</div>';
-  else{h+='<div class="card bars">';topics.forEach(function(t){var col=t.avg<60?"var(--bad)":t.avg<80?"var(--warn)":"var(--good)";h+='<div class="barrow"><span>'+esc(SETS[t.id].title)+' <span class="muted">· L'+SETS[t.id].lesson+' · '+t.n+' уч.</span></span><span class="track"><i style="width:'+t.avg+'%;background:'+col+'"></i></span><span class="v">'+t.avg+' %</span></div>';});h+='<p class="muted" style="font-size:13px">Середній найкращий результат серед учнів, які пробували вправу. Теми нижче 60 % варто повторити з усіма.</p></div>';}
-  return h+'</section></div>';
-}
+function topAdvice(a){var adv=advice(a);return adv.find(function(x){return x.k==="bad";})||adv.find(function(x){return x.k==="warn";})||adv[0];}
 function viewTStudents(){
-  var h=tHead("Študenti");
+  var h='<div class="sec-h"><div><span class="eyebrow">Kabinet lektora</span><h2 class="h2">Moji študenti</h2></div><div class="acts l"><button class="btn ghost sm" type="button" data-reload>Obnoviť</button><button class="btn sm" type="button" data-tnew>+ Nový študent</button></div></div>';
   if(T.msg)h+='<div class="'+(T.msgErr?"err":"ok-msg")+'">'+esc(T.msg)+'</div>';
   var g=tGuard();if(g)return h+g;
-  if(!T.accounts.length)return h+'<div class="card empty">Ще немає учнів.</div>';
-  h+='<div class="card"><b>Відкрити урок усім учням</b><p class="muted" style="font-size:14px">Після заняття з групою відкрийте вправи до пройденого уроку одним кліком. Окремим учням — у їхній картці.</p><div class="lk">';
-  LESSONS.forEach(function(l){var all=T.accounts.every(function(a){return a.unlocked.indexOf(l.n)>=0;});h+='<button type="button" data-unlockall="'+l.n+'"'+(all?' aria-pressed="true" disabled':'')+'>'+(all?"✓ ":"")+'Lekcia '+l.n+'</button>';});
-  h+='</div></div>';
-  var rows=T.accounts.map(function(a){return {a:a,s:summary(a)};}).sort(function(x,y){return (y.s.last||0)-(x.s.last||0);});
-  h+='<div class="tbl"><table><thead><tr><th>Študent</th><th>Login</th><th>Stav</th><th>Lekcie</th><th>Posledná aktivita</th><th>XP</th><th>Séria</th><th>Hotovo</th><th>Priemer</th></tr></thead><tbody>';
-  rows.forEach(function(x){h+='<tr><td><button class="linkbtn" type="button" data-tstudent="'+esc(x.a.id)+'">'+esc(x.a.name)+'</button>'+(x.a.demo?' <span class="pill type">ukážka</span>':'')+'</td><td class="n">'+esc(x.a.login)+'</td><td>'+statusPill(x.a)+'</td><td class="n">'+esc(rangeTxt(x.a.unlocked))+'</td><td class="n">'+esc(ago(x.s.last))+'</td><td class="n">'+x.s.p.xp+'</td><td class="n">'+x.s.streak+'</td><td class="n">'+x.s.done+' / '+x.s.openN+'</td><td class="n">'+(x.s.avg===null?"—":x.s.avg+" %")+'</td></tr>';});
-  return h+'</tbody></table></div>';
+  var A=T.accounts;
+  if(!A.length)return h+'<div class="card empty">Ще немає учнів. Натисніть «+ Nový študent» — і отримаєте логін і пароль для першого учня.</div>';
+  var rows=A.map(function(a){return {a:a,s:summary(a),t:topAdvice(a)};});
+  var active=rows.filter(function(x){return x.s.inactive!==null&&x.s.inactive<7;}).length;
+  var need=rows.filter(function(x){return x.t&&(x.t.k==="bad"||x.t.k==="warn");}).length;
+  h+='<div class="strip"><span><b>'+A.length+'</b> учнів</span><span><b>'+active+'</b> займалися цього тижня</span><span><b>'+need+'</b> потребують уваги</span></div>';
+  var order={bad:0,warn:1,info:2,good:3};
+  rows.sort(function(x,y){return (order[x.t.k]-order[y.t.k])||((y.s.last||0)-(x.s.last||0));});
+  h+='<div class="grid">';
+  rows.forEach(function(x){var a=x.a,s=x.s;
+    h+='<div class="card stu"><div class="row"><h3>'+esc(a.name)+(a.demo?' <span class="pill type">ukážka</span>':'')+'</h3>'+statusPill(a)+'</div>'+
+      '<span class="muted" style="font-size:13px">Уроки: <b>'+esc(rangeTxt(a.unlocked))+'</b> · '+esc(ago(s.last))+(s.avg!==null?' · середнє '+s.avg+' %':'')+'</span>'+
+      '<p class="tip '+x.t.k+'">'+esc(x.t.t)+'</p>'+
+      '<button class="btn sm" type="button" data-tstudent="'+esc(a.id)+'" style="align-self:flex-start">Відкрити →</button></div>';});
+  h+='</div>';
+  h+='<details class="card"><summary><b>Відкрити урок усім учням</b> <span class="muted">— після заняття з групою</span></summary><div class="lk" style="margin-top:12px">';
+  LESSONS.forEach(function(l){var all=A.every(function(a){return a.unlocked.indexOf(l.n)>=0;});h+='<button type="button" data-unlockall="'+l.n+'"'+(all?' aria-pressed="true" disabled':'')+'>'+(all?"✓ ":"")+'Lekcia '+l.n+'</button>';});
+  return h+'</div></details>';
 }
 function credsBlock(){
   var c=T.creds;if(!c)return "";
@@ -763,48 +780,58 @@ function credsBlock(){
   return '<div class="creds" role="status"><b style="color:var(--accent)">'+(c.reset?"Новий пароль створено":"Обліковий запис створено")+' — передайте ці дані учню</b><div id="credtext"><dl><dt>Učeň</dt><dd>'+esc(c.name)+'</dd><dt>Login</dt><dd>'+esc(c.login)+'</dd><dt>Heslo</dt><dd>'+esc(c.pass)+'</dd>'+(link?'<dt>Stránka</dt><dd>'+esc(link)+'</dd>':'')+'</dl></div><p style="font-size:13px;color:#DCE6FA">Пароль показано лише зараз. Якщо учень його забуде — створіть новий. Спочатку учню відкрито лише урок 1.</p><div class="acts l"><button class="btn y sm" type="button" data-copy="'+esc(text)+'">Kopírovať údaje</button><button class="btn ghost sm" type="button" data-closecreds style="color:#fff;border-color:rgba(255,255,255,.4)">Hotovo</button></div></div>';
 }
 function viewTNew(){
-  var h='<button class="back" type="button" data-nav2="t-students">← Študenti</button><div><span class="eyebrow">Nový študent</span><h2 class="h2">Vytvoriť prístup</h2></div>';
+  var h='<button class="back" type="button" data-nav2="t-students">← Moji študenti</button><div><span class="eyebrow">Nový študent</span><h2 class="h2">Vytvoriť prístup</h2></div>';
   if(T.creds)return h+credsBlock();
   if(T.msg)h+='<div class="err">'+esc(T.msg)+'</div>';
-  h+='<form class="card" id="newform" novalidate style="max-width:520px"><div class="field"><label for="nw-name">Meno a priezvisko · ім’я учня</label><input id="nw-name" value="'+esc(T.newName)+'" placeholder="napr. Olena Kovaľ"></div>';
-  h+='<div class="field"><label for="nw-login">Prihlasovacie meno · логін</label><input id="nw-login" value="'+esc(T.newLogin)+'" autocapitalize="off" spellcheck="false" placeholder="olena.k"></div>';
-  h+='<div class="field"><label for="nw-pass">Heslo · пароль</label><div class="inp"><input id="nw-pass" value="'+esc(T.newPass)+'" autocapitalize="off" spellcheck="false" style="font-size:16px;padding:12px 14px"><button class="btn ghost sm" type="button" data-regen>Nové heslo</button></div></div>';
-  h+='<p class="muted" style="font-size:13px">Новому учню відкрито урок 1. Наступні уроки ви відкриваєте після занять.</p>';
+  h+='<form class="card" id="newform" novalidate style="max-width:520px"><div class="field"><label for="nw-name">Ім’я та прізвище учня</label><input id="nw-name" value="'+esc(T.newName)+'" placeholder="napr. Olena Kovaľ"></div>';
+  h+='<div class="field"><label for="nw-login">Логін (підставляється сам)</label><input id="nw-login" value="'+esc(T.newLogin)+'" autocapitalize="off" spellcheck="false" placeholder="olena.k"></div>';
+  h+='<div class="field"><label for="nw-pass">Пароль</label><div class="inp"><input id="nw-pass" value="'+esc(T.newPass)+'" autocapitalize="off" spellcheck="false" style="font-size:16px;padding:12px 14px"><button class="btn ghost sm" type="button" data-regen>Інший пароль</button></div></div>';
+  h+='<p class="muted" style="font-size:13px">Новому учню відкрито урок 1. Наступні уроки відкриваєте ви після занять.</p>';
   h+='<button class="btn" type="submit"'+(S.busy?" disabled":"")+'>'+(S.busy?"Vytváram…":"Vytvoriť účet")+'</button></form>';
   return h;
 }
 function viewTStudent(){
   var g=tGuard();if(g)return g;
   var a=T.accounts.find(function(x){return x.id===T.sel;});
-  if(!a)return '<button class="back" type="button" data-nav2="t-students">← Študenti</button><div class="card empty">Учня не знайдено.</div>';
+  if(!a)return '<button class="back" type="button" data-nav2="t-students">← Moji študenti</button><div class="card empty">Учня не знайдено.</div>';
   var s=summary(a),p=s.p;
-  var h='<button class="back" type="button" data-nav2="t-students">← Študenti</button><div class="sec-h"><div><span class="eyebrow">Študent'+(a.demo?' · ukážka':'')+'</span><h2 class="h2">'+esc(a.name)+'</h2><span class="muted">Login: <b>'+esc(a.login)+'</b> · účet od '+esc(fmtDate(a.createdAt))+'</span></div>'+statusPill(a)+'</div>';
+  var h='<button class="back" type="button" data-nav2="t-students">← Moji študenti</button><div class="sec-h"><div><span class="eyebrow">Študent'+(a.demo?' · ukážka':'')+'</span><h2 class="h2">'+esc(a.name)+'</h2><span class="muted">Логін: <b>'+esc(a.login)+'</b> · '+p.xp+' XP · '+s.streak+' дн. поспіль · '+esc(ago(s.last))+'</span></div>'+statusPill(a)+'</div>';
   if(T.creds)h+=credsBlock();
   if(T.msg)h+='<div class="'+(T.msgErr?"err":"ok-msg")+'">'+esc(T.msg)+'</div>';
-  h+='<div class="tiles4"><div class="kpi"><b>'+p.xp+'</b><span>XP</span></div><div class="kpi"><b>'+s.streak+'</b><span>днів поспіль</span></div><div class="kpi"><b>'+s.done+' / '+s.openN+'</b><span>відкритих вправ на 80 %+</span></div><div class="kpi"><b>'+(s.avg===null?"—":s.avg+" %")+'</b><span>середній результат</span></div><div class="kpi"><b style="font-size:20px">'+esc(ago(s.last))+'</b><span>остання активність</span></div></div>';
-  h+='<section class="sec"><h2 class="h3">Prístup k lekciám</h2><div class="card"><p class="muted" style="font-size:14px">Натисніть на урок, щоб відкрити або закрити учню вправи до нього. Зміни діють одразу.</p><div class="lk">';
-  LESSONS.forEach(function(l){var on=a.unlocked.indexOf(l.n)>=0;h+='<button type="button" data-toggle="'+l.n+'" aria-pressed="'+on+'">'+(on?"✓":ICON_LOCK)+' Lekcia '+l.n+'</button>';});
-  h+='</div></div></section>';
-  h+='<div class="two"><section class="sec"><h2 class="h3">Rady pre lektora</h2><div class="adv">';
-  advice(a).forEach(function(x){h+='<div class="'+x.k+'">'+esc(x.t)+'</div>';});
-  h+='</div></section><section class="sec"><h2 class="h3">Podľa lekcií</h2><div class="card bars">';
-  LESSONS.forEach(function(l){var open=a.unlocked.indexOf(l.n)>=0;var v=l.sets.map(function(st){return p.results[st.id];}).filter(Boolean);var av=v.length?Math.round(v.reduce(function(x,r){return x+r.best;},0)/l.sets.length):0;
-    var col=av<60?"var(--bad)":av<80?"var(--warn)":"var(--good)";h+='<div class="barrow"><span>'+l.n+' · '+esc(l.title)+(open?'':' <span class="muted">(закрито)</span>')+'</span><span class="track"><i style="width:'+av+'%;background:'+col+'"></i></span><span class="v">'+(v.length?av+" %":"—")+'</span></div>';});
+  h+='<section class="sec"><h2 class="h3">Що зробити</h2><div class="adv">';
+  advice(a).slice(0,4).forEach(function(x){h+='<div class="'+x.k+'">'+esc(x.t)+'</div>';});
+  h+='</div></section>';
+  h+='<section class="sec"><div class="sec-h"><h2 class="h3">Уроки й матеріали</h2><span class="muted" style="font-size:13px">Замок — відкрити або закрити учню вправи до уроку</span></div><div class="list">';
+  LESSONS.forEach(function(l){var on=a.unlocked.indexOf(l.n)>=0;
+    var done=l.sets.filter(function(st){var r=p.results[st.id];return r&&r.best>=80;}).length;
+    var v=l.sets.map(function(st){return p.results[st.id];}).filter(Boolean);var av=v.length?Math.round(v.reduce(function(x,r){return x+r.best;},0)/l.sets.length):null;
+    var col=av===null?"var(--soft)":av<60?"var(--bad)":av<80?"var(--warn)":"var(--good)";
+    h+='<div class="li lrow"><button class="lock" type="button" data-toggle="'+l.n+'" aria-pressed="'+on+'" aria-label="'+(on?"Закрити":"Відкрити")+' урок '+l.n+'">'+(on?"✓":ICON_LOCK)+'</button>'+
+      '<div class="t"><b>'+l.n+' · '+esc(l.title)+'</b><span class="muted" style="font-size:13px">'+(on?(v.length?done+' з '+l.sets.length+' вправ пройдено · '+av+' %':'вправи відкрито, учень ще не починав'):'вправи закриті')+'</span>'+
+      (on&&v.length?'<span class="prog"><i style="width:'+av+'%;background:'+col+'"></i></span>':'')+'</div>'+matLinks(l.n)+'</div>';});
+  h+='<div class="li lrow"><span class="lock ghost" aria-hidden="true">6</span><div class="t"><b>6 · Opakovanie 1</b><span class="muted" style="font-size:13px">повторювальний урок і тест за уроки 1–5</span></div>'+matLinks(6)+'</div>';
+  h+='</div></section>';
+  h+='<details class="card"><summary><b>Усі вправи детально</b></summary><div class="tbl" style="margin-top:12px"><table><thead><tr><th>Lekcia</th><th>Cvičenie</th><th>Typ</th><th>Najlepšie</th><th>Pokusy</th><th>Dátum</th></tr></thead><tbody>';
+  ALL_SETS.forEach(function(id){var st=SETS[id],r=p.results[id];h+='<tr><td class="n">'+st.lesson+'</td><td>'+esc(st.title)+'</td><td>'+TYPE_LABEL[st.type]+'</td><td class="n">'+(r?(r.best>=80?'<span class="pill done">':r.best>=60?'<span class="pill warn">':'<span class="pill weak">')+r.best+' %</span>':'<span class="muted">—</span>')+'</td><td class="n">'+(r?r.tries:0)+'</td><td class="n">'+(r?esc(fmtDate(r.at)):"—")+'</td></tr>';});
   var ty=["choice","type","listen","order","match","cards"].map(function(k){var t=p.stats.types[k];return t&&t.n?TYPE_LABEL[k]+": "+Math.round(t.c/t.n*100)+" %":null;}).filter(Boolean);
-  h+='<p class="muted" style="font-size:13px">Невиконані вправи уроку рахуються як 0 %. '+(ty.length?"Точність за типами — "+esc(ty.join(" · "))+".":"")+(p.stats.dia?" Відповідей з помилкою в діакритиці (0,5 бала): "+p.stats.dia+".":"")+'</p></div></section></div>';
-  h+='<section class="sec"><h2 class="h3">Všetky cvičenia</h2><div class="tbl"><table><thead><tr><th>Lekcia</th><th>Cvičenie</th><th>Typ</th><th>Najlepšie</th><th>Posledné</th><th>Pokusy</th><th>Dátum</th></tr></thead><tbody>';
-  ALL_SETS.forEach(function(id){var st=SETS[id],r=p.results[id],open=a.unlocked.indexOf(st.lesson)>=0;h+='<tr><td class="n">'+st.lesson+'</td><td>'+esc(st.title)+(open?'':' <span class="muted">· zamknuté</span>')+'</td><td>'+TYPE_LABEL[st.type]+'</td><td class="n">'+(r?(r.best>=80?'<span class="pill done">':r.best>=60?'<span class="pill warn">':'<span class="pill weak">')+r.best+' %</span>':'<span class="muted">—</span>')+'</td><td class="n">'+(r?r.last+" %":"—")+'</td><td class="n">'+(r?r.tries:0)+'</td><td class="n">'+(r?esc(fmtDate(r.at)):"—")+'</td></tr>';});
-  h+='</tbody></table></div></section>';
-  h+='<section class="sec"><h2 class="h3">Poznámka lektora</h2><form class="card" id="noteform"><div class="field"><label for="nt-text">Видно лише вам</label><textarea id="nt-text" rows="3">'+esc(a.note||"")+'</textarea></div><button class="btn sm" type="submit" style="align-self:flex-start">Uložiť poznámku</button></form></section>';
-  h+='<section class="sec"><h2 class="h3">Prístup</h2><div class="card"><div class="acts l"><button class="btn ghost sm" type="button" data-reset>Vygenerovať nové heslo</button><button class="btn danger sm" type="button" data-askdel>Vymazať účet</button></div>';
-  if(T.confirm==="del")h+='<div class="confirm"><span style="flex:1 1 240px">Видалити '+esc(a.name)+' разом з усім прогресом? Цю дію не можна скасувати.</span><button class="btn danger sm" type="button" data-del>Áno, vymazať</button><button class="btn ghost sm" type="button" data-canceldel>Zrušiť</button></div>';
-  return h+'</div></section>';
+  h+='</tbody></table></div>'+(ty.length||p.stats.dia?'<p class="muted" style="font-size:13px;margin-top:10px">'+(ty.length?"Точність за типами — "+esc(ty.join(" · "))+". ":"")+(p.stats.dia?"Відповідей з помилкою в діакритиці (0,5 бала): "+p.stats.dia+".":"")+'</p>':'')+'</details>';
+  h+='<form class="card" id="noteform"><div class="field"><label for="nt-text">Моя нотатка про учня (учень її не бачить)</label><textarea id="nt-text" rows="3">'+esc(a.note||"")+'</textarea></div><button class="btn sm" type="submit" style="align-self:flex-start">Зберегти нотатку</button></form>';
+  h+='<details class="card"'+(T.confirm==="del"?" open":"")+'><summary><b>Пароль і видалення</b></summary><div class="acts l" style="margin-top:12px"><button class="btn ghost sm" type="button" data-reset>Створити новий пароль</button><button class="btn danger sm" type="button" data-askdel>Видалити учня</button></div>';
+  if(T.confirm==="del")h+='<div class="confirm" style="margin-top:10px"><span style="flex:1 1 240px">Видалити '+esc(a.name)+' разом з усім прогресом? Цю дію не можна скасувати.</span><button class="btn danger sm" type="button" data-del>Так, видалити</button><button class="btn ghost sm" type="button" data-canceldel>Скасувати</button></div>';
+  return h+'</details>';
+}
+function viewTMaterials(){
+  var h='<div><span class="eyebrow">Kabinet lektora</span><h2 class="h2">Materiály</h2><p class="muted" style="margin-top:6px">Презентації, шпаргалки й домашні завдання до кожного уроку. Відкриваються в Claude в новій вкладці; учні їх тут не бачать.</p></div><div class="list">';
+  LESSONS.forEach(function(l){h+='<div class="li lrow"><span class="num">'+l.n+'</span><div class="t"><b>'+esc(l.title)+'</b><span class="muted" style="font-size:13px">'+l.sets.length+' онлайн-вправ на платформі</span></div>'+matLinks(l.n)+'</div>';});
+  h+='<div class="li lrow"><span class="num">6</span><div class="t"><b>Opakovanie 1</b><span class="muted" style="font-size:13px">повторення уроків 1–5 і тест на 50 балів</span></div>'+matLinks(6)+'</div></div>';
+  h+='<section class="sec"><h2 class="h3">Довідники</h2><div class="mat"><a class="matbtn" href="'+CL+GUIDES.student+'" target="_blank" rel="noopener">Довідник для учнів ↗</a><a class="matbtn" href="'+CL+GUIDES.teacher+'" target="_blank" rel="noopener">Довідник для лекторів ↗</a></div></section>';
+  return h;
 }
 function viewTSettings(){
   var h='<div><span class="eyebrow">Kabinet lektora</span><h2 class="h2">Nastavenia</h2></div>';
   if(T.msg)h+='<div class="'+(T.msgErr?"err":"ok-msg")+'">'+esc(T.msg)+'</div>';
-  h+='<form class="card" id="tpassform" novalidate style="max-width:520px"><h3>Zmeniť prihlasovacie údaje lektora</h3><div class="field"><label for="tp-login">Prihlasovacie meno</label><input id="tp-login" value="'+esc(S.session.login||"lektor")+'" autocapitalize="off" spellcheck="false"></div><div class="field"><label for="tp-pass">Nové heslo (мін. 8 символів)</label><input id="tp-pass" type="password" autocomplete="new-password"></div><div class="field"><label for="tp-pass2">Zopakujte heslo</label><input id="tp-pass2" type="password" autocomplete="new-password"></div><button class="btn" type="submit">Uložiť</button></form>';
-  h+='<div class="note" style="max-width:720px">Учні входять за логіном і паролем, які ви створюєте в розділі «Študenti». Новому учню відкрито лише урок 1 — наступні уроки відкривайте після занять (усім одразу або кожному окремо).'+(API.name==="rest"?' Посилання для учнів: <b>'+esc(location.origin)+'</b>':'')+'</div>';
+  h+='<form class="card" id="tpassform" novalidate style="max-width:520px"><h3>Мій логін і пароль</h3><div class="field"><label for="tp-login">Логін</label><input id="tp-login" value="'+esc(S.session.login||"lektor")+'" autocapitalize="off" spellcheck="false"></div><div class="field"><label for="tp-pass">Новий пароль (мін. 8 символів)</label><input id="tp-pass" type="password" autocomplete="new-password"></div><div class="field"><label for="tp-pass2">Повторіть пароль</label><input id="tp-pass2" type="password" autocomplete="new-password"></div><button class="btn" type="submit">Зберегти</button></form>';
+  h+='<div class="note" style="max-width:720px">Учні входять за логіном і паролем, які ви створюєте в «Moji študenti». Новому учню відкрито лише урок 1 — наступні уроки відкривайте після занять.'+(API.name==="rest"?' Посилання для учнів: <b>'+esc(location.origin)+'</b>':'')+'</div>';
   return h;
 }
 
@@ -855,7 +882,7 @@ function render(){
   else if(v==="lesson")h=viewLesson();
   else if(v==="play")h=viewPlay();
   else if(v==="result")h=viewResult();
-  else if(v==="t-overview")h=viewTOverview();
+  else if(v==="t-materials")h=viewTMaterials();
   else if(v==="t-students")h=viewTStudents();
   else if(v==="t-new")h=viewTNew();
   else if(v==="t-student")h=viewTStudent();
