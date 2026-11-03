@@ -190,6 +190,9 @@ td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
 .matbtn{border:1.5px solid var(--blue);color:var(--blue);font-weight:700;font-size:13px;padding:7px 10px;text-decoration:none;white-space:nowrap;min-height:36px;display:inline-flex;align-items:center}
 .matbtn:hover{background:var(--soft);color:var(--blue)}
 details>summary{cursor:pointer;min-height:28px}
+.themebtn{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1.5px solid rgba(255,255,255,.35);color:var(--hdr-ink);font-weight:700;font-size:13px;padding:6px 10px;min-height:40px;cursor:pointer}
+.themebtn:hover{border-color:var(--accent)}
+@media (max-width:520px){.themebtn span{display:none}}
 .ico{width:20px;height:20px;flex:none}
 .ico.s{width:14px;height:14px}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
@@ -199,6 +202,7 @@ details>summary{cursor:pointer;min-height:28px}
 <header class="bar"><div class="bar-in">
   <button class="brand" id="brand" type="button" aria-label="Slovak Learn — domov"><img src="img/logo.webp" alt=""><span><b>SLOVAK LEARN</b><small id="role"></small></span></button>
   <nav id="nav" aria-label="Hlavné menu"></nav>
+  <button class="themebtn" id="theme" type="button"></button>
 </div></header>
 <main id="app" aria-live="polite"></main>
 
@@ -519,7 +523,7 @@ function loginErrText(c){
   if(c==="offline")return "Немає з’єднання з інтернетом. Спробуйте ще раз.";
   return "Помилка сервера (код: "+(c||"невідомо")+"). Спробуйте ще раз.";
 }
-function logout(){lsSet(LS_SESSION,null);S.session=null;S.data=emptyProg();S.unlocked=[1];S.play=null;T.loaded=false;T.sel=null;T.creds=null;S.loginErr="";go("login");}
+function logout(){var wasT=S.session&&S.session.role==="teacher";lsSet(LS_SESSION,null);if(wasT&&routeRole()!=="teacher"){try{location.hash="lektor";}catch(e){}}S.session=null;S.data=emptyProg();S.unlocked=[1];S.play=null;T.loaded=false;T.sel=null;T.creds=null;S.loginErr="";go("login");}
 
 /* ================= speech ================= */
 var skVoice=null,voiceChecked=false;
@@ -545,16 +549,20 @@ document.getElementById("nav").addEventListener("click",function(e){var b=e.targ
 function updateSync(){var el=document.getElementById("sync");if(el)el.textContent=S.sync;}
 
 /* ================= login ================= */
+function routeRole(){var p=location.pathname.replace(/\/+$/,"");return (p==="/lektor"||location.hash==="#lektor")?"teacher":"student";}
 function viewLogin(){
-  var t=S.loginTab;
-  var h='<div class="login"><div style="display:flex;flex-direction:column;gap:6px;text-align:center;align-items:center"><img src="img/wave.webp" alt="" style="width:130px;height:auto"><h1 style="font-size:28px;font-weight:800;color:var(--navy)">Vitajte v Slovak Learn</h1><p class="muted">Увійдіть з даними, які дав вам лектор.</p></div>';
-  h+='<form class="card" id="loginform" novalidate><div class="seg" role="group" aria-label="Хто входить"><button type="button" data-ltab="student" aria-pressed="'+(t==="student")+'">Študent</button><button type="button" data-ltab="teacher" aria-pressed="'+(t==="teacher")+'">Lektor</button></div>';
+  var t=S.loginTab=routeRole(),teacher=t==="teacher";
+  var h='<div class="login"><div style="display:flex;flex-direction:column;gap:6px;text-align:center;align-items:center"><img src="img/'+(teacher?"think":"wave")+'.webp" alt="" style="width:130px;height:auto">';
+  h+=teacher?'<span class="eyebrow">Slovak Learn · pre lektorov</span><h1 style="font-size:28px;font-weight:800;color:var(--navy)">Kabinet lektora</h1><p class="muted">Вхід для викладачів школи.</p></div>'
+            :'<h1 style="font-size:28px;font-weight:800;color:var(--navy)">Vitajte v Slovak Learn</h1><p class="muted">Увійдіть з даними, які дав вам лектор.</p></div>';
+  h+='<form class="card" id="loginform" novalidate>';
   if(S.loginErr)h+='<div class="err" role="alert">'+esc(S.loginErr)+'</div>';
-  h+='<div class="field"><label for="lg-login">Prihlasovacie meno · логін</label><input id="lg-login" autocomplete="username" autocapitalize="off" spellcheck="false" value="'+esc(S.lgLogin)+'" placeholder="'+(t==="teacher"?"lektor":"napr. olena.k")+'"></div>';
+  h+='<div class="field"><label for="lg-login">Prihlasovacie meno · логін</label><input id="lg-login" autocomplete="username" autocapitalize="off" spellcheck="false" value="'+esc(S.lgLogin)+'" placeholder="'+(teacher?"lektor":"napr. olena.k")+'"></div>';
   h+='<div class="field"><label for="lg-pass">Heslo · пароль</label><input id="lg-pass" type="password" autocomplete="current-password"></div>';
-  h+='<button class="btn" type="submit"'+(S.busy||!S.ready?" disabled":"")+'>'+(S.busy?"Prihlasujem…":(!S.ready?"Načítavam…":(t==="teacher"?"Vstúpiť do kabinetu lektora":"Prihlásiť sa")))+'</button></form>';
-  if(t==="student")h+='<button class="linkbtn" type="button" data-guest style="align-self:center">Skúsiť cvičenia bez prihlásenia</button><p class="muted" style="font-size:13px;text-align:center">Без входу прогрес зберігається лише в цьому браузері, і лектор його не бачить.</p>';
-  if(S.ready&&!S.online)h+='<div class="note">Сервер зараз недоступний, тож вхід за логіном не працює. Можна спробувати вправи без входу.</div>';
+  h+='<button class="btn" type="submit"'+(S.busy||!S.ready?" disabled":"")+'>'+(S.busy?"Prihlasujem…":(!S.ready?"Načítavam…":(teacher?"Vstúpiť do kabinetu lektora":"Prihlásiť sa")))+'</button></form>';
+  if(teacher)h+='<button class="linkbtn" type="button" data-tostudent style="align-self:center">← Вхід для учнів</button>';
+  else h+='<button class="linkbtn" type="button" data-guest style="align-self:center">Skúsiť cvičenia bez prihlásenia</button><p class="muted" style="font-size:13px;text-align:center">Без входу прогрес зберігається лише в цьому браузері, і лектор його не бачить.</p>';
+  if(S.ready&&!S.online)h+='<div class="note">Сервер зараз недоступний, тож вхід за логіном не працює.'+(teacher?'':' Можна спробувати вправи без входу.')+'</div>';
   return h+'</div>';
 }
 
@@ -899,7 +907,7 @@ app.addEventListener("submit",function(e){
 app.addEventListener("click",function(e){
   var b=e.target.closest("button");if(!b||b.disabled||b.type==="submit")return;
   var P=S.play,a;
-  if(b.hasAttribute("data-ltab")){S.loginTab=b.getAttribute("data-ltab");S.loginErr="";return render();}
+  if(b.hasAttribute("data-tostudent")){S.loginErr="";S.lgLogin="";if(location.pathname.replace(/\/+$/,"")==="/lektor"){location.href="/";return;}try{history.replaceState(null,"",location.pathname+location.search);}catch(e){location.hash="";}return render();}
   if(b.hasAttribute("data-guest")){S.session={role:"guest",name:""};S.unlocked=ALL_LESSONS.slice();lsSet(LS_SESSION,S.session);S.data=normProg(lsGet(progKey()));return go("home");}
   if(b.hasAttribute("data-start"))return start(b.getAttribute("data-start"));
   if(b.hasAttribute("data-lesson"))return go("lesson",{lesson:+b.getAttribute("data-lesson")});
@@ -942,6 +950,17 @@ app.addEventListener("input",function(e){
 });
 app.addEventListener("keydown",function(e){if(e.target.id==="ans"&&e.key==="Enter"){e.preventDefault();checkTyped();}});
 
+/* ================= theme ================= */
+var THEMES=[null,"light","dark"],THEME_LABEL={auto:"Auto",light:"Svetlá",dark:"Tmavá"};
+var ICON_T={auto:'<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>',
+  light:'<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
+  dark:'<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>'};
+var theme=lsGet("slovaklearn-theme");if(THEMES.indexOf(theme)<0)theme=null;
+function applyTheme(){var root=document.documentElement;if(theme)root.setAttribute("data-theme",theme);else root.removeAttribute("data-theme");
+  var k=theme||"auto",btn=document.getElementById("theme");btn.innerHTML=ICON_T[k]+'<span>'+THEME_LABEL[k]+'</span>';btn.setAttribute("aria-label","Téma: "+THEME_LABEL[k]+" — змінити тему");}
+document.getElementById("theme").addEventListener("click",function(){theme=THEMES[(THEMES.indexOf(theme)+1)%3];lsSet("slovaklearn-theme",theme);applyTheme();});
+window.addEventListener("hashchange",function(){if(!S.session){S.loginErr="";render();}});
+applyTheme();
 render();
 boot();
 })();
