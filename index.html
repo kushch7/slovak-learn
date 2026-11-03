@@ -48,6 +48,14 @@ main{max-width:1040px;margin:0 auto;padding-block:24px 56px;padding-left:max(16p
 .hero h1{font-size:clamp(26px,5vw,36px);font-weight:800}
 .hero p{color:#DCE6FA}
 .hero img{width:170px;max-width:40%;height:auto;align-self:flex-end;margin-left:auto}
+.go{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;background:#fff;color:var(--navy);border:0;border-left:6px solid var(--accent);padding:16px 18px;text-align:left;font:inherit;cursor:pointer;width:100%;max-width:560px}
+.go:hover{box-shadow:0 0 0 3px var(--accent)}
+.go-t{display:flex;flex-direction:column;gap:4px;min-width:0}
+.go-k{font-size:12px;font-weight:700;color:#4B5D86;text-transform:uppercase;letter-spacing:.4px}
+.go-t b{font-size:20px;font-weight:800;color:#0F3271}
+.go-b{background:var(--accent);color:#0F3271;font-weight:800;padding:10px 16px;border:0;font:inherit;font-weight:800;cursor:pointer;white-space:nowrap}
+.go.done{cursor:default}.go.done:hover{box-shadow:none}
+.mini{font-size:13px;color:#DCE6FA}
 .stats{display:flex;flex-wrap:wrap;gap:10px}
 .stat{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);padding:8px 14px;display:flex;flex-direction:column;min-width:110px}
 .stat b{font-size:22px;font-variant-numeric:tabular-nums;color:var(--accent)}
@@ -210,6 +218,7 @@ details>summary{cursor:pointer;min-height:28px}
 (function(){
 "use strict";
 /* ================= content: lessons 1–5 (5 sets each) ================= */
+var TXT9="9 · Прочитайте текст. Pravda чи nepravda? — «Volám sa Iryna Melnyk. Som z Ukrajiny, z Poltavy. Teraz bývam na Slovensku, v Nitre. Mám tridsaťdva rokov. Som účtovníčka, ale teraz pracujem v obchode. Hovorím po ukrajinsky a trochu po slovensky.»";
 var LESSONS=[
  {n:1,title:"Pozdravy a zoznámenie",sets:[
   {id:"l1-byt",type:"type",title:"Sloveso byť",ua:"Доповніть форму дієслова byť",items:[
@@ -352,9 +361,86 @@ var LESSONS=[
   {id:"l5-vety",type:"order",title:"Online frázy",ua:"Складіть речення зі слів",items:[
    {ua:"Ви мене чуєте?",a:"Počujete ma?"},{ua:"У вас вимкнений мікрофон.",a:"Máte vypnutý mikrofón."},
    {ua:"Я надішлю вам посилання.",a:"Pošlem vám odkaz."},{ua:"Це не ручка, це олівець.",a:"To nie je pero, to je ceruzka."},
-   {ua:"Як сказати словацькою «laptop»?",a:"Ako sa povie po slovensky laptop?"}]}]}
+   {ua:"Як сказати словацькою «laptop»?",a:"Ako sa povie po slovensky laptop?"}]}]},
+ {n:6,title:"Opakovanie 1",sets:[
+  {id:"l6-situacie",type:"choice",title:"Čo poviete?",ua:"Повторення уроків 1–5: виберіть правильну фразу",items:[
+   {q:"Ви вперше бачите колегу. Як спитати ім’я?",opts:["Ako sa voláte?","Koľko máte rokov?","Kde pracujete?"],a:"Ako sa voláte?",why:"Ako sa voláte? — Volám sa …"},
+   {q:"Як спитати, звідки людина?",opts:["Odkiaľ ste?","Kde bývate?","Čo robíte?"],a:"Odkiaľ ste?",why:"Odkiaľ ste? — Som z …"},
+   {q:"Як спитати, де людина живе?",opts:["Kde bývate?","Odkiaľ ste?","Aké je vaše číslo?"],a:"Kde bývate?",why:"Kde bývate? — Bývam v …"},
+   {q:"Як спитати про роботу?",opts:["Kde pracujete?","Ako sa máte?","Čo znamená „práca“?"],a:"Kde pracujete?",why:"Kde pracujete? — Pracujem v …"},
+   {q:"Ви не зрозуміли речення на уроці.",opts:["Môžete to zopakovať?","Dovidenia!","Mám notebook."],a:"Môžete to zopakovať?",why:"Môžete to zopakovať? — Можете повторити?"},
+   {q:"Як офіційно спитати e-mail?",opts:["Aký je váš e-mail?","Aký je tvoj e-mail?","Kto je to?"],a:"Aký je váš e-mail?",why:"Офіційно — váš: Aký je váš e-mail?"},
+   {q:"Відповідь на «Ako sa máte?»",opts:["Dobre, ďakujem. A vy?","Volám sa Olena.","Som z Ukrajiny."],a:"Dobre, ďakujem. A vy?",why:"Dobre, ďakujem. A vy?"}]},
+  {id:"l6-slovesa",type:"type",title:"Slovesá: opakovanie",ua:"Напишіть дієслово в правильній формі",items:[
+   {q:"Ja ___ z Ukrajiny.",hint:"byť",a:["som"],why:"ja som"},
+   {q:"Vy ___ v Trnave?",hint:"bývať",a:["bývate"],why:"vy → bývate"},
+   {q:"On ___ po slovensky.",hint:"hovoriť",a:["hovorí"],why:"on → hovorí"},
+   {q:"My ___ dve deti.",hint:"mať",a:["máme"],why:"my → máme"},
+   {q:"Ty ___ v škole?",hint:"pracovať",a:["pracuješ"],why:"pracovať → pracujem, pracuješ"},
+   {q:"Oni ___ e-mail.",hint:"písať",a:["píšu"],why:"písať → píšem … oni píšu"},
+   {q:"Ona ___ doma.",hint:"ne + byť",a:["nie je"],why:"Заперечення byť окремо: nie je."},
+   {q:"Ja ___ mikrofón.",hint:"ne + mať",a:["nemám"],why:"Заперечення ne- разом: nemám."}]},
+  {id:"l6-pocuvanie",type:"listen",title:"Počúvanie: čísla 0–100",ua:"Послухайте й запишіть число цифрами",items:[
+   {say:"dvanásť",a:["12"]},{say:"devätnásť",a:["19"]},{say:"tridsaťštyri",a:["34"]},{say:"štyridsaťdeväť",a:["49"]},
+   {say:"päťdesiatpäť",a:["55"]},{say:"šesťdesiat",a:["60"]},{say:"osemdesiatsedem",a:["87"]},{say:"deväťdesiattri",a:["93"]}]},
+  {id:"l6-otazky",type:"match",title:"Otázka a odpoveď",ua:"З’єднайте питання з відповіддю",labels:["Otázka","Odpoveď"],pairs:[
+   ["Ako sa voláte?","Volám sa Olena."],["Odkiaľ ste?","Som z Ukrajiny."],["Kde bývate?","Bývam v Trnave."],
+   ["Koľko máte rokov?","Mám tridsať rokov."],["Kde pracujete?","Pracujem v škole."],["Čo je to?","To je zošit."]]},
+  {id:"l6-vety",type:"order",title:"Predstavte sa",ua:"Складіть речення зі слів",items:[
+   {ua:"Мене звати Ірина, я з Полтави.",a:"Volám sa Iryna, som z Poltavy."},
+   {ua:"Зараз я живу в Нітрі.",a:"Teraz bývam v Nitre."},
+   {ua:"Мені тридцять два роки.",a:"Mám tridsaťdva rokov."},
+   {ua:"Я бухгалтерка, але працюю в магазині.",a:"Som účtovníčka, ale pracujem v obchode."},
+   {ua:"Я не маю ноутбука, маю тільки мобільний.",a:"Nemám notebook, mám len mobil."}]},
+  {id:"l6-test",type:"test",title:"Test 1 · online",ua:"Онлайн-варіант тесту за уроки 1–5",items:[
+   {t:"choice",h:"1 · Pozdravy — що ви скажете?",opts:["Dobré ráno!","Dobrý večer!","Ahoj!","Dovidenia!"],q:"7:30. Ви бачите колегу, пані Нову.",a:"Dobré ráno!",why:"Вранці — Dobré ráno!"},
+   {t:"choice",h:"1 · Pozdravy — що ви скажете?",opts:["Dobré ráno!","Dobrý večer!","Ahoj!","Dovidenia!"],q:"21:00. Ви приходите на вечірній урок.",a:"Dobrý večer!",why:"Увечері — Dobrý večer!"},
+   {t:"choice",h:"1 · Pozdravy — що ви скажете?",opts:["Dobré ráno!","Dobrý večer!","Ahoj!","Dovidenia!"],q:"Ви бачите подругу Олену.",a:"Ahoj!",why:"З друзями — Ahoj!"},
+   {t:"choice",h:"1 · Pozdravy — що ви скажете?",opts:["Dobré ráno!","Dobrý večer!","Ahoj!","Dovidenia!"],q:"Ви прощаєтеся з пані лекторкою.",a:"Dovidenia!",why:"Офіційне прощання — Dovidenia!"},
+   {t:"type",h:"2 · Sloveso byť — доповніть форму",q:"Ja ___ Marek.",a:["som"],why:"ja som"},
+   {t:"type",h:"2 · Sloveso byť — доповніть форму",q:"Vy ___ z Ukrajiny?",a:["ste"],why:"vy ste"},
+   {t:"type",h:"2 · Sloveso byť — доповніть форму",q:"Ona ___ učiteľka.",a:["je"],why:"ona je"},
+   {t:"type",h:"2 · Sloveso byť — доповніть форму",q:"My ___ doma.",a:["sme"],why:"my sme"},
+   {t:"type",h:"2 · Sloveso byť — доповніть форму",q:"Ty ___ lekár.",hint:"заперечення",a:["nie si"],why:"nie + si → nie si (окремо)"},
+   {t:"type",h:"3 · Ty → Vy: напишіть питання офіційно",q:"Ako sa máš? → ___",a:["Ako sa máte?"],why:"máš → máte"},
+   {t:"type",h:"3 · Ty → Vy: напишіть питання офіційно",q:"Kde bývaš? → ___",a:["Kde bývate?"],why:"bývaš → bývate"},
+   {t:"type",h:"3 · Ty → Vy: напишіть питання офіційно",q:"Čo robíš? → ___",a:["Čo robíte?"],why:"robíš → robíte"},
+   {t:"type",h:"3 · Ty → Vy: напишіть питання офіційно",q:"Máš e-mail? → ___",a:["Máte e-mail?"],why:"máš → máte"},
+   {t:"choice",h:"4 · Odkiaľ? Kde? — виберіть прийменник",opts:["z","zo","v","vo","na"],q:"Som ___ Poľska.",a:"z",why:"z + країна"},
+   {t:"choice",h:"4 · Odkiaľ? Kde? — виберіть прийменник",opts:["z","zo","v","vo","na"],q:"Kolega je ___ Zvolena.",a:"zo",why:"Перед z, s, ž, š → zo"},
+   {t:"choice",h:"4 · Odkiaľ? Kde? — виберіть прийменник",opts:["z","zo","v","vo","na"],q:"Bývam ___ Ukrajine.",a:"na",why:"na Ukrajine, na Slovensku"},
+   {t:"choice",h:"4 · Odkiaľ? Kde? — виберіть прийменник",opts:["z","zo","v","vo","na"],q:"Bývam ___ Košiciach.",a:"v",why:"Місто: v Košiciach"},
+   {t:"choice",h:"4 · Odkiaľ? Kde? — виберіть прийменник",opts:["z","zo","v","vo","na"],q:"Sestra býva ___ Vranove.",a:"vo",why:"Перед v, z, f → vo"},
+   {t:"choice",h:"4 · Odkiaľ? Kde? — виберіть прийменник",opts:["z","zo","v","vo","na"],q:"Kamarát je ___ Česka.",a:"z",why:"z Česka"},
+   {t:"type",h:"5 · Čísla — напишіть число словами",nospace:true,q:"16",a:["šestnásť"],why:"16 — šestnásť"},
+   {t:"type",h:"5 · Čísla — напишіть число словами",nospace:true,q:"27",a:["dvadsaťsedem"],why:"27 — dvadsaťsedem (разом)"},
+   {t:"type",h:"5 · Čísla — напишіть число словами",nospace:true,q:"33",a:["tridsaťtri"],why:"33 — tridsaťtri"},
+   {t:"type",h:"5 · Čísla — напишіть число словами",nospace:true,q:"58",a:["päťdesiatosem"],why:"58 — päťdesiatosem"},
+   {t:"type",h:"5 · Čísla — напишіть число словами",nospace:true,q:"80",a:["osemdesiat"],why:"80 — osemdesiat"},
+   {t:"choice",h:"6 · Koľko má rokov?",opts:["rok","roky","rokov"],q:"Syn má 2 ___.",a:"roky",why:"2, 3, 4 → roky"},
+   {t:"choice",h:"6 · Koľko má rokov?",opts:["rok","roky","rokov"],q:"Dedko má 65 ___.",a:"rokov",why:"5 і більше → rokov"},
+   {t:"choice",h:"6 · Koľko má rokov?",opts:["rok","roky","rokov"],q:"Mám 21 ___.",a:"rokov",why:"21 = dvadsaťjeden rokov"},
+   {t:"type",h:"7 · Prítomný čas — напишіть дієслово",q:"Ja ___ e-mail.",hint:"písať",a:["píšem"],why:"písať → píšem"},
+   {t:"type",h:"7 · Prítomný čas — напишіть дієслово",q:"Ty ___ v Košiciach?",hint:"bývať",a:["bývaš"],why:"ty → bývaš"},
+   {t:"type",h:"7 · Prítomný čas — напишіть дієслово",q:"On ___ po anglicky.",hint:"hovoriť",a:["hovorí"],why:"on → hovorí"},
+   {t:"type",h:"7 · Prítomný čas — напишіть дієслово",q:"My ___ v reštaurácii.",hint:"pracovať",a:["pracujeme"],why:"my → pracujeme"},
+   {t:"type",h:"7 · Prítomný čas — напишіть дієслово",q:"Vy ___ na autobus?",hint:"čakať",a:["čakáte"],why:"vy → čakáte"},
+   {t:"type",h:"7 · Prítomný čas — напишіть дієслово",q:"Oni ___ deti v škole.",hint:"učiť",a:["učia"],why:"oni → učia"},
+   {t:"type",h:"7 · Prítomný čas — напишіть дієслово",q:"Ona ___ notebook.",hint:"nemať",a:["nemá"],why:"ne + má → nemá (разом)"},
+   {t:"type",h:"7 · Prítomný čas — напишіть дієслово",q:"Čo ___ váš brat?",hint:"robiť",a:["robí"],why:"on → robí"},
+   {t:"choice",h:"8 · Ten, tá, alebo to?",opts:["ten","tá","to"],q:"pero",a:"to",why:"-o → to"},
+   {t:"choice",h:"8 · Ten, tá, alebo to?",opts:["ten","tá","to"],q:"mobil",a:"ten",why:"Приголосний → ten"},
+   {t:"choice",h:"8 · Ten, tá, alebo to?",opts:["ten","tá","to"],q:"učebnica",a:"tá",why:"-a → tá"},
+   {t:"choice",h:"8 · Ten, tá, alebo to?",opts:["ten","tá","to"],q:"heslo",a:"to",why:"-o → to"},
+   {t:"choice",h:"8 · Ten, tá, alebo to?",opts:["ten","tá","to"],q:"správa",a:"tá",why:"-a → tá"},
+   {t:"choice",h:TXT9,opts:["Pravda","Nepravda"],q:"Iryna je z Poltavy.",a:"Pravda",why:"Som z Ukrajiny, z Poltavy."},
+   {t:"choice",h:TXT9,opts:["Pravda","Nepravda"],q:"Iryna býva v Košiciach.",a:"Nepravda",why:"Bývam v Nitre."},
+   {t:"choice",h:TXT9,opts:["Pravda","Nepravda"],q:"Iryna má tridsaťdva rokov.",a:"Pravda",why:"Mám tridsaťdva rokov."},
+   {t:"choice",h:TXT9,opts:["Pravda","Nepravda"],q:"Iryna pracuje v kancelárii.",a:"Nepravda",why:"Teraz pracujem v obchode."},
+   {t:"order",h:"10 · Складіть речення зі слів",a:"Bývam v Bratislave a pracujem v škole.",ua:"Я живу в Братиславі і працюю в школі."},
+   {t:"order",h:"10 · Складіть речення зі слів",a:"Hovoríte po anglicky?",ua:"Ви говорите англійською?"}]}]}
 ];
-var TYPE_LABEL={choice:"Výber",type:"Písanie",match:"Spájanie",order:"Poradie slov",listen:"Počúvanie",cards:"Kartičky",mixed:"Mix"};
+var TYPE_LABEL={choice:"Výber",type:"Písanie",match:"Spájanie",order:"Poradie slov",listen:"Počúvanie",cards:"Kartičky",mixed:"Mix",test:"Test"};
 var SETS={}; LESSONS.forEach(function(l){l.sets.forEach(function(s){s.lesson=l.n;SETS[s.id]=s;});});
 var ALL_SETS=Object.keys(SETS);
 var ALL_LESSONS=LESSONS.map(function(l){return l.n;});
@@ -569,22 +655,23 @@ function viewLogin(){
 /* ================= student ================= */
 function setStatus(id,res){res=res||S.data.results;var r=res[id];if(!r)return '<span class="pill new">NOVÉ</span>';if(r.best>=80)return '<span class="pill done">'+r.best+' %</span>';return '<span class="pill weak">'+r.best+' %</span>';}
 function lessonDone(l,res){res=res||S.data.results;var d=0;l.sets.forEach(function(s){var r=res[s.id];if(r&&r.best>=80)d++;});return d;}
+function nextSet(){var open=openSets(),res=S.data.results;
+  var fresh=open.filter(function(id){return !res[id];});
+  var weak=open.filter(function(id){return res[id]&&res[id].best<80;}).sort(function(x,y){return res[x].best-res[y].best;});
+  if(fresh.length)return {id:fresh[0],why:"Нова вправа"};if(weak.length)return {id:weak[0],why:"Варто повторити: "+res[weak[0]].best+" %"};return null;}
 function viewHome(){
   var guest=S.session.role==="guest",open=openSets();
   var doneSets=open.filter(function(id){var r=S.data.results[id];return r&&r.best>=80;}).length;
-  var rec=open.filter(function(id){var r=S.data.results[id];return r&&r.best<80;}).sort(function(a,b){return S.data.results[a].best-S.data.results[b].best;});
-  open.forEach(function(id){if(!S.data.results[id]&&rec.length<3)rec.push(id);});rec=rec.slice(0,3);
-  var first=(S.session.name||"").split(" ")[0];
-  var h='<section class="hero"><div class="hero-txt"><span class="eyebrow" style="color:var(--accent)">A1 · '+(guest?"ukážka":"відкриті уроки: "+rangeTxt(S.unlocked))+'</span>'+
-    '<h1>'+(first?"Ahoj, "+esc(first)+"!":"Ahoj!")+'</h1><p>Додаткові вправи до уроків. 5 хвилин на день — і словацька йде вперед.</p>'+
-    '<div class="stats"><div class="stat"><b>'+S.data.xp+'</b><span>XP</span></div><div class="stat"><b>'+streakOf(S.data.days)+'</b><span>dní po sebe</span></div><div class="stat"><b>'+doneSets+' / '+open.length+'</b><span>hotových cvičení</span></div></div>'+
+  var first=(S.session.name||"").split(" ")[0],nx=nextSet(),streak=streakOf(S.data.days);
+  var h='<section class="hero"><div class="hero-txt"><h1>'+(first?"Ahoj, "+esc(first)+"!":"Ahoj!")+'</h1>';
+  if(nx){var s=SETS[nx.id];
+    h+='<button class="go" type="button" data-start="'+nx.id+'"><span class="go-t"><span class="go-k">Lekcia '+s.lesson+' · '+(s.type==="test"?"Test":TYPE_LABEL[s.type])+' · '+esc(nx.why)+'</span><b>'+esc(s.title)+'</b></span><span class="go-b">Pokračovať →</span></button>';}
+  else h+='<div class="go done"><span class="go-t"><span class="go-k">Усі відкриті вправи пройдено на 80 %+</span><b>Výborne! Чекайте наступний урок.</b></span>'+(S.unlocked.length>=2?'<button class="go-b" type="button" data-start="mix">Opakovanie →</button>':'')+'</div>';
+  h+='<p class="mini">'+doneSets+' з '+open.length+' вправ виконано · '+streak+' '+(streak===1?"день":"дн.")+' поспіль · '+S.data.xp+' XP</p>'+
     '<span class="sync" id="sync">'+esc(guest?"Режим без входу: прогрес лише в цьому браузері":(S.sync||""))+'</span></div><img src="img/wave.webp" alt="Персонаж Slovak Learn махає рукою"></section>';
-  if(rec.length){h+='<section class="sec"><div class="sec-h"><h2>Odporúčané</h2><span class="muted">Почніть зі слабких або нових тем</span></div><div class="grid">';
-    rec.forEach(function(id){var s=SETS[id];h+='<button class="card" type="button" data-start="'+id+'"><div class="row"><span class="pill type">Lekcia '+s.lesson+' · '+TYPE_LABEL[s.type]+'</span>'+setStatus(id)+'</div><h3>'+esc(s.title)+'</h3><span class="muted">'+esc(s.ua)+'</span><span style="font-weight:700;color:var(--blue)">Začať →</span></button>';});
-    h+='</div></section>';}
   h+='<section class="sec"><div class="sec-h"><h2>Lekcie</h2><span class="muted">Нові уроки відкриває лектор після заняття</span></div><div class="grid">';
   LESSONS.forEach(function(l){
-    if(!isOpen(l.n)){h+='<button class="card locked" type="button" disabled aria-label="Lekcia '+l.n+' — zamknutá"><div class="row"><span class="num">'+l.n+'</span><span class="pill type">'+ICON_LOCK+' ZAMKNUTÉ</span></div><h3>'+esc(l.title)+'</h3><span class="muted">Відкриється після уроку '+l.n+' з лектором</span></button>';return;}
+    if(!isOpen(l.n)){h+='<div class="card locked" aria-label="Lekcia '+l.n+' — zamknutá"><div class="row"><span class="num">'+l.n+'</span><span class="pill type">'+ICON_LOCK+' ZAMKNUTÉ</span></div><h3>'+esc(l.title)+'</h3></div>';return;}
     var d=lessonDone(l),pct=Math.round(d/l.sets.length*100);
     h+='<button class="card" type="button" data-lesson="'+l.n+'"><div class="row"><span class="num">'+l.n+'</span><span class="muted">'+d+' / '+l.sets.length+' hotovo</span></div><h3>'+esc(l.title)+'</h3><div class="prog" aria-label="Pokrok '+pct+' %"><i style="width:'+pct+'%"></i></div></button>';});
   if(S.unlocked.length>=2)h+='<button class="card mix" type="button" data-start="mix"><div class="row"><span class="num" style="background:var(--accent);color:var(--accent-ink)">∑</span>'+(S.data.results.mix?'<span class="pill done">'+S.data.results.mix.best+' %</span>':'')+'</div><h3>Opakovanie</h3><span class="muted">10 випадкових завдань з відкритих уроків</span></button>';
@@ -605,6 +692,8 @@ function buildMix(){var pool=[];openSets().forEach(function(id){var s=SETS[id];i
 function start(id){
   var set,items;
   if(id==="mix"){set={id:"mix",type:"mixed",title:"Opakovanie",ua:"Змішані завдання",lesson:0};items=buildMix();}
+  else if(SETS[id]&&SETS[id].type==="test"){var ts=SETS[id];if(!isOpen(ts.lesson))return go("home");set={id:ts.id,type:"mixed",test:true,title:ts.title,ua:ts.ua,lesson:ts.lesson};
+    items=ts.items.map(function(it){return {it:it,set:{type:it.t,ua:it.h,opts:it.opts,nospace:it.nospace}};});}
   else{set=SETS[id];if(!set||!isOpen(set.lesson))return go("home");items=set.type==="match"?[]:(set.type==="cards"?shuffle(set.items):shuffle(set.items).map(function(it){return {it:it,set:set};}));}
   var P={set:set,items:items,i:0,correct:0,wrong:[],answered:false,last:null,input:""};
   if(set.type==="match")initMatch(P);
@@ -623,7 +712,7 @@ function prepItem(){
 function total(){var P=S.play;return P.set.type==="match"?P.pairs.length:P.items.length;}
 function header(){
   var P=S.play,n=total(),done=P.set.type==="match"?P.matched:P.i+(P.answered?1:0),pct=Math.round(done/n*100);
-  return '<div class="ptop"><button class="back" type="button" data-quit>× Ukončiť</button><div class="t"><span class="eyebrow">'+(P.set.lesson?"Lekcia "+P.set.lesson+" · ":"")+TYPE_LABEL[P.set.type]+'</span><h2 style="font-size:20px;font-weight:800;color:var(--navy)">'+esc(P.set.title)+'</h2></div><span class="cnt">'+(P.set.type==="match"?P.matched:Math.min(P.i+1,n))+' / '+n+'</span></div><div class="pbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct+'"><i style="width:'+pct+'%"></i></div>';
+  return '<div class="ptop"><button class="back" type="button" data-quit>× Ukončiť</button><div class="t"><span class="eyebrow">'+(P.set.lesson?"Lekcia "+P.set.lesson+" · ":"")+(P.set.test?"Test":TYPE_LABEL[P.set.type])+'</span><h2 style="font-size:20px;font-weight:800;color:var(--navy)">'+esc(P.set.title)+'</h2></div><span class="cnt">'+(P.set.type==="match"?P.matched:Math.min(P.i+1,n))+' / '+n+'</span></div><div class="pbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct+'"><i style="width:'+pct+'%"></i></div>';
 }
 function feedback(kind,c,title){var last=S.play.i+1>=S.play.items.length;
   return '<div class="fb '+kind+'"><div class="m"><b>'+esc(title)+'</b>'+(c.it.why?'<span>'+esc(c.it.why)+'</span>':'')+'</div><button class="btn y" type="button" data-next>'+(last?"Výsledok":"Ďalej")+' →</button></div>';}
@@ -784,8 +873,10 @@ function viewTStudents(){
 function credsBlock(){
   var c=T.creds;if(!c)return "";
   var link=API.name==="rest"?location.origin:"";
-  var text="Slovak Learn — вхід до кабінету\nUčeň: "+c.name+"\nPrihlasovacie meno: "+c.login+"\nHeslo: "+c.pass+(link?"\nStránka: "+link:"");
-  return '<div class="creds" role="status"><b style="color:var(--accent)">'+(c.reset?"Новий пароль створено":"Обліковий запис створено")+' — передайте ці дані учню</b><div id="credtext"><dl><dt>Učeň</dt><dd>'+esc(c.name)+'</dd><dt>Login</dt><dd>'+esc(c.login)+'</dd><dt>Heslo</dt><dd>'+esc(c.pass)+'</dd>'+(link?'<dt>Stránka</dt><dd>'+esc(link)+'</dd>':'')+'</dl></div><p style="font-size:13px;color:#DCE6FA">Пароль показано лише зараз. Якщо учень його забуде — створіть новий. Спочатку учню відкрито лише урок 1.</p><div class="acts l"><button class="btn y sm" type="button" data-copy="'+esc(text)+'">Kopírovať údaje</button><button class="btn ghost sm" type="button" data-closecreds style="color:#fff;border-color:rgba(255,255,255,.4)">Hotovo</button></div></div>';
+  var site=link||"https://claude.ai/artifact/6kjRXWSFdZZYYvn7TDmcQg";
+  var text="Ahoj, "+String(c.name).split(" ")[0]+"! 👋\n\n"+(c.reset?"Ваш новий пароль до платформи Slovak Learn:":"Запрошую вас на платформу Slovak Learn — тут онлайн-вправи до наших уроків.")+"\n\n1. Відкрийте "+site+"\n2. Логін: "+c.login+"\n3. Пароль: "+c.pass+"\n\n"+(c.reset?"":"Спочатку відкрито урок 1, наступні я відкриватиму після наших занять. ")+"5 хвилин на день — і словацька йде вперед! Do skorého videnia!";
+  var share=navigator.share?'<button class="btn ghost sm" type="button" data-share="'+esc(text)+'" style="color:#fff;border-color:rgba(255,255,255,.4)">Надіслати…</button>':"";
+  return '<div class="creds" role="status"><b style="color:var(--accent)">'+(c.reset?"Новий пароль створено":"Обліковий запис створено")+' — передайте ці дані учню</b><div id="credtext"><dl><dt>Učeň</dt><dd>'+esc(c.name)+'</dd><dt>Login</dt><dd>'+esc(c.login)+'</dd><dt>Heslo</dt><dd>'+esc(c.pass)+'</dd>'+(link?'<dt>Stránka</dt><dd>'+esc(link)+'</dd>':'')+'</dl></div><p style="font-size:13px;color:#DCE6FA">Пароль показано лише зараз. Якщо учень його забуде — створіть новий. Спочатку учню відкрито лише урок 1.</p><div class="acts l"><button class="btn y sm" type="button" data-copy="'+esc(text)+'">Скопіювати запрошення</button>'+share+'<button class="btn ghost sm" type="button" data-closecreds style="color:#fff;border-color:rgba(255,255,255,.4)">Hotovo</button></div></div>';
 }
 function viewTNew(){
   var h='<button class="back" type="button" data-nav2="t-students">← Moji študenti</button><div><span class="eyebrow">Nový študent</span><h2 class="h2">Vytvoriť prístup</h2></div>';
@@ -934,6 +1025,7 @@ app.addEventListener("click",function(e){
   if(b.hasAttribute("data-tstudent")){T.sel=b.getAttribute("data-tstudent");T.creds=null;T.confirm=null;T.msg="";return go("t-student");}
   if(b.hasAttribute("data-regen")){var pi=document.getElementById("nw-pass");T.newPass=genPass();if(pi)pi.value=T.newPass;return;}
   if(b.hasAttribute("data-copy"))return copy(b.getAttribute("data-copy"),b);
+  if(b.hasAttribute("data-share")){try{navigator.share({title:"Slovak Learn",text:b.getAttribute("data-share")}).catch(function(){});}catch(e){}return;}
   if(b.hasAttribute("data-closecreds")){var wasNew=S.view==="t-new";T.creds=null;return wasNew?go("t-students"):render();}
   if(b.hasAttribute("data-unlockall"))return unlockAll(+b.getAttribute("data-unlockall"));
   a=T.accounts.find(function(x){return x.id===T.sel;});
@@ -965,4 +1057,5 @@ render();
 boot();
 })();
 </script>
+
 </body></html>
