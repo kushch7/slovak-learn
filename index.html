@@ -908,7 +908,6 @@ function viewTStudent(){
     h+='<div class="li lrow"><button class="lock" type="button" data-toggle="'+l.n+'" aria-pressed="'+on+'" aria-label="'+(on?"Закрити":"Відкрити")+' урок '+l.n+'">'+(on?"✓":ICON_LOCK)+'</button>'+
       '<div class="t"><b>'+l.n+' · '+esc(l.title)+'</b><span class="muted" style="font-size:13px">'+(on?(v.length?done+' з '+l.sets.length+' вправ пройдено · '+av+' %':'вправи відкрито, учень ще не починав'):'вправи закриті')+'</span>'+
       (on&&v.length?'<span class="prog"><i style="width:'+av+'%;background:'+col+'"></i></span>':'')+'</div>'+matLinks(l.n)+'</div>';});
-  h+='<div class="li lrow"><span class="lock ghost" aria-hidden="true">6</span><div class="t"><b>6 · Opakovanie 1</b><span class="muted" style="font-size:13px">повторювальний урок і тест за уроки 1–5</span></div>'+matLinks(6)+'</div>';
   h+='</div></section>';
   h+='<details class="card"><summary><b>Усі вправи детально</b></summary><div class="tbl" style="margin-top:12px"><table><thead><tr><th>Lekcia</th><th>Cvičenie</th><th>Typ</th><th>Najlepšie</th><th>Pokusy</th><th>Dátum</th></tr></thead><tbody>';
   ALL_SETS.forEach(function(id){var st=SETS[id],r=p.results[id];h+='<tr><td class="n">'+st.lesson+'</td><td>'+esc(st.title)+'</td><td>'+TYPE_LABEL[st.type]+'</td><td class="n">'+(r?(r.best>=80?'<span class="pill done">':r.best>=60?'<span class="pill warn">':'<span class="pill weak">')+r.best+' %</span>':'<span class="muted">—</span>')+'</td><td class="n">'+(r?r.tries:0)+'</td><td class="n">'+(r?esc(fmtDate(r.at)):"—")+'</td></tr>';});
@@ -922,7 +921,7 @@ function viewTStudent(){
 function viewTMaterials(){
   var h='<div><span class="eyebrow">Kabinet lektora</span><h2 class="h2">Materiály</h2><p class="muted" style="margin-top:6px">Презентації, шпаргалки й домашні завдання до кожного уроку. Відкриваються в Claude в новій вкладці; учні їх тут не бачать.</p></div><div class="list">';
   LESSONS.forEach(function(l){h+='<div class="li lrow"><span class="num">'+l.n+'</span><div class="t"><b>'+esc(l.title)+'</b><span class="muted" style="font-size:13px">'+l.sets.length+' онлайн-вправ на платформі</span></div>'+matLinks(l.n)+'</div>';});
-  h+='<div class="li lrow"><span class="num">6</span><div class="t"><b>Opakovanie 1</b><span class="muted" style="font-size:13px">повторення уроків 1–5 і тест на 50 балів</span></div>'+matLinks(6)+'</div></div>';
+  h+='</div>';
   h+='<section class="sec"><h2 class="h3">Довідники</h2><div class="mat"><a class="matbtn" href="'+CL+GUIDES.student+'" target="_blank" rel="noopener">Довідник для учнів ↗</a><a class="matbtn" href="'+CL+GUIDES.teacher+'" target="_blank" rel="noopener">Довідник для лекторів ↗</a></div></section>';
   return h;
 }
