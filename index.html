@@ -440,8 +440,8 @@ var LESSONS=[
    {t:"order",h:"10 · Складіть речення зі слів",a:"Bývam v Bratislave a pracujem v škole.",ua:"Я живу в Братиславі і працюю в школі."},
    {t:"order",h:"10 · Складіть речення зі слів",a:"Hovoríte po anglicky?",ua:"Ви говорите англійською?"}]}]}
 ];
-var TYPE_LABEL={choice:"Výber",type:"Písanie",match:"Spájanie",order:"Poradie slov",listen:"Počúvanie",cards:"Kartičky",mixed:"Mix",test:"Test"};
-var SETS={}; LESSONS.forEach(function(l){l.sets.forEach(function(s){s.lesson=l.n;SETS[s.id]=s;});});
+var TYPE_LABEL={chyby:"Chyby",choice:"Výber",type:"Písanie",match:"Spájanie",order:"Poradie slov",listen:"Počúvanie",cards:"Kartičky",mixed:"Mix",test:"Test"};
+var SETS={},ITEMS={}; LESSONS.forEach(function(l){l.sets.forEach(function(s){s.lesson=l.n;SETS[s.id]=s;if(s.items&&s.type!=="cards")s.items.forEach(function(it,i){it._k=s.id+"."+i;ITEMS[it._k]={it:it,set:s};});});});
 var ALL_SETS=Object.keys(SETS);
 var ALL_LESSONS=LESSONS.map(function(l){return l.n;});
 
@@ -475,13 +475,14 @@ var ICON_PLAY='<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentC
 var ICON_LOCK='<svg class="ico s" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
 
 /* ================= progress model ================= */
-function emptyProg(){return {xp:0,days:[],results:{},stats:{types:{},dia:0}};}
-function normProg(p){p=p||{};return {xp:p.xp||0,days:(p.days||[]).slice(),results:JSON.parse(JSON.stringify(p.results||{})),stats:{types:JSON.parse(JSON.stringify((p.stats&&p.stats.types)||{})),dia:(p.stats&&p.stats.dia)||0},updatedAt:p.updatedAt||0};}
+function emptyProg(){return {xp:0,days:[],results:{},stats:{types:{},dia:0},mist:{}};}
+function normProg(p){p=p||{};return {xp:p.xp||0,days:(p.days||[]).slice(),results:JSON.parse(JSON.stringify(p.results||{})),stats:{types:JSON.parse(JSON.stringify((p.stats&&p.stats.types)||{})),dia:(p.stats&&p.stats.dia)||0},mist:Object.assign({},p.mist||{}),updatedAt:p.updatedAt||0};}
 function mergeProg(a,b){
-  var out={xp:Math.max(a.xp,b.xp),days:Array.from(new Set(a.days.concat(b.days))).sort().slice(-90),results:{},stats:{types:{},dia:Math.max(a.stats.dia,b.stats.dia)}};
+  var out={mist:{},xp:Math.max(a.xp,b.xp),days:Array.from(new Set(a.days.concat(b.days))).sort().slice(-90),results:{},stats:{types:{},dia:Math.max(a.stats.dia,b.stats.dia)}};
   new Set(Object.keys(a.results).concat(Object.keys(b.results))).forEach(function(k){var x=a.results[k],y=b.results[k];if(!x||!y){out.results[k]=Object.assign({},x||y);return;}
     var nw=(x.at||0)>(y.at||0)?x:y;out.results[k]={best:Math.max(x.best,y.best),last:nw.last,tries:Math.max(x.tries,y.tries),at:nw.at};});
   new Set(Object.keys(a.stats.types).concat(Object.keys(b.stats.types))).forEach(function(k){var x=a.stats.types[k]||{c:0,n:0},y=b.stats.types[k]||{c:0,n:0};out.stats.types[k]=x.n>=y.n?x:y;});
+  var am=a.mist||{},bm=b.mist||{};new Set(Object.keys(am).concat(Object.keys(bm))).forEach(function(k){var x=am[k]||0,y=bm[k]||0;out.mist[k]=Math.abs(x)>=Math.abs(y)?x:y;});
   return out;
 }
 function lsGet(k){try{var r=localStorage.getItem(k);return r?JSON.parse(r):null;}catch(e){return null;}}
@@ -500,7 +501,7 @@ function ClaudeAPI(){
     login:function(role,login,pass){if(!db)return Promise.reject(E("offline"));return credHash(login,pass).then(function(h){return role==="teacher"?teacherFrom(h,login.toLowerCase()):studentFrom(h);});},
     restore:function(s){if(!db)return Promise.resolve(null);return (s.role==="teacher"?teacherFrom(s.hash,s.login):studentFrom(s.hash)).catch(function(e){if(e.code==="bad")return null;throw e;});},
     sessionOf:function(r){return {role:r.role,hash:r.hash,id:r.id,name:r.name,login:r.login};},
-    saveProgress:function(s,data){return db.doc("progress/"+s.id).set({xp:data.xp,days:data.days,results:data.results,stats:data.stats,updatedAt:Date.now()});},
+    saveProgress:function(s,data){return db.doc("progress/"+s.id).set({xp:data.xp,days:data.days,results:data.results,stats:data.stats,mist:data.mist||{},updatedAt:Date.now()});},
     teacherLoad:function(){return Promise.all([db.collection("accounts").limit(1000).get(),db.collection("progress").limit(1000).get()]).then(function(r){
       var accounts=r[0].docs.map(function(d){var x=JSON.parse(JSON.stringify(d.data()));x.id=d.id;if(!x.unlocked||!x.unlocked.length)x.unlocked=[1];return x;});
       var progress={};r[1].docs.forEach(function(d){progress[d.id]=normProg(d.data());});return {accounts:accounts,progress:progress};});},
@@ -529,7 +530,7 @@ function RestAPI(){
     login:function(role,login,pass){return call("login",{role:role,login:login,pass:pass}).then(shape);},
     restore:function(s){token=s.token;return call("me").then(shape).catch(function(e){if(e.code==="auth"||e.code==="bad")return null;throw e;});},
     sessionOf:function(r){return {role:r.role,token:r.token,id:r.id,name:r.name,login:r.login};},
-    saveProgress:function(s,data){return call("saveProgress",{progress:{xp:data.xp,days:data.days,results:data.results,stats:data.stats}});},
+    saveProgress:function(s,data){return call("saveProgress",{progress:{xp:data.xp,days:data.days,results:data.results,stats:data.stats,mist:data.mist||{}}});},
     teacherLoad:function(){return call("teacherLoad").then(function(j){var p={};Object.keys(j.progress||{}).forEach(function(k){p[k]=normProg(j.progress[k]);});return {accounts:j.accounts||[],progress:p};});},
     createStudent:function(o){return call("createStudent",o).then(function(j){return j.account;});},
     resetPassword:function(a,pass){return call("resetPassword",{id:a.id,pass:pass});},
@@ -566,6 +567,11 @@ function record(id,correct,total){
   var t=today();if(S.data.days.indexOf(t)<0)S.data.days=S.data.days.concat([t]).slice(-90);
   save();return pct;
 }
+function markMist(it,ok){if(!it||!it._k)return;var m=S.data.mist||(S.data.mist={}),t=Date.now();
+  if(!ok)m[it._k]=t;else if(m[it._k]>0)m[it._k]=-t;
+  var ks=Object.keys(m);if(ks.length>300)ks.sort(function(x,y){return Math.abs(m[x])-Math.abs(m[y]);}).slice(0,ks.length-300).forEach(function(k){delete m[k];});}
+function activeMist(){var m=S.data.mist||{};return Object.keys(m).filter(function(k){return m[k]>0&&ITEMS[k]&&isOpen(ITEMS[k].set.lesson);}).sort(function(x,y){return m[y]-m[x];});}
+function wrapItem(k){var x=ITEMS[k],s=x.set;return s.type==="test"?{it:x.it,set:{type:x.it.t,ua:x.it.h,opts:x.it.opts,nospace:x.it.nospace}}:{it:x.it,set:s};}
 function isOpen(n){return S.unlocked.indexOf(n)>=0;}
 function openSets(){return ALL_SETS.filter(function(id){return isOpen(SETS[id].lesson);});}
 
@@ -674,6 +680,7 @@ function viewHome(){
     if(!isOpen(l.n)){h+='<div class="card locked" aria-label="Lekcia '+l.n+' — zamknutá"><div class="row"><span class="num">'+l.n+'</span><span class="pill type">'+ICON_LOCK+' ZAMKNUTÉ</span></div><h3>'+esc(l.title)+'</h3></div>';return;}
     var d=lessonDone(l),pct=Math.round(d/l.sets.length*100);
     h+='<button class="card" type="button" data-lesson="'+l.n+'"><div class="row"><span class="num">'+l.n+'</span><span class="muted">'+d+' / '+l.sets.length+' hotovo</span></div><h3>'+esc(l.title)+'</h3><div class="prog" aria-label="Pokrok '+pct+' %"><i style="width:'+pct+'%"></i></div></button>';});
+  var nm=activeMist().length;if(nm)h+='<button class="card mix" type="button" data-start="chyby"><div class="row"><span class="num" style="background:var(--accent);color:var(--accent-ink)">!</span><span class="pill weak">'+nm+'</span></div><h3>Moje chyby</h3><span class="muted">'+(nm>15?'15 з '+nm:nm)+' '+(nm>15?'завдань':(nm%10===1&&nm%100!==11?'завдання':(nm%10>=2&&nm%10<=4&&(nm%100<12||nm%100>14)?'завдання':'завдань')))+', де ви помилилися. Відповіли правильно — завдання зникає зі списку.</span></button>';
   if(S.unlocked.length>=2)h+='<button class="card mix" type="button" data-start="mix"><div class="row"><span class="num" style="background:var(--accent);color:var(--accent-ink)">∑</span>'+(S.data.results.mix?'<span class="pill done">'+S.data.results.mix.best+' %</span>':'')+'</div><h3>Opakovanie</h3><span class="muted">10 випадкових завдань з відкритих уроків</span></button>';
   return h+'</div></section>';
 }
@@ -691,7 +698,8 @@ function viewLesson(){
 function buildMix(){var pool=[];openSets().forEach(function(id){var s=SETS[id];if(s.type==="choice"||s.type==="type")s.items.forEach(function(it){pool.push({it:it,set:s});});});return shuffle(pool).slice(0,10);}
 function start(id){
   var set,items;
-  if(id==="mix"){set={id:"mix",type:"mixed",title:"Opakovanie",ua:"Змішані завдання",lesson:0};items=buildMix();}
+  if(id==="chyby"){var ks=activeMist();if(!ks.length)return go("home");set={id:"chyby",type:"mixed",title:"Moje chyby",ua:"Завдання, де були помилки",lesson:0,chyby:true};items=shuffle(ks).slice(0,15).map(wrapItem);}
+  else if(id==="mix"){set={id:"mix",type:"mixed",title:"Opakovanie",ua:"Змішані завдання",lesson:0};items=buildMix();}
   else if(SETS[id]&&SETS[id].type==="test"){var ts=SETS[id];if(!isOpen(ts.lesson))return go("home");set={id:ts.id,type:"mixed",test:true,title:ts.title,ua:ts.ua,lesson:ts.lesson};
     items=ts.items.map(function(it){return {it:it,set:{type:it.t,ua:it.h,opts:it.opts,nospace:it.nospace}};});}
   else{set=SETS[id];if(!set||!isOpen(set.lesson))return go("home");items=set.type==="match"?[]:(set.type==="cards"?shuffle(set.items):shuffle(set.items).map(function(it){return {it:it,set:set};}));}
@@ -712,10 +720,17 @@ function prepItem(){
 function total(){var P=S.play;return P.set.type==="match"?P.pairs.length:P.items.length;}
 function header(){
   var P=S.play,n=total(),done=P.set.type==="match"?P.matched:P.i+(P.answered?1:0),pct=Math.round(done/n*100);
-  return '<div class="ptop"><button class="back" type="button" data-quit>× Ukončiť</button><div class="t"><span class="eyebrow">'+(P.set.lesson?"Lekcia "+P.set.lesson+" · ":"")+(P.set.test?"Test":TYPE_LABEL[P.set.type])+'</span><h2 style="font-size:20px;font-weight:800;color:var(--navy)">'+esc(P.set.title)+'</h2></div><span class="cnt">'+(P.set.type==="match"?P.matched:Math.min(P.i+1,n))+' / '+n+'</span></div><div class="pbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct+'"><i style="width:'+pct+'%"></i></div>';
+  return '<div class="ptop"><button class="back" type="button" data-quit>× Ukončiť</button><div class="t"><span class="eyebrow">'+(P.set.lesson?"Lekcia "+P.set.lesson+" · ":"")+(P.set.test?"Test":P.set.chyby?"Opakovanie chýb":TYPE_LABEL[P.set.type])+'</span><h2 style="font-size:20px;font-weight:800;color:var(--navy)">'+esc(P.set.title)+'</h2></div><span class="cnt">'+(P.set.type==="match"?P.matched:Math.min(P.i+1,n))+' / '+n+'</span></div><div class="pbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct+'"><i style="width:'+pct+'%"></i></div>';
 }
+function sayText(c){var it=c.it,t=c.set.type,a=Array.isArray(it.a)?it.a[0]:it.a;
+  if(t==="listen")return it.say;if(t==="order")return it.a;
+  if(it.q&&it.q.indexOf("→")>=0)return a;
+  if(it.q&&it.q.indexOf("___")>=0)return it.q.replace("___",a);
+  if(a==="Pravda"||a==="Nepravda")return it.q;
+  if(a==="ten"||a==="tá"||a==="to")return a+" "+it.q;
+  return a;}
 function feedback(kind,c,title){var last=S.play.i+1>=S.play.items.length;
-  return '<div class="fb '+kind+'"><div class="m"><b>'+esc(title)+'</b>'+(c.it.why?'<span>'+esc(c.it.why)+'</span>':'')+'</div><button class="btn y" type="button" data-next>'+(last?"Výsledok":"Ďalej")+' →</button></div>';}
+  return '<div class="fb '+kind+'"><div class="m"><b>'+esc(title)+'</b>'+(c.it.why?'<span>'+esc(c.it.why)+'</span>':'')+'</div><button class="btn ghost sm sayb" type="button" data-sayfb aria-label="Прослухати правильну відповідь">'+ICON_PLAY+' Vypočuť</button><button class="btn y" type="button" data-next>'+(last?"Výsledok":"Ďalej")+' →</button></div>';}
 function viewPlay(){
   var P=S.play,t=P.set.type,h=header()+'<div class="stage">';
   if(t==="match")h+=renderMatch();
@@ -752,7 +767,7 @@ function checkTyped(){
   if(res==="dia")S.data.stats.dia++;
   answer(res==="ok"?1:res==="dia"?0.5:0,res);
 }
-function answer(v,last){var P=S.play,c=cur();P.answered=true;P.last=last;P.correct+=v;if(v<1)P.wrong.push({it:c.it,half:v>0});tstat(itemType(),v);render();var nb=app.querySelector("[data-next]");if(nb)nb.focus();}
+function answer(v,last){var P=S.play,c=cur();markMist(c.it,v>=1);P.answered=true;P.last=last;P.correct+=v;if(v<1)P.wrong.push({it:c.it,half:v>0});tstat(itemType(),v);render();var nb=app.querySelector("[data-next]");if(nb)nb.focus();}
 function next(){var P=S.play;if(P.i+1>=P.items.length){finish();return;}P.i++;prepItem();render();var f=app.querySelector("#ans")||app.querySelector(".opt,.tile,[data-say]");if(f)f.focus();}
 function finish(){
   var P=S.play,n,c;
@@ -1011,11 +1026,12 @@ app.addEventListener("click",function(e){
   if(b.hasAttribute("data-pick")){var c=cur();c.picked.push(c.pool.splice(+b.getAttribute("data-pick"),1)[0]);return render();}
   if(b.hasAttribute("data-unpick")){var c2=cur();c2.pool.push(c2.picked.splice(+b.getAttribute("data-unpick"),1)[0]);return render();}
   if(b.hasAttribute("data-check-order")){var c3=cur(),ok=norm(c3.picked.map(function(x){return x.w;}).join(" "))===norm(c3.it.a);return answer(ok?1:0,ok?"ok":"no");}
-  if(b.hasAttribute("data-ml")){P.sel=+b.getAttribute("data-ml");P.flash=null;return render();}
+  if(b.hasAttribute("data-ml")){P.sel=+b.getAttribute("data-ml");var mp=P.pairs[P.sel];if(mp)speak(mp.l);P.flash=null;return render();}
   if(b.hasAttribute("data-mr")){if(P.sel===null)return;var k=+b.getAttribute("data-mr");
     if(k===P.sel){P.done[k]=true;P.matched++;P.sel=null;P.flash=null;render();if(P.matched===P.pairs.length)setTimeout(finish,500);}
     else{P.mistakes++;P.flash=k;render();setTimeout(function(){if(S.play===P&&P.flash===k){P.flash=null;render();}},700);}return;}
   if(b.hasAttribute("data-flip")){P.flipped=true;return render();}
+  if(b.hasAttribute("data-sayfb"))return speak(sayText(cur()));
   if(b.hasAttribute("data-say-card"))return speak(P.items[P.i].sk);
   if(b.hasAttribute("data-know")){if(b.getAttribute("data-know")==="1")P.known++;else P.wrong.push({it:{ua:P.items[P.i].sk,a:P.items[P.i].ua}});if(P.i+1>=P.items.length)return finish();P.i++;P.flipped=false;return render();}
   if(b.hasAttribute("data-reload")){T.loaded=false;T.msg="";render();return loadTeacher();}

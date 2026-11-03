@@ -102,8 +102,11 @@ function cleanProgress(p) {
   const out = {
     xp: Math.max(0, Math.min(1e7, Number(p.xp) || 0)),
     days: (Array.isArray(p.days) ? p.days : []).filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d)).slice(-90),
-    results: {}, stats: { types: {}, dia: Math.max(0, Number(p.stats && p.stats.dia) || 0) }, updatedAt: Date.now()
+    results: {}, stats: { types: {}, dia: Math.max(0, Number(p.stats && p.stats.dia) || 0) }, mist: {}, updatedAt: Date.now()
   };
+  for (const [k, t] of Object.entries((p.mist && typeof p.mist === "object") ? p.mist : {}).slice(0, 300)) {
+    if (/^[a-z0-9-]{2,30}\.\d{1,3}$/.test(k) && Number.isFinite(+t)) out.mist[k] = +t;
+  }
   for (const [k, r] of Object.entries(p.results || {}).slice(0, 200)) {
     if (!/^[a-z0-9-]{2,30}$/.test(k) || !r) continue;
     out.results[k] = { best: Math.min(100, Math.max(0, +r.best || 0)), last: Math.min(100, Math.max(0, +r.last || 0)), tries: Math.max(0, +r.tries || 0), at: +r.at || Date.now() };
