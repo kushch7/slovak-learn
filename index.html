@@ -871,8 +871,14 @@ function gradeTest(){var P=S.play;saveTestInput();P.log=[];P.correct=0;
 function playStarted(P){if(P.set.test){saveTestInput();return P.items.some(function(c,i){return tAnswered(P,i);});}
   if(P.set.type==="match")return P.matched>0||P.mistakes>0;return P.i>0||P.answered||(P.items[P.i]&&P.items[P.i].picked&&P.items[P.i].picked.length>0)||!!(P.input&&P.input.trim());}
 function quitPlay(){var P=S.play;if(P)P.quitAsk=false;return go(P&&P.set.lesson&&!P.set.test?"lesson":"home",P&&P.set.lesson&&!P.set.test?{lesson:P.set.lesson}:null);}
-function quitBar(){var P=S.play;if(!P||!P.quitAsk)return "";
-  return '<div class="confirm quitbar" role="alertdialog" aria-label="Ukončiť?"><span style="flex:1 1 260px"><b>Ukončiť?</b> '+(P.set.test?'Тест ще не надіслано — усі ваші відповіді пропадуть, і доведеться почати спочатку.':'Результат цієї спроби не збережеться: вправу доведеться почати спочатку.')+'</span><button class="btn danger sm" type="button" data-quit-ok>Áno, ukončiť</button><button class="btn sm" type="button" data-quit-no>Pokračovať</button></div>';}
+function partialScore(P){var n,c;if(P.set.type==="match"){n=P.pairs.length;c=Math.max(0,P.matched-P.mistakes);}else if(P.set.type==="cards"){n=P.items.length;c=P.known;}else{n=P.items.length;c=P.correct;}return {c:c,n:n};}
+function quitSubmit(){var P=S.play;P.quitAsk=false;if(P.set.test)return gradeTest();var r=partialScore(P);
+  if(P.set.type==="match")tstat("match",r.c,r.n);else if(P.set.type==="cards")tstat("cards",r.c,P.i);
+  P.result={pct:record(P.set.id,r.c,r.n),c:r.c,n:r.n,partial:true};go("result");}
+function quitBar(){var P=S.play;if(!P||!P.quitAsk)return "";var msg,ok;
+  if(P.set.test){saveTestInput();var dn=0;for(var q=0;q<P.items.length;q++)if(tAnswered(P,q))dn++;msg='<b>Ukončiť test?</b> Тест буде надіслано лектору з поточними відповідями: заповнено <b>'+dn+' з '+P.items.length+'</b>, решта — без відповіді.';ok='Odoslať test a ukončiť';}
+  else{var r=partialScore(P);msg='<b>Ukončiť cvičenie?</b> Буде збережено поточний результат: <b>'+fnum(r.c)+' з '+r.n+'</b> балів (завдання без відповіді рахуються як 0).';ok='Uložiť výsledok a ukončiť';}
+  return '<div class="confirm quitbar" role="alertdialog" aria-label="Ukončiť?"><span style="flex:1 1 260px">'+msg+'</span><button class="btn y sm" type="button" data-quit-ok>'+ok+'</button><button class="btn sm" type="button" data-quit-no>Pokračovať</button></div>';}
 function viewPlay(){
   if(S.play.set.test)return viewTest();
   var P=S.play,t=P.set.type,h=header()+'<div class="stage">';
@@ -946,9 +952,9 @@ function renderCards(){
 function viewResult(){
   var P=S.play,r=P.result;
   if(r.test)return '<div class="stage res"><img src="img/party.webp" alt="Персонаж святкує"><span class="eyebrow">'+esc(P.set.title)+'</span><span class="big" style="font-size:40px">Test odoslaný!</span><span>+50 XP</span><p>Дякуємо! Ваші відповіді надіслано лектору. Результат і розбір помилок ви обговорите разом на уроці.</p><div class="acts"><button class="btn" type="button" data-home>Domov</button></div></div>';
-  var good=r.pct>=80;
+  var good=r.pct>=80;var partialNote=r.partial?'<p class="muted" style="font-size:13px">Вправу завершено достроково — завдання без відповіді зараховано як 0.</p>':'';
   var msg=r.pct===100?"Výborne! Бездоганно.":good?"Veľmi dobre! Тема засвоєна.":r.pct>=50?"Dobre. Повторіть ще раз — і буде краще.":"Варто повторити правило в шпаргалці й спробувати знову.";
-  var h='<div class="stage res"><img src="img/'+(good?"party":"think")+'.webp" alt="'+(good?"Персонаж святкує":"Персонаж замислився")+'"><span class="eyebrow">'+esc(P.set.title)+'</span><span class="big">'+r.pct+' %</span><span>'+fnum(r.c)+' з '+r.n+' балів · +'+Math.round(r.c*10)+' XP</span><p>'+esc(msg)+'</p>';
+  var h='<div class="stage res"><img src="img/'+(good?"party":"think")+'.webp" alt="'+(good?"Персонаж святкує":"Персонаж замислився")+'"><span class="eyebrow">'+esc(P.set.title)+'</span><span class="big">'+r.pct+' %</span><span>'+fnum(r.c)+' з '+r.n+' балів · +'+Math.round(r.c*10)+' XP</span><p>'+esc(msg)+'</p>'+partialNote;
   if(P.wrong.length){h+='<div class="rev"><b>Помилки:</b>';P.wrong.forEach(function(w){var it=w.it;var q=it.q?it.q.replace("___","…"):(it.ua||it.say);var a=Array.isArray(it.a)?it.a[0]:it.a;h+='<div'+(w.half?' class="h"':'')+'>'+esc(q)+' → <b>'+esc(a)+'</b>'+(w.half?' <span class="muted">(0,5 бала: правопис)</span>':'')+'</div>';});h+='</div>';}
   return h+'<div class="acts"><button class="btn" type="button" data-start="'+P.set.id+'">Znova</button>'+(P.set.lesson?'<button class="btn ghost" type="button" data-lesson="'+P.set.lesson+'">Lekcia '+P.set.lesson+'</button>':'')+'<button class="btn ghost" type="button" data-home>Domov</button></div></div>';
 }
@@ -1179,7 +1185,7 @@ app.addEventListener("click",function(e){
   if(b.hasAttribute("data-lesson"))return go("lesson",{lesson:+b.getAttribute("data-lesson")});
   if(b.hasAttribute("data-home"))return go("home");
   if(b.hasAttribute("data-quit")){if(P&&playStarted(P)&&!P.quitAsk){P.quitAsk=true;render();var qb=app.querySelector("[data-quit-no]");if(qb)qb.focus();window.scrollTo(0,0);return;}return quitPlay();}
-  if(b.hasAttribute("data-quit-ok"))return quitPlay();
+  if(b.hasAttribute("data-quit-ok"))return quitSubmit();
   if(b.hasAttribute("data-quit-no")){P.quitAsk=false;return render();}
   if(b.hasAttribute("data-next"))return next();
   if(b.hasAttribute("data-opt")){var o=b.getAttribute("data-opt");return answer(o===cur().it.a?1:0,o);}
