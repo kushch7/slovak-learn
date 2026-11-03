@@ -847,18 +847,13 @@ function statusPill(account){var a=advice(account),s=summary(account);
 
 /* ================= teacher: views ================= */
 var CL="https://claude.ai/artifact/";
-var MATERIALS={
-  1:{deck:"Mpee7Gjh8GjGFJd4hVansv",cheat:"WcCDoLzhR98A8t8qVvjRGx",hw:"6hEceHxD18HJehwgiQQvuS"},
-  2:{deck:"WGDKhfoCw9r7mWWSpqdVVj",cheat:"1HRCxzgnG4jdy2kBH9fAEc",hw:"RKHDVbV9ouyAYZnAKYERjM"},
-  3:{deck:"4qqiBMRZoVnhGwaMHwCPNb",cheat:"3wVop1QyWosgT6d1aC4y6k",hw:"JroWPV8nZiURXDbB2WPM4a"},
-  4:{deck:"FdEttSHni3wnY7sTNUedqQ",cheat:"K8caSVXYCY3JtLhatp77PU",hw:"HG1nTQJYVp5YQeZeM85TAQ"},
-  5:{deck:"EKZLcfZbnBrt3NMqkasa55",cheat:"GhfigvDF23SMii8HWaPdxf",hw:"Vfy5RJXijV2kq5WcmrD9fF"},
-  6:{deck:"XjZMg4v8aQWAgcf9i5pGTr",test:"Vfi43PGppJVwijxLxUxPBd"}
-};
-var GUIDES={student:"DUBLPz9xWXuDdvTVY1gunN",teacher:"TtbxcxrLkoPLHR9QirrfY9"};
-var MAT_LABEL={deck:"Prezentácia",cheat:"Ťahák",hw:"Domáca úloha",test:"Test 1"};
+var MATERIALS={};[1,2,3,4,5].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});
+MATERIALS[6]={deck:"l6-prezentacia",test:"test1",key:"test1-kluc"};
+var MAT="materials/";
+var GUIDES={student:"prirucka-student",teacher:"prirucka-lektor"};
+var MAT_LABEL={deck:"Prezentácia",cheat:"Ťahák",hw:"Domáca úloha",test:"Test 1",key:"Kľúč k testu"};
 function matLinks(n){var m=MATERIALS[n];if(!m)return "";var h='<div class="mat">';
-  ["deck","cheat","hw","test"].forEach(function(k){if(m[k])h+='<a class="matbtn" href="'+CL+m[k]+'" target="_blank" rel="noopener">'+MAT_LABEL[k]+' ↗</a>';});
+  ["deck","cheat","hw","test","key"].forEach(function(k){if(m[k])h+='<a class="matbtn" href="'+MAT+m[k]+'.pdf" target="_blank" rel="noopener">'+MAT_LABEL[k]+' · PDF</a>';});
   return h+'</div>';}
 function tGuard(){if(T.err)return '<div class="card empty">'+esc(T.err)+'</div>';if(!T.loaded)return '<div class="card empty">Načítavam…</div>';return "";}
 function topAdvice(a){var adv=advice(a);return adv.find(function(x){return x.k==="bad";})||adv.find(function(x){return x.k==="warn";})||adv[0];}
@@ -934,10 +929,10 @@ function viewTStudent(){
   return h+'</details>';
 }
 function viewTMaterials(){
-  var h='<div><span class="eyebrow">Kabinet lektora</span><h2 class="h2">Materiály</h2><p class="muted" style="margin-top:6px">Презентації, шпаргалки й домашні завдання до кожного уроку. Відкриваються в Claude в новій вкладці; учні їх тут не бачать.</p></div><div class="list">';
+  var h='<div><span class="eyebrow">Kabinet lektora</span><h2 class="h2">Materiály</h2><p class="muted" style="margin-top:6px">Презентації, шпаргалки й домашні завдання до кожного уроку. PDF-файли відкриваються в новій вкладці — їх можна завантажити, роздрукувати або надіслати учню. Учні цього розділу не бачать.</p></div><div class="list">';
   LESSONS.forEach(function(l){h+='<div class="li lrow"><span class="num">'+l.n+'</span><div class="t"><b>'+esc(l.title)+'</b><span class="muted" style="font-size:13px">'+l.sets.length+' онлайн-вправ на платформі</span></div>'+matLinks(l.n)+'</div>';});
   h+='</div>';
-  h+='<section class="sec"><h2 class="h3">Довідники</h2><div class="mat"><a class="matbtn" href="'+CL+GUIDES.student+'" target="_blank" rel="noopener">Довідник для учнів ↗</a><a class="matbtn" href="'+CL+GUIDES.teacher+'" target="_blank" rel="noopener">Довідник для лекторів ↗</a></div></section>';
+  h+='<section class="sec"><h2 class="h3">Довідники</h2><div class="mat"><a class="matbtn" href="'+MAT+GUIDES.student+'.pdf" target="_blank" rel="noopener">Довідник для учнів · PDF</a><a class="matbtn" href="'+MAT+GUIDES.teacher+'.pdf" target="_blank" rel="noopener">Довідник для лекторів · PDF</a></div></section>';
   return h;
 }
 function viewTSettings(){
