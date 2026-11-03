@@ -1,0 +1,7 @@
+{
+  "name": "slovak-learn",
+  "private": true,
+  "type": "module",
+  "engines": { "node": "22.x" },
+  "dependencies": { "@vercel/blob": "^1.1.1" }
+}
