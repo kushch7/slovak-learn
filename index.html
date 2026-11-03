@@ -210,7 +210,7 @@ td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
 .side-d>summary{display:none}.side-b{display:flex;flex-direction:column;padding:8px}
 .side button{font:inherit;text-align:left;background:none;border:0;color:var(--ink);cursor:pointer;width:100%}
 .side-all{font-weight:800;padding:10px;font-size:14px}.side-all.on,.side-mh.on{background:var(--soft)}
-.side-m{border-top:1px solid var(--line);padding-top:6px;margin-top:6px}.side-mh{display:flex;flex-direction:column;padding:8px 10px}.side-mh b{font-size:11px;letter-spacing:.4px;text-transform:uppercase;color:var(--blue)}.side-mh span{font-weight:800;font-size:14px}
+.side-m{border-top:1px solid var(--line)}.side-m:first-child{border-top:0}.side-mh{display:flex;align-items:center;gap:10px;padding:12px 10px}.side-mh:hover{background:var(--soft)}.side-mh .mt{display:flex;flex-direction:column;flex:1;min-width:0}.side-mh .chev{width:14px;color:var(--blue);font-size:14px}.side-mh .mc{font-size:12px;color:var(--muted);font-weight:700}.side-m.ex .side-mh{background:var(--soft)}.side-mh b{font-size:11px;letter-spacing:.4px;text-transform:uppercase;color:var(--blue)}.side-mh span{font-weight:800;font-size:14px}
 .side ul{list-style:none;margin:0;padding:0 0 4px}.side-l{display:flex;align-items:center;gap:8px;padding:7px 10px;font-size:13px;line-height:1.3}.side-l .sn{flex:none;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;background:var(--hdr);color:#fff;font-size:11px;font-weight:800}
 .side-l:hover{background:var(--soft)}.side-l.on{background:var(--soft);font-weight:800;box-shadow:inset 3px 0 0 var(--accent)}.side-l.off{color:var(--muted)}.side-l.off .sn{background:var(--line);color:var(--muted)}.side-l .ico{margin-left:auto;flex:none}
 .side-l.rv .sn{background:var(--accent);color:var(--accent-ink)}.side-l.tt .sn{background:var(--accent);color:var(--accent-ink)}.side-l.tt{font-weight:700}
@@ -744,14 +744,17 @@ function testCard(t){var r=S.data.results[t.id],n=t.items.length;
   if(!setOpenFor(S.unlocked,t))return '<div class="card test locked" aria-label="'+esc(t.title)+' — zamknutý"><div class="row"><span class="num tnum">T</span><span class="pill type">'+ICON_LOCK+' ZAMKNUTÝ</span></div><h3>'+esc(t.title)+'</h3><span class="muted">Тест модуля відкриває лектор окремо — коли ви будете готові.</span></div>';
   var sent=S.data.tests&&S.data.tests[t.id]&&S.data.tests[t.id].att&&S.data.tests[t.id].att.length;
   return '<button class="card test" type="button" data-start="'+t.id+'"><div class="row"><span class="num tnum">T</span>'+(sent?'<span class="pill done">ODOSLANÝ ✓</span>':'<span class="pill new">OTVORENÝ</span>')+'</div><h3>'+esc(t.title)+'</h3><span class="muted">'+n+' завдань · '+(sent?'надіслано лектору · можна пройти ще раз':'без підказок — результат побачить лектор')+'</span></button>';}
-function sideNav(){var cur=S.view==="lesson"?S.lesson:null,f=S.modF||0;
-  var o='<nav class="side" aria-label="Moduly a lekcie"><details class="side-d"'+(window.innerWidth>900||S.sideOpen?' open':'')+'><summary>Moduly a lekcie'+(f?' · Modul '+f:'')+'</summary><div class="side-b">';
-  o+='<button type="button" class="side-all'+(!f&&S.view==="home"?' on':'')+'" data-modf="0">Všetky moduly</button>';
-  MODULES.forEach(function(md){var ls=LESSONS.filter(function(l){return l.mod===md.n;});if(!ls.length)return;
-    o+='<div class="side-m"><button type="button" class="side-mh'+(f===md.n&&S.view==="home"?' on':'')+'" data-modf="'+md.n+'"><b>'+esc(md.level+' · Modul '+md.n)+'</b><span>'+esc(md.title)+'</span></button><ul>';
-    ls.forEach(function(l){var open=isOpen(l.n);o+='<li>'+(open?'<button type="button" class="side-l'+(cur===l.n?' on':'')+(l.review?' rv':'')+'" data-lesson="'+l.n+'"'+(cur===l.n?' aria-current="page"':'')+'><span class="sn">'+l.n+'</span>'+esc(l.title)+'</button>':'<span class="side-l off'+(l.review?' rv':'')+'"><span class="sn">'+l.n+'</span>'+esc(l.title)+ICON_LOCK+'</span>')+'</li>';});
-    testsOf(md.n).forEach(function(t){var open=setOpenFor(S.unlocked,t);o+='<li>'+(open?'<button type="button" class="side-l tt" data-start="'+t.id+'"><span class="sn">T</span>Test '+t.mod+'</button>':'<span class="side-l off tt"><span class="sn">T</span>Test '+t.mod+ICON_LOCK+'</span>')+'</li>';});
-    o+='</ul></div>';});
+S.sideExp=null;
+function defaultExp(){var e={};if(S.view==="lesson"){e[LESSONS[S.lesson-1].mod]=true;return e;}var last=null;LESSONS.forEach(function(l){if(isOpen(l.n))last=l.mod;});e[last||1]=true;return e;}
+function sideNav(){var cur=S.view==="lesson"?S.lesson:null;if(!S.sideExp)S.sideExp=defaultExp();if(cur&&S.sideCur!==cur){S.sideExp[LESSONS[cur-1].mod]=true;S.sideCur=cur;}
+  var o='<nav class="side" aria-label="Moduly a lekcie"><details class="side-d"'+(window.innerWidth>900||S.sideOpen?' open':'')+'><summary>Moduly a lekcie</summary><div class="side-b">';
+  MODULES.forEach(function(md){var ls=LESSONS.filter(function(l){return l.mod===md.n;});if(!ls.length)return;var ex=!!S.sideExp[md.n],opened=ls.filter(function(l){return isOpen(l.n);}).length;
+    o+='<div class="side-m'+(ex?' ex':'')+'"><button type="button" class="side-mh" data-modx="'+md.n+'" aria-expanded="'+ex+'"><span class="chev" aria-hidden="true">'+(ex?'▾':'▸')+'</span><span class="mt"><b>'+esc(md.level+' · Modul '+md.n)+'</b><span>'+esc(md.title)+'</span></span><span class="mc">'+opened+'/'+ls.length+'</span></button>';
+    if(ex){o+='<ul>';
+      ls.forEach(function(l){var open=isOpen(l.n);o+='<li>'+(open?'<button type="button" class="side-l'+(cur===l.n?' on':'')+(l.review?' rv':'')+'" data-lesson="'+l.n+'"'+(cur===l.n?' aria-current="page"':'')+'><span class="sn">'+l.n+'</span>'+esc(l.title)+'</button>':'<span class="side-l off'+(l.review?' rv':'')+'"><span class="sn">'+l.n+'</span>'+esc(l.title)+ICON_LOCK+'</span>')+'</li>';});
+      testsOf(md.n).forEach(function(t){var open=setOpenFor(S.unlocked,t);o+='<li>'+(open?'<button type="button" class="side-l tt" data-start="'+t.id+'"><span class="sn">T</span>Test '+t.mod+'</button>':'<span class="side-l off tt"><span class="sn">T</span>Test '+t.mod+ICON_LOCK+'</span>')+'</li>';});
+      o+='</ul>';}
+    o+='</div>';});
   return o+'</div></details></nav>';}
 function viewHome(){
   var guest=S.session.role==="guest",open=openSets().filter(function(id){return SETS[id].type!=="test";});
@@ -764,7 +767,7 @@ function viewHome(){
   h+='<p class="mini">'+doneSets+' з '+open.length+' вправ виконано · '+streak+' '+(streak===1?"день":"дн.")+' поспіль · '+S.data.xp+' XP</p>'+
     '<span class="sync" id="sync">'+esc(guest?"Режим без входу: прогрес лише в цьому браузері":(S.sync||""))+'</span></div><img src="img/wave.webp" alt="Персонаж Slovak Learn махає рукою"></section>';
   h+='<section class="sec"><div class="sec-h"><h2>Lekcie</h2><span class="muted">Нові уроки відкриває лектор після заняття</span></div><div class="grid">';
-  var lastMod=null;LESSONS.forEach(function(l){if(S.modF&&l.mod!==S.modF)return;
+  var lastMod=null;LESSONS.forEach(function(l){
     if(l.mod!==lastMod){lastMod=l.mod;h+=modRowStudent(l.mod);}
     h+=lessonCard(l);if(lastOfMod(l))testsOf(l.mod).forEach(function(t){h+=testCard(t);});});
   return h+'</div></section>';
@@ -1149,7 +1152,7 @@ app.addEventListener("click",function(e){
     if(k===P.sel){P.done[k]=true;P.matched++;P.sel=null;P.flash=null;render();if(P.matched===P.pairs.length)setTimeout(finish,500);}
     else{P.mistakes++;P.flash=k;render();setTimeout(function(){if(S.play===P&&P.flash===k){P.flash=null;render();}},700);}return;}
   if(b.hasAttribute("data-flip")){P.flipped=true;return render();}
-  if(b.hasAttribute("data-modf")){S.modF=+b.getAttribute("data-modf");if(window.innerWidth<=900)S.sideOpen=false;go("home");window.scrollTo(0,0);return;}
+  if(b.hasAttribute("data-modx")){var mx=+b.getAttribute("data-modx");S.sideExp=S.sideExp||{};S.sideExp[mx]=!S.sideExp[mx];return render();}
   if(b.hasAttribute("data-slide"))return moveSlide(+b.getAttribute("data-slide"));
   if(b.hasAttribute("data-sayfb"))return speak(sayText(cur()));
   if(b.hasAttribute("data-say-card"))return speak(P.items[P.i].sk);
