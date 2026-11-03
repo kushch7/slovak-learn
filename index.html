@@ -492,7 +492,38 @@ var LESSONS=[
   {id:"l7-cesta",type:"order",title:"Pýtame sa na cestu",ua:"Складіть речення зі слів",items:[
    {ua:"Вибачте, де тут пошта?",a:"Prepáčte, kde je tu pošta?"},{ua:"Ідіть прямо, а потім ліворуч.",a:"Choďte rovno a potom doľava."},
    {ua:"Це далеко? — Ні, це близько.",a:"Je to ďaleko? Nie, je to blízko."},{ua:"Аптека на розі.",a:"Lekáreň je na rohu."},
-   {ua:"Вибачте, я не знаю. Я не звідси.",a:"Prepáčte, neviem. Nie som odtiaľto."}]}]}
+   {ua:"Вибачте, я не знаю. Я не звідси.",a:"Prepáčte, neviem. Nie som odtiaľto."}]}]},
+ {n:8,mod:2,title:"Doprava",sets:[
+  {id:"l8-doprava",type:"cards",title:"Doprava",ua:"Картки: знаю / ще ні",items:[
+   {sk:"autobus",g:"ten",ua:"автобус",ex:"Autobus ide do centra."},{sk:"električka",g:"tá",ua:"трамвай",ex:"Do práce chodím električkou."},
+   {sk:"vlak",g:"ten",ua:"потяг",ex:"Vlak ide do Košíc."},{sk:"auto",g:"to",ua:"машина",ex:"Nemám auto."},
+   {sk:"bicykel",g:"ten",ua:"велосипед",ex:"Idem do parku bicyklom."},{sk:"lístok",g:"ten",ua:"квиток",ex:"Kde kúpim lístok?"},
+   {sk:"zastávka",g:"tá",ua:"зупинка",ex:"Čakám na zastávke."},{sk:"cestovný poriadok",g:"ten",ua:"розклад",ex:"Cestovný poriadok je na zastávke."},
+   {sk:"pešo",g:"príslovka",ua:"пішки",ex:"Do školy chodím pešo."},{sk:"vystúpiť",g:"sloveso",ua:"вийти (з транспорту)",ex:"Kde mám vystúpiť?"}]},
+  {id:"l8-cim",type:"match",title:"Čím idete?",ua:"З’єднайте слово і форму «чим?»",labels:["Kto? Čo?","Čím?"],pairs:[
+   ["autobus","autobusom"],["električka","električkou"],["vlak","vlakom"],["auto","autom"],["bicykel","bicyklom"],["taxík","taxíkom"],["trolejbus","trolejbusom"]]},
+  {id:"l8-ist-chodit",type:"choice",title:"ísť, alebo chodiť?",ua:"Зараз чи регулярно?",items:[
+   {q:"Teraz ___ do obchodu.",opts:["idem","chodím"],a:"idem",why:"teraz → ísť: idem"},
+   {q:"Každý deň ___ do práce autobusom.",opts:["idem","chodím"],a:"chodím",why:"každý deň → chodiť: chodím"},
+   {q:"Kam ___ ? (ty, teraz)",opts:["ideš","chodíš"],a:"ideš",why:"teraz → ísť: ideš"},
+   {q:"Deti ___ do školy pešo. (každý deň)",opts:["idú","chodia"],a:"chodia",why:"регулярно → chodia"},
+   {q:"Zajtra ___ na letisko.",opts:["ideme","chodíme"],a:"ideme",why:"zajtra, один раз → ideme"},
+   {q:"Často ___ do parku?",opts:["idete","chodíte"],a:"chodíte",why:"často → chodíte"},
+   {q:"Dnes ___ do práce. (ja, nie)",opts:["nejdem","nechodím"],a:"nejdem",why:"dnes → ísť: nejdem (з «j»)"},
+   {q:"Mária ___ do centra električkou. (každý deň)",opts:["ide","chodí"],a:"chodí",why:"регулярно → chodí"}]},
+  {id:"l8-kam",type:"type",title:"Kam? · do / na",ua:"Напишіть do / na і слово в правильній формі",items:[
+   {q:"Idem ___.",hint:"škola",a:["do školy"],why:"tá -a → do + -y: do školy"},
+   {q:"Idem ___.",hint:"pošta",a:["na poštu"],why:"na pošte → na poštu (-u)"},
+   {q:"Idem ___.",hint:"banka",a:["do banky"],why:"v banke → do banky"},
+   {q:"Idem ___.",hint:"stanica",a:["na stanicu"],why:"na stanici → na stanicu"},
+   {q:"Idem ___.",hint:"obchod",a:["do obchodu"],why:"ten → do + -u: do obchodu"},
+   {q:"Idem ___.",hint:"práca",a:["do práce"],why:"після c → -e: do práce"},
+   {q:"Idem ___.",hint:"mesto",a:["do mesta"],why:"to → do + -a: do mesta"},
+   {q:"Idem ___.",hint:"úrad",a:["na úrad"],why:"na + ten — без змін: na úrad"}]},
+  {id:"l8-vety",type:"order",title:"V MHD",ua:"Складіть речення зі слів",items:[
+   {ua:"Який автобус їде до центру?",a:"Ktorý autobus ide do centra?"},{ua:"Де купити квиток?",a:"Kde kúpim lístok?"},
+   {ua:"Я щодня їжджу на роботу трамваєм.",a:"Každý deň chodím do práce električkou."},
+   {ua:"Сьогодні я йду на пошту пішки.",a:"Dnes idem na poštu pešo."},{ua:"Вибачте, ви виходите?",a:"Prepáčte, vystupujete?"}]}]}
 ];
 var TYPE_LABEL={chyby:"Chyby",choice:"Výber",type:"Písanie",match:"Spájanie",order:"Poradie slov",listen:"Počúvanie",cards:"Kartičky",mixed:"Mix",test:"Test"};
 var MODULES=[{n:1,level:"A1",title:"Prvé kroky",ua:"Перші кроки"},{n:2,level:"A1",title:"V meste",ua:"У місті"}];
@@ -777,7 +808,7 @@ function viewHome(){
   return h+'</div></section>';
 }
 var ST_MAT={deck:"Prezentácia z hodiny",cheat:"Ťahák",hw:"Domáca úloha"};
-var SLIDES={1:23,2:22,3:22,4:20,5:18,6:17,7:17};S.slide={};
+var SLIDES={1:23,2:22,3:22,4:20,5:18,6:17,7:17,8:17};S.slide={};
 function slideSrc(n,i){return MAT+"slides/l"+n+"/"+(i<10?"0":"")+i+".webp";}
 function slideViewer(n){var tot=SLIDES[n],m=MATERIALS[n];if(!tot||!m||!m.deck)return "";var i=Math.min(S.slide[n]||1,tot);
   return '<section class="card pres" data-pres="'+n+'"><div class="pres-h"><div><span class="eyebrow">Hlavný materiál · головний матеріал уроку</span><h3>Prezentácia z hodiny</h3></div><a class="matbtn" href="'+MAT+m.deck+'.pdf" target="_blank" rel="noopener">PDF · stiahnuť</a></div>'+
@@ -1010,7 +1041,7 @@ var CL="https://claude.ai/artifact/";
 var MATERIALS={};[1,2,3,4,5].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});
 MATERIALS[6]={deck:"l6-prezentacia"};
 var TEST_MAT={t1:{test:"test1",key:"test1-kluc"}};
-MATERIALS[7]={deck:"l7-prezentacia",cheat:"l7-tahak",hw:"l7-domaca-uloha"};
+MATERIALS[7]={deck:"l7-prezentacia",cheat:"l7-tahak",hw:"l7-domaca-uloha"};MATERIALS[8]={deck:"l8-prezentacia",cheat:"l8-tahak",hw:"l8-domaca-uloha"};
 var MAT="materials/";
 var GUIDES={student:"prirucka-student",teacher:"prirucka-lektor"};
 var MAT_LABEL={deck:"Prezentácia",cheat:"Ťahák",hw:"Domáca úloha",test:"Test 1",key:"Kľúč k testu"};
