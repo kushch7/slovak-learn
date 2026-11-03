@@ -526,7 +526,38 @@ var LESSONS=[
   {id:"l8-vety",type:"order",title:"V MHD",ua:"Складіть речення зі слів",items:[
    {ua:"Який автобус їде до центру?",a:"Ktorý autobus ide do centra?"},{ua:"Де купити квиток?",a:"Kde kúpim lístok?"},
    {ua:"Я щодня їжджу на роботу трамваєм.",a:"Každý deň chodím do práce električkou."},
-   {ua:"Сьогодні я йду на пошту пішки.",a:"Dnes idem na poštu pešo."},{ua:"Вибачте, ви виходите?",a:"Prepáčte, vystupujete?"}]}]}
+   {ua:"Сьогодні я йду на пошту пішки.",a:"Dnes idem na poštu pešo."},{ua:"Вибачте, ви виходите?",a:"Prepáčte, vystupujete?"}]}]},
+ {n:9,mod:2,title:"Čas a dni",sets:[
+  {id:"l9-dni",type:"cards",title:"Dni a čas",ua:"Картки: знаю / ще ні",items:[
+   {sk:"pondelok",g:"ten",ua:"понеділок",ex:"V pondelok pracujem."},{sk:"utorok",g:"ten",ua:"вівторок",ex:"V utorok mám kurz."},
+   {sk:"streda",g:"tá",ua:"середа",ex:"V stredu som doma."},{sk:"štvrtok",g:"ten",ua:"четвер",ex:"Vo štvrtok idem do mesta."},
+   {sk:"piatok",g:"ten",ua:"пʼятниця",ex:"V piatok idem do kina."},{sk:"sobota",g:"tá",ua:"субота",ex:"V sobotu nepracujem."},
+   {sk:"nedeľa",g:"tá",ua:"неділя",ex:"V nedeľu je obchod zatvorený."},{sk:"ráno",g:"príslovka",ua:"вранці",ex:"Ráno pijem kávu."},
+   {sk:"poobede",g:"príslovka",ua:"після обіду",ex:"Poobede mám čas."},{sk:"večer",g:"príslovka",ua:"увечері",ex:"Večer som doma."}]},
+  {id:"l9-kedy",type:"match",title:"Kedy?",ua:"З’єднайте день і «коли?»",labels:["Deň","Kedy?"],pairs:[
+   ["pondelok","v pondelok"],["streda","v stredu"],["štvrtok","vo štvrtok"],["piatok","v piatok"],["sobota","v sobotu"],["nedeľa","v nedeľu"],["víkend","cez víkend"]]},
+  {id:"l9-hodiny",type:"choice",title:"Koľko je hodín?",ua:"Виберіть правильну форму",items:[
+   {q:"1:00 → Je jedna ___.",opts:["hodina","hodiny","hodín"],a:"hodina",why:"1 → je jedna hodina"},
+   {q:"3:00 → Sú tri ___.",opts:["hodina","hodiny","hodín"],a:"hodiny",why:"2, 3, 4 → sú … hodiny"},
+   {q:"7:00 → Je sedem ___.",opts:["hodina","hodiny","hodín"],a:"hodín",why:"5+ → je … hodín"},
+   {q:"2:00 → ___ dve hodiny.",opts:["Je","Sú"],a:"Sú",why:"2, 3, 4 → sú"},
+   {q:"5:00 → ___ päť hodín.",opts:["Je","Sú"],a:"Je",why:"5+ → je"},
+   {q:"2:00 → Sú ___ hodiny.",opts:["dva","dve"],a:"dve",why:"hodina — tá → dve hodiny"},
+   {q:"4:00 → Sú štyri ___.",opts:["hodina","hodiny","hodín"],a:"hodiny",why:"4 → hodiny"},
+   {q:"12:00 → Je dvanásť ___.",opts:["hodina","hodiny","hodín"],a:"hodín",why:"12 → hodín"}]},
+  {id:"l9-o-kolkej",type:"type",title:"O koľkej?",ua:"Напишіть «o» і годину словами",items:[
+   {q:"Film je ___.",hint:"5:00",a:["o piatej"],why:"5 → o piatej"},
+   {q:"Autobus ide ___.",hint:"2:00",a:["o druhej"],why:"2 → o druhej (не «o dve»)"},
+   {q:"Kurz je ___.",hint:"6:00",a:["o šiestej"],why:"6 → o šiestej"},
+   {q:"Obed je ___.",hint:"12:00",a:["o dvanástej"],why:"12 → o dvanástej"},
+   {q:"Stretneme sa ___.",hint:"3:00",a:["o tretej"],why:"3 → o tretej"},
+   {q:"Lekcia je ___.",hint:"8:00",a:["o ôsmej"],why:"8 → o ôsmej"},
+   {q:"Vstávam ___.",hint:"7:00",a:["o siedmej"],why:"7 → o siedmej"},
+   {q:"Obchod je otvorený ___.",hint:"9:00",a:["o deviatej"],why:"9 → o deviatej"}]},
+  {id:"l9-vety",type:"order",title:"Máš čas?",ua:"Складіть речення зі слів",items:[
+   {ua:"Маєш час у суботу?",a:"Máš čas v sobotu?"},{ua:"Котра зараз година?",a:"Koľko je teraz hodín?"},
+   {ua:"Фільм о пʼятій.",a:"Film je o piatej."},{ua:"У четвер увечері я вдома.",a:"Vo štvrtok večer som doma."},
+   {ua:"Я працюю з восьмої до четвертої.",a:"Pracujem od ôsmej do štvrtej."}]}]}
 ];
 var TYPE_LABEL={chyby:"Chyby",choice:"Výber",type:"Písanie",match:"Spájanie",order:"Poradie slov",listen:"Počúvanie",cards:"Kartičky",mixed:"Mix",test:"Test"};
 var MODULES=[{n:1,level:"A1",title:"Prvé kroky",ua:"Перші кроки"},{n:2,level:"A1",title:"V meste",ua:"У місті"}];
@@ -1035,7 +1066,7 @@ function statusPill(account){var a=advice(account),s=summary(account);
 /* ================= teacher: views ================= */
 var CL="https://claude.ai/artifact/";
 /* Матеріали: PDF видає захищений сервер (/api/file) — учень отримує лише шпаргалку й ДЗ відкритих уроків, лектор — усе */
-var MATERIALS={};[1,2,3,4,5,7,8].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};
+var MATERIALS={};[1,2,3,4,5,7,8,9].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};
 var TEST_MAT={t1:{test:"test1",key:"test1-kluc"}};
 var MAT="materials/";function fileHref(name){return API.fileUrl?API.fileUrl(name):MAT+name+".pdf";}
 var GUIDES={student:"prirucka-student",teacher:"prirucka-lektor"};
