@@ -140,8 +140,22 @@ function send(res, code, obj) {
 
 export default async function handler(req, res) {
   try {
+    if (req.method === "GET") {
+      const checks = {
+        SESSION_SECRET: !!SECRET,
+        DATA_KEY: !!process.env.DATA_KEY,
+        TEACHER_PASSWORD: !!process.env.TEACHER_PASSWORD,
+        BLOB_READ_WRITE_TOKEN: !!process.env.BLOB_READ_WRITE_TOKEN
+      };
+      let storage = "not tested";
+      if (checks.BLOB_READ_WRITE_TOKEN) {
+        try { await list({ limit: 1 }); storage = "ok"; } catch (e) { storage = "error: " + String(e && e.message || e).slice(0, 200); }
+      }
+      return send(res, 200, { server: "ok", checks, storage });
+    }
     if (req.method !== "POST") return send(res, 405, { error: "method" });
     if (!SECRET || !process.env.DATA_KEY) return send(res, 500, { error: "config" });
+    if (!process.env.BLOB_READ_WRITE_TOKEN) return send(res, 500, { error: "storage" });
     let body = req.body;
     if (typeof body === "string") { try { body = JSON.parse(body || "{}"); } catch { body = {}; } }
     body = body || {};
@@ -234,6 +248,7 @@ export default async function handler(req, res) {
     return send(res, 400, { error: "unknown" });
   } catch (e) {
     console.error(e);
-    return send(res, 500, { error: "server" });
+    const msg = String(e && e.message || e);
+    return send(res, 500, { error: /blob|token|store/i.test(msg) ? "storage" : "server", detail: msg.slice(0, 200) });
   }
 }

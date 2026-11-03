@@ -417,7 +417,7 @@ function RestAPI(){
   function call(action,body){
     return fetch("/api/app",{method:"POST",headers:Object.assign({"content-type":"application/json"},token?{authorization:"Bearer "+token}:{}),body:JSON.stringify(Object.assign({action:action},body||{}))})
       .catch(function(){throw E("offline");})
-      .then(function(r){return r.json().catch(function(){return {};}).then(function(j){if(r.status===401)throw E(j.error==="bad"?"bad":"auth");if(!r.ok)throw E(j.error||"server");return j;});});
+      .then(function(r){return r.json().catch(function(){return {};}).then(function(j){if(r.status===404)throw E("noapi");if(r.status===401)throw E(j.error==="bad"?"bad":"auth");if(!r.ok)throw E(j.error||"server");return j;});});
   }
   function shape(j){if(j.token)token=j.token;return {role:j.role,token:token,id:j.id,name:j.name||"",login:j.login,unlocked:j.unlocked||[1],progress:j.progress?normProg(j.progress):null};}
   return {
@@ -497,7 +497,14 @@ function doLogin(form){
     S.busy=false;
     if(r.role==="teacher"){S.session=API.sessionOf(r);lsSet(LS_SESSION,S.session);go("t-overview");}else applyStudent(r);
   }).catch(function(e){S.busy=false;
-    S.loginErr=e.code==="bad"?(S.loginTab==="teacher"?"Неправильний логін або пароль лектора.":"Неправильний логін або пароль. Перевірте дані, які дав вам лектор."):"Не вдалося з’єднатися. Спробуйте ще раз.";render();});
+    S.loginErr=e.code==="bad"?(S.loginTab==="teacher"?"Неправильний логін або пароль лектора.":"Неправильний логін або пароль. Перевірте дані, які дав вам лектор."):loginErrText(e.code);render();});
+}
+function loginErrText(c){
+  if(c==="config")return "Сервер не налаштований: у Vercel бракує змінних SESSION_SECRET або DATA_KEY (Settings → Environment Variables), після додавання потрібен Redeploy.";
+  if(c==="storage")return "Сервер не бачить сховище даних (Blob). Підключіть Blob-сховище до проєкту у Vercel (Storage) і зробіть Redeploy.";
+  if(c==="noapi")return "Серверна частина не знайдена: перевірте, що папка api є в репозиторії.";
+  if(c==="offline")return "Немає з’єднання з інтернетом. Спробуйте ще раз.";
+  return "Помилка сервера (код: "+(c||"невідомо")+"). Спробуйте ще раз.";
 }
 function logout(){lsSet(LS_SESSION,null);S.session=null;S.data=emptyProg();S.unlocked=[1];S.play=null;T.loaded=false;T.sel=null;T.creds=null;S.loginErr="";go("login");}
 
