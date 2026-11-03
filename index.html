@@ -734,7 +734,6 @@ function speak(text,slow){if(!("speechSynthesis" in window))return;try{window.sp
 /* ================= navigation ================= */
 var app=document.getElementById("app");
 app.addEventListener("toggle",function(e){if(e.target&&e.target.classList&&e.target.classList.contains("side-d"))S.sideOpen=e.target.open;},true);
-document.addEventListener("keydown",function(e){if(S.view!=="lesson"||!document.getElementById("pres-img"))return;var tg=e.target&&e.target.tagName;if(tg==="INPUT"||tg==="TEXTAREA")return;if(e.key==="ArrowRight")moveSlide(1);else if(e.key==="ArrowLeft")moveSlide(-1);});
 function go(view,extra){S.view=view;if(extra)Object.assign(S,extra);if(view.indexOf("t-")===0&&!T.loaded&&!T.loading)loadTeacher();render();window.scrollTo(0,0);}
 document.getElementById("brand").addEventListener("click",function(){if(!S.session)go("login");else go(S.session.role==="teacher"?"t-students":"home");});
 function renderNav(){
@@ -812,15 +811,6 @@ function viewHome(){
   return h+'</div></section>';
 }
 var ST_MAT={deck:"Prezentácia z hodiny",cheat:"Ťahák",hw:"Domáca úloha"};
-var SLIDES={1:23,2:22,3:22,4:20,5:18,6:17,7:17,8:17};S.slide={};
-function slideSrc(n,i){return MAT+"slides/l"+n+"/"+(i<10?"0":"")+i+".webp";}
-function slideViewer(n){var tot=SLIDES[n],m=MATERIALS[n];if(!tot||!m||!m.deck)return "";var i=Math.min(S.slide[n]||1,tot);
-  return '<section class="card pres" data-pres="'+n+'"><div class="pres-h"><div><span class="eyebrow">Hlavný materiál · головний матеріал уроку</span><h3>Prezentácia z hodiny</h3></div><a class="matbtn" href="'+MAT+m.deck+'.pdf" target="_blank" rel="noopener">PDF · stiahnuť</a></div>'+
-  '<div class="pres-v"><img id="pres-img" src="'+slideSrc(n,i)+'" alt="Snímka '+i+' z '+tot+'" width="1280" height="720"></div>'+
-  '<div class="pres-c"><button class="btn ghost sm" type="button" data-slide="-1"'+(i<=1?' disabled':'')+' aria-label="Predošlá snímka">‹ Predošlá</button><span class="muted" id="pres-cnt">'+i+' / '+tot+'</span><button class="btn sm" type="button" data-slide="1"'+(i>=tot?' disabled':'')+' aria-label="Ďalšia snímka">Ďalšia ›</button></div></section>';}
-function moveSlide(d){var n=S.lesson,tot=SLIDES[n];if(!tot)return;var i=Math.max(1,Math.min(tot,(S.slide[n]||1)+d));S.slide[n]=i;
-  var img=document.getElementById("pres-img"),cnt=document.getElementById("pres-cnt");if(!img)return render();img.src=slideSrc(n,i);img.alt="Snímka "+i+" z "+tot;cnt.textContent=i+" / "+tot;
-  var bs=app.querySelectorAll("[data-slide]");bs[0].disabled=i<=1;bs[1].disabled=i>=tot;if(i<tot){var pre=new Image();pre.src=slideSrc(n,i+1);}}
 function studentMat(n){var m=MATERIALS[n];if(!m||!S.session||S.session.role!=="student")return "";var b="";
   ["cheat","hw"].forEach(function(k){if(m[k])b+='<a class="matbtn" href="'+MAT+m[k]+'.pdf" target="_blank" rel="noopener">'+ST_MAT[k]+' · PDF</a>';});
   if(!b)return "";return '<div class="card smat"><b style="color:var(--navy)">Po lekcii · після уроку</b><span class="muted" style="font-size:13px">Шпаргалка для повторення й домашнє завдання — завантажте або роздрукуйте.</span><div class="mat">'+b+'</div></div>';}
@@ -829,7 +819,7 @@ function viewLesson(){
   var h='<button class="back" type="button" data-home>← Všetky lekcie</button>';
   if(!isOpen(l.n))return h+'<div class="card empty">Цей урок ще закритий. Його відкриє лектор після заняття.</div>';
   h+='<div class="sec-h"><div><span class="eyebrow">Lekcia '+l.n+'</span><h2 class="h2">'+esc(l.title)+'</h2></div><span class="muted">'+lessonDone(l)+' / '+l.sets.length+' hotovo</span></div>';
-  if(S.session&&S.session.role==="student")h+=slideViewer(l.n);h+=studentMat(l.n);if(l.review)h+='<div class="grid">'+testsOf(l.mod).map(testCard).join('')+'</div>';h+='<section class="sec"><h3 class="h3">Online cvičenia · онлайн-вправи</h3><div class="list">';
+  h+=studentMat(l.n);if(l.review)h+='<div class="grid">'+testsOf(l.mod).map(testCard).join('')+'</div>';h+='<section class="sec"><h3 class="h3">Online cvičenia · онлайн-вправи</h3><div class="list">';
   l.sets.forEach(function(s){var r=S.data.results[s.id];var n=s.items?s.items.length:s.pairs.length;
     h+='<div class="li"><div class="t"><b>'+esc(s.title)+'</b><span class="muted">'+esc(s.ua)+' · '+n+' '+(s.type==="match"?"пар":"завдань")+(r?' · спроб: '+r.tries:'')+'</span></div><span class="pill type">'+TYPE_LABEL[s.type]+'</span>'+setStatus(s.id)+'<button class="btn sm" type="button" data-start="'+s.id+'">'+(r?"Znova":"Začať")+'</button></div>';});
   return h+'</div></section>';
@@ -1042,15 +1032,18 @@ function statusPill(account){var a=advice(account),s=summary(account);
 
 /* ================= teacher: views ================= */
 var CL="https://claude.ai/artifact/";
-var MATERIALS={};[1,2,3,4,5].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});
-MATERIALS[6]={deck:"l6-prezentacia"};
-var TEST_MAT={t1:{test:"test1",key:"test1-kluc"}};
-MATERIALS[7]={deck:"l7-prezentacia",cheat:"l7-tahak",hw:"l7-domaca-uloha"};MATERIALS[8]={deck:"l8-prezentacia",cheat:"l8-tahak",hw:"l8-domaca-uloha"};
+/* Презентації й тести — лише для лектора: посилання на приватні артефакти Claude, не публічні файли */
+var ART="https://claude.ai/artifact/",DECK_ART={"1": "Mpee7Gjh8GjGFJd4hVansv", "2": "WGDKhfoCw9r7mWWSpqdVVj", "3": "4qqiBMRZoVnhGwaMHwCPNb", "4": "FdEttSHni3wnY7sTNUedqQ", "5": "EKZLcfZbnBrt3NMqkasa55", "6": "XjZMg4v8aQWAgcf9i5pGTr", "7": "QFoQQ7dP823CopRNMSKHjd", "8": "QXHjFz3s4PPB7kPXzq61jw"};
+var MATERIALS={};[1,2,3,4,5,7,8].forEach(function(n){MATERIALS[n]={cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={};
+Object.keys(DECK_ART).forEach(function(n){MATERIALS[n].deckArt=ART+DECK_ART[n];});
+var TEST_MAT={t1:{testArt:ART+"Vfi43PGppJVwijxLxUxPBd"}};
 var MAT="materials/";
 var GUIDES={student:"prirucka-student",teacher:"prirucka-lektor"};
-var MAT_LABEL={deck:"Prezentácia",cheat:"Ťahák",hw:"Domáca úloha",test:"Test 1",key:"Kľúč k testu"};
+var MAT_LABEL={deck:"Prezentácia",cheat:"Ťahák",hw:"Domáca úloha",test:"Test + kľúč"};
 function matLinks(n){var m=typeof n==="string"?TEST_MAT[n]:MATERIALS[n];if(!m)return "";var h='<div class="mat">';
-  ["deck","cheat","hw","test","key"].forEach(function(k){if(m[k])h+='<a class="matbtn" href="'+MAT+m[k]+'.pdf" target="_blank" rel="noopener">'+MAT_LABEL[k]+' · PDF</a>';});
+  if(m.deckArt)h+='<a class="matbtn" href="'+m.deckArt+'" target="_blank" rel="noopener">'+MAT_LABEL.deck+' ↗</a>';
+  ["cheat","hw"].forEach(function(k){if(m[k])h+='<a class="matbtn" href="'+MAT+m[k]+'.pdf" target="_blank" rel="noopener">'+MAT_LABEL[k]+' · PDF</a>';});
+  if(m.testArt)h+='<a class="matbtn" href="'+m.testArt+'" target="_blank" rel="noopener">'+MAT_LABEL.test+' ↗</a>';
   return h+'</div>';}
 function tGuard(){if(T.err)return '<div class="card empty">'+esc(T.err)+'</div>';if(!T.loaded)return '<div class="card empty">Načítavam…</div>';return "";}
 function topAdvice(a){var adv=advice(a);return adv.find(function(x){return x.k==="bad";})||adv.find(function(x){return x.k==="warn";})||adv[0];}
@@ -1134,7 +1127,7 @@ function viewTStudent(){
   return h+'</details>';
 }
 function viewTMaterials(){
-  var h='<div><span class="eyebrow">Kabinet lektora</span><h2 class="h2">Materiály</h2><p class="muted" style="margin-top:6px">Презентації, шпаргалки й домашні завдання до кожного уроку. PDF-файли відкриваються в новій вкладці — їх можна завантажити, роздрукувати або надіслати учню. Учень бачить презентацію, шпаргалку й домашнє завдання лише тих уроків, які ви йому відкрили; тест і ключ — тільки тут.</p></div><div class="list">';
+  var h='<div><span class="eyebrow">Kabinet lektora</span><h2 class="h2">Materiály</h2><p class="muted" style="margin-top:6px">Презентації, шпаргалки й домашні завдання до кожного уроку. <b>Презентації й тести з ключем</b> (↗) — лише для лектора: учні їх не бачать. Шпаргалку й домашнє завдання (PDF) учень отримує в кабінеті, щойно ви відкриєте йому урок.</p></div><div class="list">';
   var mm=null;LESSONS.forEach(function(l){if(l.mod!==mm){mm=l.mod;h+=modRow(l.mod);}h+='<div class="li lrow'+(l.review?' revl':'')+'"><span class="num">'+l.n+'</span><div class="t"><b>'+esc(l.title)+'</b><span class="muted" style="font-size:13px">'+l.sets.length+' онлайн-вправ на платформі</span></div>'+matLinks(l.n)+'</div>';
     if(lastOfMod(l))testsOf(l.mod).forEach(function(t){h+='<div class="li lrow tst"><span class="num tnum">T</span><div class="t"><b>'+esc(t.title)+'</b><span class="muted" style="font-size:13px">'+t.items.length+' завдань онлайн · паперова версія й ключ</span></div>'+matLinks(t.gate)+'</div>';});});
   h+='</div>';
@@ -1245,7 +1238,6 @@ app.addEventListener("click",function(e){
     if(b.hasAttribute("data-tsubmit-ok"))return gradeTest();
     if(b.hasAttribute("data-tsubmit-no")){P.confirm=false;return render();}
   }
-  if(b.hasAttribute("data-slide"))return moveSlide(+b.getAttribute("data-slide"));
   if(b.hasAttribute("data-sayfb"))return speak(sayText(cur()));
   if(b.hasAttribute("data-say-card"))return speak(P.items[P.i].sk);
   if(b.hasAttribute("data-know")){if(b.getAttribute("data-know")==="1")P.known++;else P.wrong.push({it:{ua:P.items[P.i].sk,a:P.items[P.i].ua}});if(P.i+1>=P.items.length)return finish();P.i++;P.flipped=false;return render();}
