@@ -732,7 +732,40 @@ var LESSONS=[
    {ua:"Квартира нова і світла.",a:"Byt je nový a svetlý."},
    {ua:"Кухня велика, але спальня маленька.",a:"Kuchyňa je veľká, ale spálňa je malá."},
    {ua:"Скільки коштує оренда?",a:"Koľko stojí nájom?"},
-   {ua:"Можу я подивитися квартиру?",a:"Môžem si byt pozrieť?"}]}]}
+   {ua:"Можу я подивитися квартиру?",a:"Môžem si byt pozrieť?"}]}]},
+ {n:14,mod:3,title:"Rodina",sets:[
+  {id:"l14-rodina",type:"cards",title:"Rodina",ua:"Картки: знаю / ще ні",items:[
+   {sk:"otec",g:"ten",ua:"батько",ex:"Môj otec je lekár."},{sk:"mama",g:"tá",ua:"мама",ex:"Moja mama býva v Kyjeve."},
+   {sk:"syn",g:"ten",ua:"син",ex:"Náš syn má desať rokov."},{sk:"dcéra",g:"tá",ua:"дочка",ex:"Naša dcéra sa volá Sofia."},
+   {sk:"brat",g:"ten",ua:"брат",ex:"Brat býva v Poľsku."},{sk:"sestra",g:"tá",ua:"сестра",ex:"Moja sestra je vydatá."},
+   {sk:"manžel",g:"ten",ua:"чоловік",ex:"Môj manžel je kuchár."},{sk:"manželka",g:"tá",ua:"дружина",ex:"Jeho manželka sa volá Eva."},
+   {sk:"starý otec",g:"ten",ua:"дідусь",ex:"Starý otec má sedemdesiat rokov."},{sk:"stará mama",g:"tá",ua:"бабуся",ex:"Stará mama varí polievku."},
+   {sk:"dieťa",g:"to",ua:"дитина",ex:"Mám jedno dieťa."},{sk:"rodičia",g:"",ua:"батьки",ex:"Moji rodičia bývajú v Ľvove."}]},
+  {id:"l14-moj",type:"choice",title:"môj · moja · moje",ua:"Виберіть правильну форму",items:[
+   {q:"To je ___ brat. (ja)",opts:["môj","moja","moje"],a:"môj",why:"ten brat → môj"},
+   {q:"To je ___ sestra. (ja)",opts:["môj","moja","moje"],a:"moja",why:"tá sestra → moja"},
+   {q:"Kde je ___ dieťa? (ty)",opts:["tvoj","tvoja","tvoje"],a:"tvoje",why:"to dieťa → tvoje"},
+   {q:"___ dcéra má šesť rokov. (my)",opts:["Náš","Naša","Naše"],a:"Naša",why:"tá dcéra → naša"},
+   {q:"Ako sa volá ___ syn? (vy)",opts:["váš","vaša","vaše"],a:"váš",why:"ten syn → váš"},
+   {q:"Ako sa volá ___ manželka? (on)",opts:["jeho","jej"],a:"jeho",why:"on → jeho (не змінюється)"},
+   {q:"To je ___ syn. (ona)",opts:["jeho","jej"],a:"jej",why:"ona → jej (не змінюється)"}]},
+  {id:"l14-mnozne",type:"type",title:"Množné číslo",ua:"Напишіть множину",items:[
+   {q:"sestra → ___",hint:"множина",a:["sestry"],why:"tá -a → -y: sestry"},
+   {q:"dcéra → ___",hint:"множина",a:["dcéry"],why:"dcéra → dcéry"},
+   {q:"mama → ___",hint:"множина",a:["mamy"],why:"mama → mamy"},
+   {q:"teta → ___",hint:"множина",a:["tety"],why:"teta → tety"},
+   {q:"dieťa → ___",hint:"множина",a:["deti"],why:"dieťa → deti"},
+   {q:"brat → ___",hint:"множина",a:["bratia"],why:"brat → bratia (особлива форма)"},
+   {q:"Dcéra má tri ___ .",hint:"rok",a:["roky"],why:"2–4 → roky"},
+   {q:"Otec má päťdesiat ___ .",hint:"rok",a:["rokov"],why:"5+ → rokov"}]},
+  {id:"l14-stav",type:"match",title:"Vek a stav",ua:"З’єднайте пари",labels:["Slovensky","Po ukrajinsky"],pairs:[
+   ["ženatý","одружений"],["vydatá","заміжня"],["slobodný","неодружений"],["rozvedená","розлучена"],["súrodenci","брати й сестри"],["starí rodičia","дідусь і бабуся"],["jedináčik","єдина дитина"]]},
+  {id:"l14-vety",type:"order",title:"Moja rodina",ua:"Складіть речення зі слів",items:[
+   {ua:"Це моя родина.",a:"To je moja rodina."},
+   {ua:"Мій брат живе в Кракові.",a:"Môj brat býva v Krakove."},
+   {ua:"Нашій дочці шість років.",a:"Naša dcéra má šesť rokov."},
+   {ua:"Ваша сестра заміжня?",a:"Je vaša sestra vydatá?"},
+   {ua:"Мої батьки живуть в Україні.",a:"Moji rodičia bývajú na Ukrajine."}]}]}
 ];
 var TYPE_LABEL={chyby:"Chyby",choice:"Výber",type:"Písanie",match:"Spájanie",order:"Poradie slov",listen:"Počúvanie",cards:"Kartičky",mixed:"Mix",test:"Test"};
 var MODULES=[{n:1,level:"A1",title:"Prvé kroky",ua:"Перші кроки"},{n:2,level:"A1",title:"V meste",ua:"У місті"},{n:3,level:"A1",title:"Domov",ua:"Дім"}];
@@ -1322,7 +1355,7 @@ function statusPill(account){var a=advice(account),s=summary(account);
 /* ================= teacher: views ================= */
 var CL="https://claude.ai/artifact/";
 /* Матеріали: PDF видає захищений сервер (/api/file) — учень отримує лише шпаргалку й ДЗ відкритих уроків, лектор — усе */
-var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};
+var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};
 var TEST_MAT={t1:{test:"test1",key:"test1-kluc",label:"Test 1"},t2:{test:"test2",key:"test2-kluc",label:"Test 2"}};
 var MAT="materials/";function fileHref(name){return API.fileUrl?API.fileUrl(name):MAT+name+".pdf";}
 var GUIDES={student:"prirucka-student",teacher:"prirucka-lektor"};
