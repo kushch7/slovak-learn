@@ -765,7 +765,37 @@ var LESSONS=[
    {ua:"Мій брат живе в Кракові.",a:"Môj brat býva v Krakove."},
    {ua:"Нашій дочці шість років.",a:"Naša dcéra má šesť rokov."},
    {ua:"Ваша сестра заміжня?",a:"Je vaša sestra vydatá?"},
-   {ua:"Мої батьки живуть в Україні.",a:"Moji rodičia bývajú na Ukrajine."}]}]}
+   {ua:"Мої батьки живуть в Україні.",a:"Moji rodičia bývajú na Ukrajine."}]}]},
+ {n:15,mod:3,title:"Môj deň",sets:[
+  {id:"l15-den",type:"cards",title:"Môj deň",ua:"Картки: знаю / ще ні",items:[
+   {sk:"vstávať",g:"",ua:"вставати",ex:"Vstávam o šiestej."},{sk:"raňajkovať",g:"",ua:"снідати",ex:"Vždy raňajkujem doma."},
+   {sk:"obedovať",g:"",ua:"обідати",ex:"Obedujem v práci."},{sk:"večerať",g:"",ua:"вечеряти",ex:"Večeriame o siedmej."},
+   {sk:"umývať sa",g:"",ua:"вмиватися",ex:"Ráno sa umývam."},{sk:"sprchovať sa",g:"",ua:"приймати душ",ex:"Večer sa sprchujem."},
+   {sk:"obliekať sa",g:"",ua:"одягатися",ex:"Potom sa obliekam."},{sk:"čistiť si zuby",g:"",ua:"чистити зуби",ex:"Čistím si zuby."},
+   {sk:"variť",g:"",ua:"готувати",ex:"Večer varím."},{sk:"upratovať",g:"",ua:"прибирати",ex:"V sobotu upratujeme."},
+   {sk:"oddychovať",g:"",ua:"відпочивати",ex:"Poobede oddychujem."},{sk:"ísť spať",g:"",ua:"лягати спати",ex:"Idem spať o jedenástej."}]},
+  {id:"l15-sa-si",type:"choice",title:"sa, alebo si?",ua:"Виберіть sa або si",opts:["sa","si"],items:[
+   {q:"Ráno ___ umývam.",a:"sa",why:"umývať sa — мити себе"},{q:"Čistím ___ zuby.",a:"si",why:"čistiť si zuby — собі"},
+   {q:"Kedy ___ sprchuješ?",a:"sa",why:"sprchovať sa"},{q:"Umývam ___ ruky.",a:"si",why:"umývať si ruky — собі руки"},
+   {q:"Deti ___ obliekajú.",a:"sa",why:"obliekať sa"},{q:"Češem ___ vlasy.",a:"si",why:"česať si vlasy"},
+   {q:"Peter ___ holí.",a:"sa",why:"holiť sa"}]},
+  {id:"l15-tvary",type:"type",title:"Čo robíte?",ua:"Напишіть дієслово в правильній формі",items:[
+   {q:"Ja ___ o šiestej.",hint:"vstávať",a:["vstávam"],why:"ja → vstávam"},
+   {q:"Ty ___ doma?",hint:"raňajkovať",a:["raňajkuješ"],why:"raňajkovať → raňajkujem, raňajkuješ"},
+   {q:"On ___ každý deň.",hint:"variť",a:["varí"],why:"variť → varím, varí"},
+   {q:"My ___ v sobotu.",hint:"upratovať",a:["upratujeme"],why:"upratovať → upratujeme"},
+   {q:"Vy ___ večer?",hint:"oddychovať",a:["oddychujete"],why:"oddychovať → oddychujete"},
+   {q:"Oni ___ o siedmej.",hint:"večerať",a:["večerajú"],why:"večerať → večeriam … oni večerajú"},
+   {q:"Ráno sa ___ .",hint:"umývať, ja",a:["umývam"],why:"Ráno sa umývam."},
+   {q:"Nikdy ___ .",hint:"raňajkovať, ja",a:["neraňajkujem"],why:"nikdy + ne-: Nikdy neraňajkujem."}]},
+  {id:"l15-castost",type:"match",title:"Ako často?",ua:"З’єднайте пари",labels:["Slovensky","Po ukrajinsky"],pairs:[
+   ["vždy","завжди"],["zvyčajne","зазвичай"],["často","часто"],["niekedy","іноді"],["zriedka","рідко"],["nikdy","ніколи"],["každý deň","щодня"]]},
+  {id:"l15-vety",type:"order",title:"Môj deň",ua:"Складіть речення зі слів",items:[
+   {ua:"Я встаю о шостій.",a:"Vstávam o šiestej."},
+   {ua:"Вранці я вмиваюся і одягаюся.",a:"Ráno sa umývam a obliekam."},
+   {ua:"Увечері я чищу зуби.",a:"Večer si čistím zuby."},
+   {ua:"Я ніколи не снідаю.",a:"Nikdy neraňajkujem."},
+   {ua:"У суботу ми готуємо і прибираємо.",a:"V sobotu varíme a upratujeme."}]}]}
 ];
 var TYPE_LABEL={chyby:"Chyby",choice:"Výber",type:"Písanie",match:"Spájanie",order:"Poradie slov",listen:"Počúvanie",cards:"Kartičky",mixed:"Mix",test:"Test"};
 var MODULES=[{n:1,level:"A1",title:"Prvé kroky",ua:"Перші кроки"},{n:2,level:"A1",title:"V meste",ua:"У місті"},{n:3,level:"A1",title:"Domov",ua:"Дім"}];
@@ -1355,7 +1385,7 @@ function statusPill(account){var a=advice(account),s=summary(account);
 /* ================= teacher: views ================= */
 var CL="https://claude.ai/artifact/";
 /* Матеріали: PDF видає захищений сервер (/api/file) — учень отримує лише шпаргалку й ДЗ відкритих уроків, лектор — усе */
-var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};
+var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};
 var TEST_MAT={t1:{test:"test1",key:"test1-kluc",label:"Test 1"},t2:{test:"test2",key:"test2-kluc",label:"Test 2"}};
 var MAT="materials/";function fileHref(name){return API.fileUrl?API.fileUrl(name):MAT+name+".pdf";}
 var GUIDES={student:"prirucka-student",teacher:"prirucka-lektor"};
