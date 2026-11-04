@@ -881,6 +881,7 @@ function applyStudent(r){
   var local=normProg(lsGet(progKey()));
   S.data=r.progress?mergeProg(local,r.progress):local;
   S.sync="Прогрес синхронізується з кабінетом лектора";
+  sweepTests();
   go("home");
 }
 function boot(){
@@ -926,7 +927,8 @@ function speak(text,slow){if(!("speechSynthesis" in window))return;try{window.sp
 /* ================= navigation ================= */
 var app=document.getElementById("app");
 app.addEventListener("toggle",function(e){if(e.target&&e.target.classList&&e.target.classList.contains("side-d"))S.sideOpen=e.target.open;},true);
-function go(view,extra){S.view=view;if(extra)Object.assign(S,extra);if(view.indexOf("t-")===0&&!T.loaded&&!T.loading)loadTeacher();render();window.scrollTo(0,0);}
+function go(view,extra){if(S.view==="play"&&view!=="play"&&view!=="result"&&S.play&&S.play.set&&S.play.set.test&&!S.play.done)cutTest(S.play);
+  if(view!=="home"&&view!=="play"&&view!=="result")S.notice="";S.view=view;if(extra)Object.assign(S,extra);if(view.indexOf("t-")===0&&!T.loaded&&!T.loading)loadTeacher();render();window.scrollTo(0,0);}
 document.getElementById("brand").addEventListener("click",function(){if(!S.session)go("login");else go(S.session.role==="teacher"?"t-students":"home");});
 function renderNav(){
   var nav=document.getElementById("nav"),role=document.getElementById("role"),h="",r=S.session&&S.session.role;
@@ -989,7 +991,7 @@ function viewTIntro(){var t=SETS[S.tintro];if(!t||!setOpenFor(S.unlocked,t))retu
   h+='<li><b>'+pl(n,"завдання","завдання","завдань")+'</b>, без підказок і без перевірки по ходу.</li>';
   h+='<li>'+(c.min?'Час — <b>'+c.min+' хв</b>. Таймер стартує, щойно ви натиснете «Začať test», і не зупиняється, навіть якщо закрити сторінку. Коли час вийде, тест надішлеться автоматично.':'Час не обмежений.')+'</li>';
   h+='<li>'+(c.tries?(c.tries===1?'<b>Одна спроба</b>.':'Спроб: <b>'+c.tries+'</b>'+(left<c.tries?', залишилось: <b>'+left+'</b>':'')+'.')+' Після відправлення змінити відповіді вже не можна.':'Кількість спроб не обмежена.')+'</li>';
-  h+='<li>Між питаннями можна переходити через номери вгорі й змінювати відповіді до відправлення.</li><li>Результат побачить лектор — ви обговорите його разом на уроці.</li></ul>';
+  h+='<li>Між питаннями можна переходити через номери вгорі й змінювати відповіді до відправлення.</li><li><b>Не виходьте з тесту, доки не надішлете його.</b> Якщо закрити сторінку, перейти в інший розділ або натиснути «× Ukončiť», тест буде надіслано з тими відповідями, які ви встигли дати. Повернутися до нього не можна.</li><li>Результат побачить лектор — ви обговорите його разом на уроці.</li></ul>';
   if(left<=0)h+='<div class="card empty">Спроби вичерпано. Нову спробу може відкрити лектор.</div>';
   else h+='<div class="acts l"><button class="btn y" type="button" data-tbegin="'+t.id+'">Začať test</button><button class="btn ghost" type="button" data-home>Ešte nie</button></div>';
   return h+'</div>';}
@@ -1037,7 +1039,7 @@ function viewHome(){
   var guest=S.session.role==="guest",open=openSets().filter(function(id){return SETS[id].type!=="test";});
   var doneSets=open.filter(function(id){var r=S.data.results[id];return r&&r.best>=80;}).length;
   var first=(S.session.name||"").split(" ")[0],nx=nextSet(),streak=streakOf(S.data.days);
-  var h='<section class="hero"><div class="hero-txt"><h1>'+(first?"Ahoj, "+esc(first)+"!":"Ahoj!")+'</h1>';
+  var h=(S.notice?'<div class="confirm" role="status" style="margin-bottom:16px"><span style="flex:1 1 260px">'+esc(S.notice)+'</span></div>':'')+'<section class="hero"><div class="hero-txt"><h1>'+(first?"Ahoj, "+esc(first)+"!":"Ahoj!")+'</h1>';
   if(nx){var s=SETS[nx.id];
     h+='<button class="go" type="button" data-start="'+nx.id+'"><span class="go-t"><span class="go-k">'+(s.type==="test"?"Modul "+s.mod+" · Test":"Lekcia "+s.lesson+" · "+TYPE_LABEL[s.type])+' · '+esc(nx.why)+'</span><b>'+esc(s.title)+'</b></span><span class="go-b">Pokračovať →</span></button>';}
   else if(!nums(S.unlocked).length)h+='<div class="go done"><span class="go-t"><span class="go-k">Vitajte v Slovak Learn!</span><b>Перший урок відкриє лектор після заняття.</b></span></div>';
@@ -1072,9 +1074,10 @@ function start(id,begin){
   if(mm&&mm[1]==="chyby"){var ks=activeMist(md);if(!ks.length)return go("home");set={id:id,type:"mixed",title:"Moje chyby"+(md?" · Modul "+md:""),ua:"Завдання, де були помилки",lesson:0,chyby:true};items=shuffle(ks).slice(0,15).map(wrapItem);}
   else if(mm){items=buildMix(md);if(!items.length)return go("home");set={id:id,type:"mixed",title:"Opakovanie"+(md?" · Modul "+md:""),ua:"Змішані завдання"+(md?" з уроків модуля":""),lesson:0};}
   else if(SETS[id]&&SETS[id].type==="test"){var ts=SETS[id];if(!setOpenFor(S.unlocked,ts))return go("home");var rec=testRec(ts.id);tOpen=openActive(rec);
-    if(!tOpen&&triesLeft(ts)<=0)return go("home");
-    if(!tOpen&&!begin)return go("tintro",{tintro:ts.id});
-    if(!tOpen){tOpen=rec.open=Date.now();save();}tMin=myTcfg(ts.gate).min;
+    if(tOpen){cutTest(buildTestPlay(ts,tOpen));return go("home");}
+    if(triesLeft(ts)<=0)return go("home");
+    if(!begin)return go("tintro",{tintro:ts.id});
+    tOpen=rec.open=Date.now();save();tMin=myTcfg(ts.gate).min;
     set={id:ts.id,type:"mixed",test:true,title:ts.title,ua:ts.ua,lesson:ts.lesson};
     items=ts.items.map(function(it){return {it:it,set:{type:it.t,ua:it.h,opts:it.opts,nospace:it.nospace}};});}
   else{set=SETS[id];if(!set||!setOpenFor(S.unlocked,set))return go("home");items=set.type==="match"?[]:(set.type==="cards"?shuffle(set.items):shuffle(set.items).map(function(it){return {it:it,set:set};}));}
@@ -1132,14 +1135,21 @@ function viewTest(){
   if(P.confirm)h+='<div class="confirm"><span style="flex:1 1 240px">Без відповіді: <b>'+(n-done)+'</b> '+((n-done)===1?'питання':'питань')+'. Надіслати тест лектору зараз? Після відправлення змінити відповіді вже не можна.</span><button class="btn y sm" type="button" data-tsubmit-ok>Áno, odoslať</button><button class="btn ghost sm" type="button" data-tsubmit-no>Späť k testu</button></div>';
   else if(P.i===n-1||done===n)h+='<p class="muted" style="font-size:13px">Перед відправленням можна повернутися до будь-якого питання через номери вгорі.</p>'+(P.i<n-1?'<button class="btn y" type="button" data-tsubmit style="align-self:flex-start">Odoslať test</button>':'');
   return h+'</div>';}
-function gradeTest(auto){var P=S.play;if(P.done)return;saveTestInput();P.auto=!!auto;P.quitAsk=false;P.confirm=false;P.log=[];P.correct=0;
+function gradeTest(auto){var P=S.play;if(P.done)return;saveTestInput();P.auto=!!auto;P.quitAsk=false;P.confirm=false;gradeCore(P);finishTest();}
+function gradeCore(P){P.log=[];P.correct=0;
   P.items.forEach(function(c,i){var it=c.it,t=c.set.type,g="",v=0;
     if(t==="choice"){g=P.ans[i]||"";v=g===it.a?1:0;}
     else if(t==="order"){g=(c.picked||[]).map(function(x){return x.w;}).join(" ");v=g&&norm(g)===norm(it.a)?1:0;}
     else{g=P.ans[i]||"";if(String(g).trim()){var ns=t==="listen"||c.set.nospace,nv=norm(g,ns),ans=it.a.map(function(a){return norm(a,ns);});v=ans.indexOf(nv)>=0?1:(ans.map(strip).indexOf(strip(nv))>=0?0.5:0);}}
-    P.log.push([String(g||"—").slice(0,80),v]);P.correct+=v;});
-  finishTest();}
-function playStarted(P){if(P.set.test){saveTestInput();return P.items.some(function(c,i){return tAnswered(P,i);});}
+    P.log.push([String(g||"—").slice(0,80),v]);P.correct+=v;});}
+/* leaving a started test = submitting it */
+function cutTest(P){if(!P||!P.set.test||P.done)return;if(S.play===P)saveTestInput();P.cut=true;gradeCore(P);finishTest(P,true);
+  S.notice=P.set.title+" надіслано лектору: ви вийшли з тесту до завершення, тому зараховано відповіді, які ви встигли дати.";}
+function buildTestPlay(ts,op){var P={set:{id:ts.id,type:"mixed",test:true,title:ts.title,ua:ts.ua,lesson:ts.lesson},items:ts.items.map(function(it){return {it:it,set:{type:it.t,ua:it.h,opts:it.opts,nospace:it.nospace}};}),i:0,ans:[],open:op};
+  var m=myTcfg(ts.gate).min;P.deadline=m?op+m*60000:0;tRestore(P);return P;}
+function sweepTests(){TESTS.forEach(function(ts){var rec=(S.data.tests||{})[ts.id],op=openActive(rec);if(!op)return;if(S.play&&S.play.set.id===ts.id&&!S.play.done&&S.view==="play")return;
+  var P=buildTestPlay(ts,op);if(P.deadline&&Date.now()>=P.deadline)P.auto=true;cutTest(P);});}
+function playStarted(P){if(P.set.test)return true;
   if(P.set.type==="match")return P.matched>0||P.mistakes>0;return P.i>0||P.answered||(P.items[P.i]&&P.items[P.i].picked&&P.items[P.i].picked.length>0)||!!(P.input&&P.input.trim());}
 function quitPlay(){var P=S.play;if(P)P.quitAsk=false;return go(P&&P.set.lesson&&!P.set.test?"lesson":"home",P&&P.set.lesson&&!P.set.test?{lesson:P.set.lesson}:null);}
 function partialScore(P){var n,c;if(P.set.type==="match"){n=P.pairs.length;c=Math.max(0,P.matched-P.mistakes);}else if(P.set.type==="cards"){n=P.items.length;c=P.known;}else{n=P.items.length;c=P.correct;}return {c:c,n:n};}
@@ -1147,9 +1157,9 @@ function quitSubmit(){var P=S.play;P.quitAsk=false;if(P.set.test)return gradeTes
   if(P.set.type==="match")tstat("match",r.c,r.n);else if(P.set.type==="cards")tstat("cards",r.c,P.i);
   P.result={pct:record(P.set.id,r.c,r.n),c:r.c,n:r.n,partial:true};go("result");}
 function quitBar(){var P=S.play;if(!P||!P.quitAsk)return "";var msg,ok;
-  if(P.set.test){saveTestInput();var dn=0;for(var q=0;q<P.items.length;q++)if(tAnswered(P,q))dn++;msg='<b>Ukončiť test?</b> Можна надіслати тест зараз (заповнено <b>'+dn+' з '+P.items.length+'</b>) або вийти й повернутися пізніше — відповіді збережуться в цьому браузері.'+(P.deadline?' <b>Таймер не зупиняється.</b>':'');ok='Odoslať test';}
+  if(P.set.test){saveTestInput();var dn=0;for(var q=0;q<P.items.length;q++)if(tAnswered(P,q))dn++;msg='<b>Ukončiť test?</b> Тест буде надіслано лектору з поточними відповідями: заповнено <b>'+dn+' з '+P.items.length+'</b>. Повернутися до нього після виходу не можна.';ok='Odoslať a ukončiť';}
   else{var r=partialScore(P);msg='<b>Ukončiť cvičenie?</b> Буде збережено поточний результат: <b>'+fnum(r.c)+' з '+r.n+'</b> балів (завдання без відповіді рахуються як 0).';ok='Uložiť výsledok a ukončiť';}
-  return '<div class="confirm quitbar" role="alertdialog" aria-label="Ukončiť?"><span style="flex:1 1 260px">'+msg+'</span><button class="btn y sm" type="button" data-quit-ok>'+ok+'</button>'+(P.set.test?'<button class="btn ghost sm" type="button" data-quit-leave>Odísť bez odoslania</button>':'')+'<button class="btn sm" type="button" data-quit-no>Pokračovať</button></div>';}
+  return '<div class="confirm quitbar" role="alertdialog" aria-label="Ukončiť?"><span style="flex:1 1 260px">'+msg+'</span><button class="btn y sm" type="button" data-quit-ok>'+ok+'</button>'+'<button class="btn sm" type="button" data-quit-no>Pokračovať</button></div>';}
 function viewPlay(){
   if(S.play.set.test)return viewTest();
   var P=S.play,t=P.set.type,h=header()+'<div class="stage">';
@@ -1191,11 +1201,11 @@ function answer(v,last){var P=S.play,c=cur();
   if(P.set.test){P.log.push([String(P.given!=null?P.given:last).slice(0,80),v]);P.correct+=v;P.given=null;if(P.i+1>=P.items.length)return finishTest();P.i++;prepItem();render();var f0=app.querySelector("#ans")||app.querySelector(".opt,.tile");if(f0)f0.focus();return;}
   markMist(c.it,v>=1);P.answered=true;P.last=last;P.correct+=v;if(v<1)P.wrong.push({it:c.it,half:v>0});tstat(itemType(),v);render();var nb=app.querySelector("[data-next]");if(nb)nb.focus();}
 function next(){var P=S.play;if(P.i+1>=P.items.length){finish();return;}P.i++;prepItem();render();var f=app.querySelector("#ans")||app.querySelector(".opt,.tile,[data-say]");if(f)f.focus();}
-function finishTest(){var P=S.play,n=P.items.length,c=P.correct,pct=n?Math.round(c/n*100):0;
+function finishTest(P0,silent){var P=P0||S.play,n=P.items.length,c=P.correct,pct=n?Math.round(c/n*100):0;
   var r=S.data.results[P.set.id]?Object.assign({},S.data.results[P.set.id]):{best:0,tries:0};r.best=Math.max(r.best||0,pct);r.last=pct;r.tries=(r.tries||0)+1;r.at=Date.now();S.data.results[P.set.id]=r;S.data.xp+=50;
   var t=today();if(S.data.days.indexOf(t)<0)S.data.days=S.data.days.concat([t]).slice(-90);
-  S.data.tests=S.data.tests||{};var T0=S.data.tests[P.set.id]||{att:[]};var now=Date.now();T0.att=(T0.att||[]).concat([{at:now,s:c,n:n,a:P.log,d:P.open?Math.round((Math.min(now,P.deadline||now)-P.open)/1000):0,auto:P.auto}]).slice(-3);S.data.tests[P.set.id]=T0;
-  P.done=true;lsSet(tKey(P.set.id),null);save();P.result={test:true,auto:P.auto};go("result");}
+  S.data.tests=S.data.tests||{};var T0=S.data.tests[P.set.id]||{att:[]};var now=Date.now();T0.att=(T0.att||[]).concat([{at:now,s:c,n:n,a:P.log,d:P.open?Math.round((Math.min(now,P.deadline||now)-P.open)/1000):0,auto:!!P.auto,cut:!!P.cut&&!P.auto}]).slice(-3);S.data.tests[P.set.id]=T0;
+  P.done=true;lsSet(tKey(P.set.id),null);save();if(silent)return;P.result={test:true,auto:P.auto};go("result");}
 function finish(){
   var P=S.play,n,c;
   if(P.set.type==="match"){n=P.pairs.length;c=Math.max(0,n-P.mistakes);tstat("match",c,n);}
@@ -1350,7 +1360,7 @@ function testReview(t,p){var rec=p.tests&&p.tests[t.id],att=rec&&rec.att;if(!att
     return '<tr class="'+(pts>=1?'':pts>0?'h':'x')+'"><td class="n">'+(i+1)+'</td><td><span class="muted" style="font-size:12px">'+esc((it.h||"").split(" — ")[0])+'</span><br>'+esc(q)+'</td><td>'+esc(g[0]||"—")+'</td><td><b>'+esc(ok)+'</b></td><td class="n">'+fnum(pts)+'</td></tr>';}).join("");
   var hist=att.length>1?' · попередні спроби: '+att.slice(0,-1).map(function(x){return (x.n?Math.round(x.s/x.n*100):0)+" %";}).join(", "):'';
   var secs=testSections(t,A),prevS=att.length>1?testSections(t,att[att.length-2]):null,weak=secs.filter(function(x){return x.pct<60;}),best=secs.filter(function(x){return x.pct>=90;});
-  var sh='<div class="li tsecs"><div><b>Результат по розділах</b> <span class="muted" style="font-size:13px">остання спроба · '+fmtDate(A.at)+(A.d?' · тривалість '+fmtDur(A.d):'')+(A.auto?' · надіслано автоматично, час вийшов':'')+'</span></div><div class="secg">';
+  var sh='<div class="li tsecs"><div><b>Результат по розділах</b> <span class="muted" style="font-size:13px">остання спроба · '+fmtDate(A.at)+(A.d?' · тривалість '+fmtDur(A.d):'')+(A.auto?' · надіслано автоматично, час вийшов':'')+(A.cut?' · учень вийшов з тесту до відправлення':'')+'</span></div><div class="secg">';
   secs.forEach(function(x,i){var col=x.pct<60?"var(--bad)":x.pct<80?"var(--warn)":"var(--good)",pv=prevS&&prevS[i]&&prevS[i].k===x.k?prevS[i].pct:null;
     sh+='<span class="sl">'+esc(x.label)+'</span><span class="prog" role="img" aria-label="'+x.pct+' %"><i style="width:'+Math.max(x.pct,2)+'%;background:'+col+'"></i></span><span class="sv"><b>'+fnum(x.s)+' / '+x.n+'</b>'+(pv!==null?' <small>(було '+pv+' %)</small>':'')+'</span>';});
   sh+='</div>'+(weak.length?'<p style="font-size:14px;margin:0"><b style="color:var(--bad)">Повторити на уроці:</b> '+(weak.length===secs.length?'усі розділи нижче 60 % — варто повторити модуль перед новою спробою.':esc(weak.map(function(x){return x.label;}).join("; "))+'.')+'</p>':'<p style="font-size:14px;margin:0;color:var(--good)"><b>Усі розділи — 60 % і вище.</b></p>')+(best.length&&weak.length?'<p class="muted" style="font-size:13px;margin:0">Добре засвоєно: '+esc(best.map(function(x){return x.label;}).join("; "))+'.</p>':'')+'</div>';
@@ -1480,7 +1490,6 @@ app.addEventListener("click",function(e){
   if(b.hasAttribute("data-home"))return go("home");
   if(b.hasAttribute("data-quit")){if(P&&playStarted(P)&&!P.quitAsk){P.quitAsk=true;render();var qb=app.querySelector("[data-quit-no]");if(qb)qb.focus();window.scrollTo(0,0);return;}return quitPlay();}
   if(b.hasAttribute("data-quit-ok"))return quitSubmit();
-  if(b.hasAttribute("data-quit-leave")){saveTestInput();tPersist();return quitPlay();}
   if(b.hasAttribute("data-tbegin"))return start(b.getAttribute("data-tbegin"),true);
   if(b.hasAttribute("data-dsay"))return speak(b.getAttribute("data-dsay").replace(/\s*…\s*/g," ").replace(/ \/ /g,", "));
   if(b.hasAttribute("data-tmore")){var am=T.accounts.find(function(x){return x.id===T.sel;});if(am){var gt=b.getAttribute("data-tmore"),tt=TESTS.find(function(x){return x.gate===gt;});return setTcfg(am,gt,"tries",usedTries(tt.id,progOf(am.id).results)+1);}return;}
@@ -1538,6 +1547,7 @@ app.addEventListener("change",function(e){var t=e.target;
   if(t.id==="dl"){S.dl=+t.value;var dr=document.getElementById("dres");if(dr)dr.innerHTML=dictList();return;}
   if(t.hasAttribute&&t.hasAttribute("data-tcfg")){var a=T.accounts.find(function(x){return x.id===T.sel;});if(a)setTcfg(a,t.getAttribute("data-tcfg"),t.getAttribute("data-k"),+t.value);}
 });
+window.addEventListener("pagehide",function(){try{saveTestInput();tPersist();}catch(e){}});
 setInterval(function(){var P=S.play;if(!P||!P.set||!P.set.test||!P.deadline||P.done||S.view!=="play")return;var left=P.deadline-Date.now(),el=document.getElementById("tmr");
   if(el){el.textContent="⏱ "+fmtLeft(left);el.classList.toggle("low",left<300000);}if(left<=0)gradeTest(true);},1000);
 app.addEventListener("keydown",function(e){if(e.target.id==="ans"&&e.key==="Enter"){e.preventDefault();if(S.play&&S.play.set.test){if(S.play.i<S.play.items.length-1)testGo(S.play.i+1);}else checkTyped();}});

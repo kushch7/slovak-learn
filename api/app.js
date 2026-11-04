@@ -131,7 +131,7 @@ function cleanProgress(p) {
   for (const [k, t] of Object.entries((p.tests && typeof p.tests === "object") ? p.tests : {}).slice(0, 20)) {
     if (!/^[a-z0-9-]{2,30}$/.test(k) || !t || !Array.isArray(t.att)) continue;
     out.tests[k] = { open: Math.max(0, Math.min(Date.now() + 86400000, +t.open || 0)), att: t.att.slice(-3).filter((x) => x && typeof x === "object").map((x) => ({
-      at: +x.at || Date.now(), d: Math.max(0, Math.min(86400, Math.round(+x.d || 0))), auto: !!x.auto, s: Math.max(0, Math.min(500, +x.s || 0)), n: Math.max(0, Math.min(500, Math.round(+x.n || 0))),
+      at: +x.at || Date.now(), d: Math.max(0, Math.min(86400, Math.round(+x.d || 0))), auto: !!x.auto, cut: !!x.cut, s: Math.max(0, Math.min(500, +x.s || 0)), n: Math.max(0, Math.min(500, Math.round(+x.n || 0))),
       a: (Array.isArray(x.a) ? x.a : []).slice(0, 200).map((r) => [String(Array.isArray(r) ? r[0] : "").slice(0, 80), Math.max(0, Math.min(1, +(Array.isArray(r) ? r[1] : 0) || 0))])
     })) };
   }
