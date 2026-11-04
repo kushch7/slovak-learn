@@ -103,12 +103,21 @@ function verifyFileToken(t) {
   try { const p = JSON.parse(Buffer.from(body, "base64url").toString("utf8")); return p.f === 1 && p.exp > Date.now() ? p : null; } catch { return null; }
 }
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-const publicAcc = (a) => ({ id: a.id, name: a.name, login: a.login, createdAt: a.createdAt, note: a.note || "", unlocked: a.unlocked || [1], demo: !!a.demo });
+const publicAcc = (a) => ({ id: a.id, name: a.name, login: a.login, createdAt: a.createdAt, note: a.note || "", unlocked: a.unlocked || [1], tcfg: a.tcfg || {}, demo: !!a.demo });
 const cleanLessons = (arr) => {
   const list = Array.isArray(arr) ? arr : [];
   const lessons = [...new Set(list.map(Number).filter((n) => LESSONS.includes(n)))].sort((a, b) => a - b);
   const tests = [...new Set(list.filter((x) => typeof x === "string" && /^t\d{1,2}$/.test(x)))].sort();
   return [...lessons, ...tests];
+};
+const cleanTcfg = (o) => {
+  const out = {};
+  if (!o || typeof o !== "object") return out;
+  for (const [k, v] of Object.entries(o).slice(0, 20)) {
+    if (!/^t\d{1,2}$/.test(k) || !v || typeof v !== "object") continue;
+    out[k] = { tries: Math.max(0, Math.min(9, Math.round(+v.tries || 0))), min: Math.max(0, Math.min(240, Math.round(+v.min || 0))) };
+  }
+  return out;
 };
 const validLogin = (l) => /^[a-z0-9._-]{3,30}$/.test(l);
 function cleanProgress(p) {
@@ -121,8 +130,8 @@ function cleanProgress(p) {
   out.tests = {};
   for (const [k, t] of Object.entries((p.tests && typeof p.tests === "object") ? p.tests : {}).slice(0, 20)) {
     if (!/^[a-z0-9-]{2,30}$/.test(k) || !t || !Array.isArray(t.att)) continue;
-    out.tests[k] = { att: t.att.slice(-3).filter((x) => x && typeof x === "object").map((x) => ({
-      at: +x.at || Date.now(), s: Math.max(0, Math.min(500, +x.s || 0)), n: Math.max(0, Math.min(500, Math.round(+x.n || 0))),
+    out.tests[k] = { open: Math.max(0, Math.min(Date.now() + 86400000, +t.open || 0)), att: t.att.slice(-3).filter((x) => x && typeof x === "object").map((x) => ({
+      at: +x.at || Date.now(), d: Math.max(0, Math.min(86400, Math.round(+x.d || 0))), auto: !!x.auto, s: Math.max(0, Math.min(500, +x.s || 0)), n: Math.max(0, Math.min(500, Math.round(+x.n || 0))),
       a: (Array.isArray(x.a) ? x.a : []).slice(0, 200).map((r) => [String(Array.isArray(r) ? r[0] : "").slice(0, 80), Math.max(0, Math.min(1, +(Array.isArray(r) ? r[1] : 0) || 0))])
     })) };
   }
@@ -199,7 +208,7 @@ export default async function handler(req, res) {
       const acc = (await allAccounts()).find((a) => a.login === login);
       if (!acc || !checkPass(pass, acc.pass)) { await sleep(600); return send(res, 401, { error: "bad" }); }
       const progress = await readOne(progPath(acc.id));
-      return send(res, 200, { role: "student", id: acc.id, name: acc.name, unlocked: acc.unlocked || [1], progress, token: sign({ r: "s", id: acc.id, pv: acc.pv || 1, exp: Date.now() + 60 * DAY }), ft: fileToken("s", acc.id, acc.pv || 1) });
+      return send(res, 200, { role: "student", id: acc.id, name: acc.name, unlocked: acc.unlocked || [1], tcfg: acc.tcfg || {}, progress, token: sign({ r: "s", id: acc.id, pv: acc.pv || 1, exp: Date.now() + 60 * DAY }), ft: fileToken("s", acc.id, acc.pv || 1) });
     }
 
     if (!auth) return send(res, 401, { error: "auth" });
@@ -210,7 +219,7 @@ export default async function handler(req, res) {
       if (!acc || (acc.pv || 1) !== auth.pv) return send(res, 401, { error: "auth" });
       if (action === "me") {
         const progress = await readOne(progPath(acc.id));
-        return send(res, 200, { role: "student", id: acc.id, name: acc.name, unlocked: acc.unlocked || [1], progress, ft: fileToken("s", acc.id, acc.pv || 1) });
+        return send(res, 200, { role: "student", id: acc.id, name: acc.name, unlocked: acc.unlocked || [1], tcfg: acc.tcfg || {}, progress, ft: fileToken("s", acc.id, acc.pv || 1) });
       }
       if (action === "saveProgress") {
         const data = cleanProgress(body.progress);
@@ -252,6 +261,12 @@ export default async function handler(req, res) {
       if (!acc) return send(res, 404, { error: "notfound" });
       await Promise.all([removeAll(accPath(acc.id)), removeAll(progPath(acc.id))]);
       return send(res, 200, { ok: true });
+    }
+    if (action === "setTestCfg") {
+      if (!acc) return send(res, 404, { error: "notfound" });
+      acc.tcfg = cleanTcfg(body.tcfg);
+      await writeOne(accPath(acc.id), acc);
+      return send(res, 200, { ok: true, tcfg: acc.tcfg });
     }
     if (action === "saveNote") {
       if (!acc) return send(res, 404, { error: "notfound" });
