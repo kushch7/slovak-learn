@@ -795,7 +795,40 @@ var LESSONS=[
    {ua:"Вранці я вмиваюся і одягаюся.",a:"Ráno sa umývam a obliekam."},
    {ua:"Увечері я чищу зуби.",a:"Večer si čistím zuby."},
    {ua:"Я ніколи не снідаю.",a:"Nikdy neraňajkujem."},
-   {ua:"У суботу ми готуємо і прибираємо.",a:"V sobotu varíme a upratujeme."}]}]}
+   {ua:"У суботу ми готуємо і прибираємо.",a:"V sobotu varíme a upratujeme."}]}]},
+ {n:16,mod:3,title:"Jedlo a varenie",sets:[
+  {id:"l16-jedlo",type:"cards",title:"Jedlo",ua:"Картки: знаю / ще ні",items:[
+   {sk:"chlieb",g:"ten",ua:"хліб",ex:"Kúpim chlieb."},{sk:"mäso",g:"to",ua:"м’ясо",ex:"Nejem mäso."},
+   {sk:"zelenina",g:"tá",ua:"овочі",ex:"Mám rád zeleninu."},{sk:"ovocie",g:"to",ua:"фрукти",ex:"Ovocie je zdravé."},
+   {sk:"syr",g:"ten",ua:"сир",ex:"Prosím si kúsok syra."},{sk:"polievka",g:"tá",ua:"суп",ex:"Polievka je horúca."},
+   {sk:"zemiaky",g:"",ua:"картопля",ex:"Varím zemiaky."},{sk:"cukor",g:"ten",ua:"цукор",ex:"Trochu cukru, prosím."},
+   {sk:"múka",g:"tá",ua:"борошно",ex:"Potrebujem kilo múky."},{sk:"variť",g:"",ua:"варити, готувати",ex:"Rád varím."},
+   {sk:"piecť",g:"",ua:"пекти",ex:"V nedeľu pečieme koláč."},{sk:"krájať",g:"",ua:"різати",ex:"Krájam cibuľu."}]},
+  {id:"l16-mam-rad",type:"choice",title:"Mám rád / páči sa mi",ua:"Виберіть правильну форму",items:[
+   {q:"Peter má ___ syr.",opts:["rád","rada","radi"],a:"rád",why:"on → má rád"},
+   {q:"Jana má ___ ovocie.",opts:["rád","rada","radi"],a:"rada",why:"ona → má rada"},
+   {q:"My máme ___ polievku.",opts:["rád","rada","radi"],a:"radi",why:"my → máme radi"},
+   {q:"Mama má ___ kávu.",opts:["rád","rada","radi"],a:"rada",why:"ona → má rada"},
+   {q:"___ sa mi tá reštaurácia.",opts:["Páči","Páčia"],a:"Páči",why:"tá reštaurácia — однина → páči sa"},
+   {q:"___ sa ti tieto koláče?",opts:["Páči","Páčia"],a:"Páčia",why:"koláče — множина → páčia sa"},
+   {q:"Tá polievka sa mi ___ .",opts:["páči","páčia"],a:"páči",why:"polievka — однина"}]},
+  {id:"l16-mnozstvo",type:"type",title:"Koľko?",ua:"Напишіть слово після кількості (2-й відмінок)",items:[
+   {q:"fľaša ___",hint:"voda",a:["vody"],why:"fľaša vody"},
+   {q:"kúsok ___",hint:"chlieb",a:["chleba"],why:"kúsok chleba"},
+   {q:"trochu ___",hint:"cukor",a:["cukru"],why:"trochu cukru"},
+   {q:"veľa ___",hint:"zelenina",a:["zeleniny"],why:"veľa zeleniny"},
+   {q:"šálka ___",hint:"káva",a:["kávy"],why:"šálka kávy"},
+   {q:"kilo ___",hint:"múka",a:["múky"],why:"kilo múky"},
+   {q:"kilo ___",hint:"zemiaky",a:["zemiakov"],why:"kilo zemiakov"},
+   {q:"pol kila ___",hint:"mäso",a:["mäsa"],why:"pol kila mäsa"}]},
+  {id:"l16-varenie",type:"match",title:"V kuchyni",ua:"З’єднайте пари",labels:["Slovensky","Po ukrajinsky"],pairs:[
+   ["variť","варити"],["piecť","пекти"],["krájať","різати"],["miešať","мішати"],["soliť","солити"],["ochutnať","скуштувати"],["recept","рецепт"]]},
+  {id:"l16-vety",type:"order",title:"Čo máš rád?",ua:"Складіть речення зі слів",items:[
+   {ua:"Я люблю овочі.",a:"Mám rád zeleninu."},
+   {ua:"Мені подобається цей ресторан.",a:"Páči sa mi tá reštaurácia."},
+   {ua:"Будь ласка, шматочок сиру.",a:"Prosím si kúsok syra."},
+   {ua:"Я додам трохи цукру.",a:"Pridám trochu cukru."},
+   {ua:"У неділю ми печемо пиріг.",a:"V nedeľu pečieme koláč."}]}]}
 ];
 var TYPE_LABEL={chyby:"Chyby",choice:"Výber",type:"Písanie",match:"Spájanie",order:"Poradie slov",listen:"Počúvanie",cards:"Kartičky",mixed:"Mix",test:"Test"};
 var MODULES=[{n:1,level:"A1",title:"Prvé kroky",ua:"Перші кроки"},{n:2,level:"A1",title:"V meste",ua:"У місті"},{n:3,level:"A1",title:"Domov",ua:"Дім"}];
@@ -1385,7 +1418,7 @@ function statusPill(account){var a=advice(account),s=summary(account);
 /* ================= teacher: views ================= */
 var CL="https://claude.ai/artifact/";
 /* Матеріали: PDF видає захищений сервер (/api/file) — учень отримує лише шпаргалку й ДЗ відкритих уроків, лектор — усе */
-var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};
+var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15,16].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};
 var TEST_MAT={t1:{test:"test1",key:"test1-kluc",label:"Test 1"},t2:{test:"test2",key:"test2-kluc",label:"Test 2"}};
 var MAT="materials/";function fileHref(name){return API.fileUrl?API.fileUrl(name):MAT+name+".pdf";}
 var GUIDES={student:"prirucka-student",teacher:"prirucka-lektor"};
