@@ -828,7 +828,39 @@ var LESSONS=[
    {ua:"Мені подобається цей ресторан.",a:"Páči sa mi tá reštaurácia."},
    {ua:"Будь ласка, шматочок сиру.",a:"Prosím si kúsok syra."},
    {ua:"Я додам трохи цукру.",a:"Pridám trochu cukru."},
-   {ua:"У неділю ми печемо пиріг.",a:"V nedeľu pečieme koláč."}]}]}
+   {ua:"У неділю ми печемо пиріг.",a:"V nedeľu pečieme koláč."}]}]},
+ {n:17,mod:3,title:"V reštaurácii",sets:[
+  {id:"l17-menu",type:"cards",title:"Jedálny lístok",ua:"Картки: знаю / ще ні",items:[
+   {sk:"jedálny lístok",g:"ten",ua:"меню",ex:"Tu je jedálny lístok."},{sk:"predjedlo",g:"to",ua:"закуска",ex:"Ako predjedlo si dám šalát."},
+   {sk:"hlavné jedlo",g:"to",ua:"основна страва",ex:"Hlavné jedlo je guláš."},{sk:"príloha",g:"tá",ua:"гарнір",ex:"Aká je príloha?"},
+   {sk:"dezert",g:"ten",ua:"десерт",ex:"Na dezert sú palacinky."},{sk:"nápoj",g:"ten",ua:"напій",ex:"Aký nápoj si dáte?"},
+   {sk:"rezeň",g:"ten",ua:"шніцель",ex:"Chcel by som rezeň."},{sk:"hranolky",g:"",ua:"картопля фрі",ex:"Vyprážaný syr a hranolky."},
+   {sk:"rezervácia",g:"tá",ua:"бронювання",ex:"Máte rezerváciu?"},{sk:"tanier",g:"ten",ua:"тарілка",ex:"Tanier je prázdny."},
+   {sk:"vidlička",g:"tá",ua:"виделка",ex:"Chýba mi vidlička."},{sk:"objednať si",g:"",ua:"замовити",ex:"Môžem si objednať?"}]},
+  {id:"l17-chcel",type:"choice",title:"Chcel by som…",ua:"Виберіть правильну форму",opts:["Chcel","Chcela","Chceli"],items:[
+   {q:"Peter: ___ by som guláš.",a:"Chcel",why:"чоловік → Chcel by som"},
+   {q:"Anna: ___ by som šalát.",a:"Chcela",why:"жінка → Chcela by som"},
+   {q:"My: ___ by sme stôl pre dve osoby.",a:"Chceli",why:"my → Chceli by sme"},
+   {q:"Mária: ___ by som vodu.",a:"Chcela",why:"жінка → Chcela by som"},
+   {q:"Tomáš: ___ by som pivo.",a:"Chcel",why:"чоловік → Chcel by som"},
+   {q:"Vy: ___ by ste dezert?",a:"Chceli",why:"vy → Chceli by ste"}]},
+  {id:"l17-mnozne",type:"type",title:"Dve, dva…",ua:"Напишіть слово в множині",items:[
+   {q:"dve ___",hint:"polievka",a:["polievky"],why:"tá polievka → dve polievky"},
+   {q:"dva ___",hint:"rezeň",a:["rezne"],why:"ten rezeň → dva rezne"},
+   {q:"dve ___",hint:"pivo",a:["pivá"],why:"to pivo → dve pivá"},
+   {q:"tri ___",hint:"kofola",a:["kofoly"],why:"tá kofola → tri kofoly"},
+   {q:"dva ___",hint:"šalát",a:["šaláty"],why:"ten šalát → dva šaláty"},
+   {q:"dve ___",hint:"víno",a:["vína"],why:"to víno → dve vína (довгий склад → коротке -a)"},
+   {q:"štyri ___",hint:"palacinka",a:["palacinky"],why:"tá palacinka → štyri palacinky"},
+   {q:"dva ___",hint:"koláč",a:["koláče"],why:"ten koláč → dva koláče"}]},
+  {id:"l17-frazy",type:"match",title:"V reštaurácii",ua:"З’єднайте пари",labels:["Slovensky","Po ukrajinsky"],pairs:[
+   ["Máte rezerváciu?","У вас є бронювання?"],["Čo nám odporúčate?","Що ви нам порадите?"],["Pre koľko osôb?","На скільки осіб?"],["Polievka je studená.","Суп холодний."],["Čakáme už dlho.","Ми вже довго чекаємо."],["Ospravedlňujem sa.","Вибачте."],["Účet, prosím.","Рахунок, будь ласка."]]},
+  {id:"l17-vety",type:"order",title:"Objednávame",ua:"Складіть речення зі слів",items:[
+   {ua:"Я б хотів забронювати столик.",a:"Chcel by som rezervovať stôl."},
+   {ua:"Столик на двох, будь ласка.",a:"Stôl pre dve osoby, prosím."},
+   {ua:"Я б хотіла вареники і салат.",a:"Chcela by som pirohy a šalát."},
+   {ua:"Дві колі, будь ласка.",a:"Dve kofoly, prosím."},
+   {ua:"Перепрошую, суп холодний.",a:"Prepáčte, polievka je studená."}]}]}
 ];
 var TYPE_LABEL={chyby:"Chyby",choice:"Výber",type:"Písanie",match:"Spájanie",order:"Poradie slov",listen:"Počúvanie",cards:"Kartičky",mixed:"Mix",test:"Test"};
 var MODULES=[{n:1,level:"A1",title:"Prvé kroky",ua:"Перші кроки"},{n:2,level:"A1",title:"V meste",ua:"У місті"},{n:3,level:"A1",title:"Domov",ua:"Дім"}];
@@ -1418,7 +1450,7 @@ function statusPill(account){var a=advice(account),s=summary(account);
 /* ================= teacher: views ================= */
 var CL="https://claude.ai/artifact/";
 /* Матеріали: PDF видає захищений сервер (/api/file) — учень отримує лише шпаргалку й ДЗ відкритих уроків, лектор — усе */
-var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15,16].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};
+var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15,16,17].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};
 var TEST_MAT={t1:{test:"test1",key:"test1-kluc",label:"Test 1"},t2:{test:"test2",key:"test2-kluc",label:"Test 2"}};
 var MAT="materials/";function fileHref(name){return API.fileUrl?API.fileUrl(name):MAT+name+".pdf";}
 var GUIDES={student:"prirucka-student",teacher:"prirucka-lektor"};
