@@ -103,7 +103,7 @@ function verifyFileToken(t) {
   try { const p = JSON.parse(Buffer.from(body, "base64url").toString("utf8")); return p.f === 1 && p.exp > Date.now() ? p : null; } catch { return null; }
 }
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-const publicAcc = (a) => ({ id: a.id, name: a.name, login: a.login, createdAt: a.createdAt, note: a.note || "", unlocked: a.unlocked || [1], tcfg: a.tcfg || {}, demo: !!a.demo });
+const publicAcc = (a) => ({ id: a.id, name: a.name, login: a.login, createdAt: a.createdAt, note: a.note || "", unlocked: a.unlocked || [1], tcfg: a.tcfg || {}, hide: a.hide || [], demo: !!a.demo });
 const cleanLessons = (arr) => {
   const list = Array.isArray(arr) ? arr : [];
   const lessons = [...new Set(list.map(Number).filter((n) => LESSONS.includes(n)))].sort((a, b) => a - b);
@@ -208,7 +208,7 @@ export default async function handler(req, res) {
       const acc = (await allAccounts()).find((a) => a.login === login);
       if (!acc || !checkPass(pass, acc.pass)) { await sleep(600); return send(res, 401, { error: "bad" }); }
       const progress = await readOne(progPath(acc.id));
-      return send(res, 200, { role: "student", id: acc.id, name: acc.name, unlocked: acc.unlocked || [1], tcfg: acc.tcfg || {}, progress, token: sign({ r: "s", id: acc.id, pv: acc.pv || 1, exp: Date.now() + 60 * DAY }), ft: fileToken("s", acc.id, acc.pv || 1) });
+      return send(res, 200, { role: "student", id: acc.id, name: acc.name, unlocked: acc.unlocked || [1], tcfg: acc.tcfg || {}, hide: acc.hide || [], progress, token: sign({ r: "s", id: acc.id, pv: acc.pv || 1, exp: Date.now() + 60 * DAY }), ft: fileToken("s", acc.id, acc.pv || 1) });
     }
 
     if (!auth) return send(res, 401, { error: "auth" });
@@ -219,7 +219,7 @@ export default async function handler(req, res) {
       if (!acc || (acc.pv || 1) !== auth.pv) return send(res, 401, { error: "auth" });
       if (action === "me") {
         const progress = await readOne(progPath(acc.id));
-        return send(res, 200, { role: "student", id: acc.id, name: acc.name, unlocked: acc.unlocked || [1], tcfg: acc.tcfg || {}, progress, ft: fileToken("s", acc.id, acc.pv || 1) });
+        return send(res, 200, { role: "student", id: acc.id, name: acc.name, unlocked: acc.unlocked || [1], tcfg: acc.tcfg || {}, hide: acc.hide || [], progress, ft: fileToken("s", acc.id, acc.pv || 1) });
       }
       if (action === "saveProgress") {
         const data = cleanProgress(body.progress);
@@ -261,6 +261,13 @@ export default async function handler(req, res) {
       if (!acc) return send(res, 404, { error: "notfound" });
       await Promise.all([removeAll(accPath(acc.id)), removeAll(progPath(acc.id))]);
       return send(res, 200, { ok: true });
+    }
+    if (action === "setHidden") {
+      if (!acc) return send(res, 404, { error: "notfound" });
+      const mods = Array.isArray(body.mods) ? body.mods : [];
+      acc.hide = [...new Set(mods.map(Number).filter((n) => Number.isInteger(n) && n >= 1 && n <= 20))].sort((a, b) => a - b);
+      await writeOne(accPath(acc.id), acc);
+      return send(res, 200, { ok: true, hide: acc.hide });
     }
     if (action === "setTestCfg") {
       if (!acc) return send(res, 404, { error: "notfound" });
