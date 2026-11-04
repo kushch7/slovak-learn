@@ -32,7 +32,7 @@ export default async function handler(req, res) {
         const m = f.match(/^l(\d{1,2})-(tahak|domaca-uloha)$/);
         const hidden = (acc.hide || []).map(Number);
         // modules have 6 lessons each (1–6 → 1, 7–12 → 2, …)
-        ok = f === "prirucka-student" || (!!m && (acc.unlocked || [1]).map(Number).includes(+m[1]) && !hidden.includes(Math.ceil(+m[1] / 6)));
+        ok = f === "prirucka-student" || (!!m && (acc.unlocked || [1]).map(Number).includes(+m[1]) && !hidden.includes(Math.ceil(+m[1] / 6)) && !(acc.mclose || []).includes((m[2] === "tahak" ? "c" : "h") + (+m[1])));
       }
     }
     if (!ok) return page(res, 403, "Цей матеріал вам ще недоступний. Його відкриє лектор після заняття.");
