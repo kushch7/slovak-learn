@@ -1029,7 +1029,47 @@ var LESSONS=[
    {ua:"Чи може вона залишитися до четвертої?",a:"Môže zostať do štvrtej?"},
    {ua:"На уроці мобільний не можна.",a:"Na hodine nesmie mať mobil."},
    {ua:"Я хочу записати сина до садочка.",a:"Chcem prihlásiť syna do škôlky."},
-   {ua:"У суботу ти не мусиш іти до школи.",a:"V sobotu nemusíš ísť do školy."}]}]}
+   {ua:"У суботу ти не мусиш іти до школи.",a:"V sobotu nemusíš ísť do školy."}]}]},
+ {n:22,mod:4,title:"Telefón a e-mail",sets:[
+  {id:"l22-slova",type:"vocab",title:"Telefón a e-mail",ua:"Картки: знаю / ще ні",items:[
+   {sk:"hovor",g:"ten",ua:"дзвінок",ex:"Mám hovor."},{sk:"zavolať",g:"",ua:"зателефонувати",ex:"Zavolám vám zajtra."},
+   {sk:"správa",g:"tá",ua:"повідомлення",ex:"Pošlite mi správu."},{sk:"odkaz",g:"ten",ua:"повідомлення (голосове)",ex:"Chcete nechať odkaz?"},
+   {sk:"predmet",g:"ten",ua:"тема листа",ex:"Predmet: Zmena termínu"},{sk:"príloha",g:"tá",ua:"вкладення",ex:"Posielam prílohu."},
+   {sk:"objednať sa",g:"",ua:"записатися",ex:"Chcela by som sa objednať."},{sk:"zrušiť",g:"",ua:"скасувати",ex:"Chcem zrušiť termín."},
+   {sk:"zmeniť",g:"",ua:"змінити",ex:"Môžem zmeniť termín?"},{sk:"odpovedať",g:"",ua:"відповісти",ex:"Odpovedzte mi, prosím."},
+   {sk:"pani doktorka",g:"",ua:"пані лікарко",ex:"Dobrý deň, pani doktorka."},{sk:"S pozdravom",g:"",ua:"З повагою",ex:"S pozdravom, Oksana"}]},
+  {id:"l22-oslovenie",type:"choice",title:"Pán, alebo pani?",ua:"Як звернутися?",items:[
+   {q:"Dobrý deň, ___ Nováková.",opts:["pani","pán"],a:"pani",why:"жінка → pani"},
+   {q:"Dobrý deň, ___ doktor.",opts:["pán","pani"],a:"pán",why:"чоловік → pán doktor"},
+   {q:"Prepáčte, pani ___ …",opts:["učiteľka","učiteľ"],a:"učiteľka",why:"pani + жіноча посада"},
+   {q:"___ pani Horváthová, (у листі)",opts:["Vážená","Vážený"],a:"Vážená",why:"pani → vážená"},
+   {q:"___ pán Novák, (у листі)",opts:["Vážený","Vážená"],a:"Vážený",why:"pán → vážený"},
+   {q:"Як закінчити офіційний лист?",opts:["S pozdravom","Ahoj","Čau"],a:"S pozdravom",why:"офіційно → S pozdravom"},
+   {q:"Лікарю ви кажете:",opts:["Dobrý deň, pán doktor.","Ahoj, doktor!","Čau, pán doktor."],a:"Dobrý deň, pán doktor.",why:"офіційно й на vy"}]},
+  {id:"l22-chcel",type:"type",title:"Chcel by som · Mohli by ste",ua:"Напишіть потрібне слово",items:[
+   {q:"(Peter) ___ by som sa objednať.",a:["Chcel"],why:"чоловік → Chcel by som"},
+   {q:"(Anna) ___ by som zrušiť termín.",a:["Chcela"],why:"жінка → Chcela by som"},
+   {q:"(my) ___ by sme zmeniť termín.",a:["Chceli"],why:"my → Chceli by sme"},
+   {q:"___ by ste to zopakovať?",hint:"чи не могли б ви",a:["Mohli"],why:"Mohli by ste…? — ввічливе прохання"},
+   {q:"Zle vás ___ .",hint:"чую",a:["počujem"],why:"Zle vás počujem. — погано вас чую"},
+   {q:"Chcela by som ___ objednať.",a:["sa"],why:"objednať sa → by som sa objednať"},
+   {q:"Volám ___ termínu.",hint:"щодо",a:["kvôli"],why:"Volám kvôli termínu."},
+   {q:"To mi ___ .",hint:"підходить",a:["vyhovuje"],why:"To mi vyhovuje. — мені це підходить"}]},
+  {id:"l22-chyba",type:"error",title:"Nájdi chybu",ua:"Натисніть на слово з помилкою",items:[
+   {q:"Dobrý deň, pán Nováková.",opts:["Dobrý","deň","pán","Nováková"],a:"pán",why:"pani Nováková"},
+   {q:"Ahoj, pán doktor!",opts:["Ahoj","pán","doktor"],a:"Ahoj",why:"Dobrý deň, pán doktor!"},
+   {q:"Peter: Chcela by som zrušiť termín.",opts:["Chcela","by","som","zrušiť","termín"],a:"Chcela",why:"Peter → Chcel by som"},
+   {q:"Môžeš mi zavolať, pani učiteľka?",opts:["Môžeš","mi","zavolať","pani","učiteľka"],a:"Môžeš",why:"на vy → Môžete"},
+   {q:"Vážený pani Horváthová,",opts:["Vážený","pani","Horváthová"],a:"Vážený",why:"Vážená pani"},
+   {q:"Zle vás vidím, môžete to zopakovať?",opts:["Zle","vás","vidím","môžete","zopakovať"],a:"vidím",why:"по телефону — počujem"}]},
+  {id:"l22-frazy",type:"match",title:"Na telefóne",ua:"З’єднайте пари",labels:["Slovensky","Po ukrajinsky"],pairs:[
+   ["Tu je Oksana.","Це Оксана."],["Zle vás počujem.","Погано вас чую."],["Moment, prepojím vás.","Хвилинку, з’єдную."],["Chcete nechať odkaz?","Хочете залишити повідомлення?"],["Zavolám vám späť.","Я вам передзвоню."],["To mi vyhovuje.","Мені це підходить."],["Linka je obsadená.","Лінія зайнята."]]},
+  {id:"l22-vety",type:"order",title:"Telefonát",ua:"Складіть речення зі слів",items:[
+   {ua:"Я б хотіла записатися до лікаря.",a:"Chcela by som sa objednať k lekárovi."},
+   {ua:"Чи не могли б ви це повторити?",a:"Mohli by ste to zopakovať?"},
+   {ua:"Телефоную щодо запису.",a:"Volám kvôli termínu."},
+   {ua:"Добрий день, пані вчителько.",a:"Dobrý deň, pani učiteľka."},
+   {ua:"Я б хотів скасувати запис.",a:"Chcel by som zrušiť termín."}]}]}
 ];
 var TYPE_LABEL={chyby:"Chyby",choice:"Výber",type:"Písanie",match:"Spájanie",order:"Poradie slov",listen:"Počúvanie",cards:"Kartičky",odd:"Čo nepatrí?",error:"Nájdi chybu",mixed:"Mix",test:"Test"};
 var MODULES=[{n:1,level:"A1",title:"Prvé kroky",ua:"Перші кроки"},{n:2,level:"A1",title:"V meste",ua:"У місті"},{n:3,level:"A1",title:"Domov",ua:"Дім"},{n:4,level:"A1",title:"Úrady a služby",ua:"Установи й послуги"}];
@@ -1647,7 +1687,7 @@ function statusPill(account){var a=advice(account),s=summary(account);
 /* ================= teacher: views ================= */
 var CL="https://claude.ai/artifact/";
 /* Матеріали: PDF видає захищений сервер (/api/file) — учень отримує лише шпаргалку й ДЗ відкритих уроків, лектор — усе */
-var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15,16,17,19,20,21].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};MATERIALS[18]={deck:"l18-prezentacia"};for(var _n=1;_n<=21;_n++)MATERIALS[_n].ex="l"+_n+"-precvicovanie";
+var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15,16,17,19,20,21,22].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};MATERIALS[18]={deck:"l18-prezentacia"};for(var _n=1;_n<=22;_n++)MATERIALS[_n].ex="l"+_n+"-precvicovanie";
 var TEST_MAT={t1:{test:"test1",key:"test1-kluc",label:"Test 1"},t2:{test:"test2",key:"test2-kluc",label:"Test 2"},t3:{test:"test3",key:"test3-kluc",label:"Test 3"}};
 var MAT="materials/";function fileHref(name){return API.fileUrl?API.fileUrl(name):MAT+name+".pdf";}
 var GUIDES={student:"prirucka-student",teacher:"prirucka-lektor"};
