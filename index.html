@@ -989,7 +989,47 @@ var LESSONS=[
    {ua:"Мені погано з понеділка.",a:"Je mi zle od pondelka."},
    {ua:"У мене температура і кашель.",a:"Mám horúčku a kašeľ."},
    {ua:"Як мені приймати ліки?",a:"Ako mám užívať lieky?"},
-   {ua:"Тричі на день після їжі.",a:"Trikrát denne po jedle."}]}]}
+   {ua:"Тричі на день після їжі.",a:"Trikrát denne po jedle."}]}]},
+ {n:21,mod:4,title:"Deti a škola",sets:[
+  {id:"l21-skola",type:"vocab",title:"Škola a škôlka",ua:"Картки: знаю / ще ні",items:[
+   {sk:"škola",g:"tá",ua:"школа",ex:"Sofia chodí do školy."},{sk:"škôlka",g:"tá",ua:"садочок",ex:"Andrij chodí do škôlky."},
+   {sk:"trieda",g:"tá",ua:"клас",ex:"Som mama Sofie z 2. B."},{sk:"učiteľka",g:"tá",ua:"учителька",ex:"Učiteľka je milá."},
+   {sk:"prestávka",g:"tá",ua:"перерва",ex:"Na prestávke jeme desiatu."},{sk:"rozvrh",g:"ten",ua:"розклад",ex:"Aký máš rozvrh?"},
+   {sk:"družina",g:"tá",ua:"продовжений день",ex:"Po škole ide do družiny."},{sk:"známka",g:"tá",ua:"оцінка",ex:"Jednotka je najlepšia známka."},
+   {sk:"prezúvky",g:"",ua:"змінне взуття",ex:"Deti musia mať prezúvky."},{sk:"prázdniny",g:"",ua:"канікули",ex:"V lete sú prázdniny."},
+   {sk:"zápis",g:"ten",ua:"запис",ex:"Zápis je v apríli."},{sk:"musieť",g:"",ua:"мусити",ex:"Musím ísť."}]},
+  {id:"l21-modal",type:"choice",title:"Musí, môže, alebo smie?",ua:"Що підходить за змістом?",items:[
+   {q:"V škole ___ deti nosiť prezúvky. (так треба)",opts:["musia","môžu","smú"],a:"musia",why:"обов’язок → musieť"},
+   {q:"___ mi pomôcť? (ввічливе прохання, vy)",opts:["Môžete","Musíte","Smiete"],a:"Môžete",why:"ввічливе прохання → Môžete…?"},
+   {q:"Na hodine ___ používať mobil. (заборонено, ty)",opts:["nesmieš","nemusíš","nemôžeš"],a:"nesmieš",why:"заборона → nesmieš"},
+   {q:"V sobotu ___ ísť do školy. (не треба, ty)",opts:["nemusíš","nesmieš","nemôžeš"],a:"nemusíš",why:"не обов’язково → nemusíš"},
+   {q:"Som chorá, zajtra ___ prísť. (не можу)",opts:["nemôžem","nesmiem","nemusím"],a:"nemôžem",why:"немає можливості → nemôžem"},
+   {q:"Mami, ___ ísť von? (дозвіл, ja)",opts:["smiem","musím","môžu"],a:"smiem",why:"дозвіл → Smiem…? (або Môžem…?)"},
+   {q:"Oni ___ zostať v družine do piatej.",opts:["môžu","môžú","môže"],a:"môžu",why:"oni → môžu"}]},
+  {id:"l21-tvary",type:"type",title:"Musím, môžem, smiem",ua:"Напишіть правильну форму",items:[
+   {q:"(ja) ___ ísť do práce.",hint:"musieť",a:["musím","Musím"],why:"ja → musím"},
+   {q:"Deti ___ nosiť prezúvky.",hint:"musieť",a:["musia"],why:"oni → musia"},
+   {q:"(my) ___ prísť zajtra.",hint:"môcť",a:["môžeme","Môžeme"],why:"my → môžeme"},
+   {q:"Oni ___ zostať v družine.",hint:"môcť",a:["môžu"],why:"oni → môžu"},
+   {q:"(ty) ___ pozerať televíziu.",hint:"smieť",a:["smieš","Smieš"],why:"ty → smieš"},
+   {q:"Deti ___ jesť na prestávke.",hint:"smieť",a:["smú"],why:"oni → smú"},
+   {q:"(vy) ___ vyplniť prihlášku.",hint:"musieť",a:["musíte","Musíte"],why:"vy → musíte"},
+   {q:"Sofia ___ viac čítať.",hint:"musieť",a:["musí"],why:"ona → musí"}]},
+  {id:"l21-chyba",type:"error",title:"Nájdi chybu",ua:"Натисніть на слово з помилкою",items:[
+   {q:"Oni môžú prísť zajtra.",opts:["Oni","môžú","prísť","zajtra"],a:"môžú",why:"oni môžu (коротке u)"},
+   {q:"Deti smia jesť na prestávke.",opts:["Deti","smia","jesť","na","prestávke"],a:"smia",why:"oni smú"},
+   {q:"Ja musí ísť do práce.",opts:["Ja","musí","ísť","do","práce"],a:"musí",why:"ja musím"},
+   {q:"Na hodine nemusíš mať mobil — je to zakázané.",opts:["Na","hodine","nemusíš","mať","mobil"],a:"nemusíš",why:"заборонено → nesmieš"},
+   {q:"Môžeš mi pomôcť, pani učiteľka?",opts:["Môžeš","mi","pomôcť","pani","učiteľka"],a:"Môžeš",why:"до вчительки на vy → Môžete"},
+   {q:"Jednotka je najhoršia známka.",opts:["Jednotka","je","najhoršia","známka"],a:"najhoršia",why:"jednotka je najlepšia známka"}]},
+  {id:"l21-frazy",type:"match",title:"V škole",ua:"З’єднайте пари",labels:["Slovensky","Po ukrajinsky"],pairs:[
+   ["Môže zostať v družine?","Чи може вона залишитися на продовженому дні?"],["Musí nosiť prezúvky?","Їй треба носити змінне взуття?"],["Na hodine nesmie.","На уроці не можна."],["Zajtra nemôžem prísť.","Завтра я не можу прийти."],["To nevadí.","Нічого страшного."],["Musíte vyplniť prihlášku.","Ви мусите заповнити заяву."],["Môžete mi pomôcť?","Можете мені допомогти?"]]},
+  {id:"l21-vety",type:"order",title:"Deti a škola",ua:"Складіть речення зі слів",items:[
+   {ua:"Софія мусить більше читати.",a:"Sofia musí viac čítať."},
+   {ua:"Чи може вона залишитися до четвертої?",a:"Môže zostať do štvrtej?"},
+   {ua:"На уроці мобільний не можна.",a:"Na hodine nesmie mať mobil."},
+   {ua:"Я хочу записати сина до садочка.",a:"Chcem prihlásiť syna do škôlky."},
+   {ua:"У суботу ти не мусиш іти до школи.",a:"V sobotu nemusíš ísť do školy."}]}]}
 ];
 var TYPE_LABEL={chyby:"Chyby",choice:"Výber",type:"Písanie",match:"Spájanie",order:"Poradie slov",listen:"Počúvanie",cards:"Kartičky",odd:"Čo nepatrí?",error:"Nájdi chybu",mixed:"Mix",test:"Test"};
 var MODULES=[{n:1,level:"A1",title:"Prvé kroky",ua:"Перші кроки"},{n:2,level:"A1",title:"V meste",ua:"У місті"},{n:3,level:"A1",title:"Domov",ua:"Дім"},{n:4,level:"A1",title:"Úrady a služby",ua:"Установи й послуги"}];
@@ -1607,7 +1647,7 @@ function statusPill(account){var a=advice(account),s=summary(account);
 /* ================= teacher: views ================= */
 var CL="https://claude.ai/artifact/";
 /* Матеріали: PDF видає захищений сервер (/api/file) — учень отримує лише шпаргалку й ДЗ відкритих уроків, лектор — усе */
-var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15,16,17,19,20].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};MATERIALS[18]={deck:"l18-prezentacia"};for(var _n=1;_n<=20;_n++)MATERIALS[_n].ex="l"+_n+"-precvicovanie";
+var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15,16,17,19,20,21].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};MATERIALS[18]={deck:"l18-prezentacia"};for(var _n=1;_n<=21;_n++)MATERIALS[_n].ex="l"+_n+"-precvicovanie";
 var TEST_MAT={t1:{test:"test1",key:"test1-kluc",label:"Test 1"},t2:{test:"test2",key:"test2-kluc",label:"Test 2"},t3:{test:"test3",key:"test3-kluc",label:"Test 3"}};
 var MAT="materials/";function fileHref(name){return API.fileUrl?API.fileUrl(name):MAT+name+".pdf";}
 var GUIDES={student:"prirucka-student",teacher:"prirucka-lektor"};
