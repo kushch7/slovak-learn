@@ -3,6 +3,10 @@
     {
       "source": "/lektor",
       "destination": "/index.html"
+    },
+    {
+      "source": "/tarify",
+      "destination": "/tarify.html"
     }
   ],
   "headers": [

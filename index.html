@@ -1172,7 +1172,7 @@ function viewLogin(){
   h+='<div class="field"><label for="lg-pass">Heslo · пароль</label><input id="lg-pass" type="password" autocomplete="current-password"></div>';
   h+='<button class="btn" type="submit"'+(S.busy||!S.ready?" disabled":"")+'>'+(S.busy?"Prihlasujem…":(!S.ready?"Načítavam…":(teacher?"Vstúpiť do kabinetu lektora":"Prihlásiť sa")))+'</button></form>';
   if(teacher)h+='<button class="linkbtn" type="button" data-tostudent style="align-self:center">← Вхід для учнів</button>';
-  else h+='<button class="linkbtn" type="button" data-guest style="align-self:center">Skúsiť cvičenia bez prihlásenia</button><p class="muted" style="font-size:13px;text-align:center">Без входу прогрес зберігається лише в цьому браузері, і лектор його не бачить.</p>';
+  else h+='<button class="linkbtn" type="button" data-guest style="align-self:center">Skúsiť cvičenia bez prihlásenia</button><p class="muted" style="font-size:13px;text-align:center">Без входу прогрес зберігається лише в цьому браузері, і лектор його не бачить.</p><a class="linkbtn" href="/tarify" style="align-self:center">Ще не вчитеся з нами? Тарифи та запис →</a>';
   if(S.ready&&!S.online)h+='<div class="note">Сервер зараз недоступний, тож вхід за логіном не працює.'+(teacher?'':' Можна спробувати вправи без входу.')+'</div>';
   return h+'</div>';
 }

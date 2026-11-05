@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Slovak Learn — тарифи</title>
+<meta name="description" content="Онлайн-уроки словацької для українців: групові та індивідуальні, A1–B2. PDF-вправи, шпаргалки й онлайн-платформа для практики.">
+<link rel="icon" href="img/logo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
+<style>
+:root{
+  --bg:#F3F6FC; --surface:#FFFFFF; --ink:#13254F; --muted:#4B5D86; --line:#C9D5EE; --soft:#DCE6FA;
+  --hdr:#0F3271; --navy:#0F3271; --blue:#1034AF; --btn:#1034AF; --btn-ink:#FFFFFF;
+  --accent:#FFD25A; --accent-ink:#0F3271; --good:#1D6B41;
+  --font:'Montserrat','Segoe UI',Arial,sans-serif; color-scheme:light;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0B1630; --surface:#13234B; --ink:#E8EEFB; --muted:#A9B8DB; --line:#2A3D6E; --soft:#1C3066;
+  --hdr:#07122B; --navy:#C9D7FA; --blue:#8FB0EE; --btn:#3D63D9; --good:#7AD9A2; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0B1630; --surface:#13234B; --ink:#E8EEFB; --muted:#A9B8DB; --line:#2A3D6E; --soft:#1C3066;
+  --hdr:#07122B; --navy:#C9D7FA; --blue:#8FB0EE; --btn:#3D63D9; --good:#7AD9A2; color-scheme:dark }
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.55}
+h1,h2,h3{margin:0;line-height:1.15;text-wrap:balance}
+p{margin:0}
+a{color:inherit}
+img{max-width:100%;height:auto}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* header */
+.bar{position:sticky;top:0;z-index:5;background:var(--hdr);color:#fff}
+.bar .wrap{display:flex;align-items:center;gap:12px;padding-block:10px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff}
+.brand img{width:40px;height:40px}
+.brand b{font-size:15px;letter-spacing:1.2px}
+.bar nav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.bar nav a{color:#fff;text-decoration:none;font-weight:600;font-size:14px;padding:8px 12px}
+.bar nav a:hover{background:rgba(255,255,255,.1)}
+.bar nav a.login{border:1.5px solid var(--accent);color:var(--accent)}
+@media (max-width:640px){.bar nav a.hide-sm{display:none}}
+
+/* buttons */
+.cta{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:var(--accent-ink);font-weight:800;text-decoration:none;padding:14px 22px;border:0;font:inherit;font-weight:800;cursor:pointer}
+.cta:hover{box-shadow:0 0 0 3px rgba(255,210,90,.45)}
+.cta.blue{background:var(--btn);color:var(--btn-ink)}
+.cta.blue:hover{box-shadow:0 0 0 3px var(--soft)}
+
+/* hero */
+.hero{background:var(--hdr);color:#fff}
+.hero .wrap{display:flex;flex-wrap:wrap;align-items:flex-end;gap:24px;padding-top:48px}
+.hero-txt{flex:999 1 420px;display:flex;flex-direction:column;gap:18px;padding-bottom:48px}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--accent)}
+.hero h1{font-size:clamp(30px,5.4vw,46px);font-weight:800}
+.hero p.lead{color:#DCE6FA;font-size:18px;max-width:560px}
+.hero .facts{display:flex;flex-wrap:wrap;gap:8px 18px;color:#DCE6FA;font-size:14px;font-weight:600}
+.hero .facts span::before{content:"✓ ";color:var(--accent)}
+.hero img{width:220px;max-width:42%;margin-left:auto}
+
+/* sections */
+section.sec{padding-block:56px}
+.sec-h{display:flex;flex-direction:column;gap:8px;margin-bottom:28px;max-width:640px}
+.sec-h .eyebrow{color:var(--blue)}
+.sec-h h2{font-size:clamp(24px,3.6vw,32px);font-weight:800;color:var(--navy)}
+.muted{color:var(--muted)}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;counter-reset:s;padding:0;margin:0;list-style:none}
+.steps li{background:var(--surface);border:1px solid var(--line);padding:22px;display:flex;flex-direction:column;gap:8px}
+.steps li::before{counter-increment:s;content:counter(s);width:36px;height:36px;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink);font-weight:800}
+.steps b{font-size:17px;color:var(--navy)}
+
+/* pricing */
+.switch{display:inline-flex;border:2px solid var(--navy);margin-bottom:24px}
+.switch button{background:none;border:0;padding:10px 20px;font:inherit;font-weight:700;color:var(--navy);cursor:pointer;min-height:44px}
+.switch button[aria-pressed="true"]{background:var(--navy);color:var(--bg)}
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;align-items:stretch}
+.plan{background:var(--surface);border:1px solid var(--line);padding:24px;display:flex;flex-direction:column;gap:16px;position:relative}
+.plan.rec{border:2px solid var(--blue);box-shadow:0 10px 30px rgba(16,52,175,.12)}
+.badge{position:absolute;top:-13px;left:24px;background:var(--accent);color:var(--accent-ink);font-size:12px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;padding:4px 10px}
+.plan h3{font-size:20px;font-weight:800;color:var(--navy)}
+.plan .desc{font-size:14px;color:var(--muted);min-height:42px}
+.price{display:flex;align-items:baseline;gap:6px}
+.price b{font-size:42px;font-weight:800;color:var(--navy);font-variant-numeric:tabular-nums;line-height:1}
+.price span{color:var(--muted);font-weight:600}
+.per{font-size:14px;color:var(--muted);margin-top:-8px}
+.feat{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px;font-size:15px;flex:1}
+.feat li{display:flex;gap:10px;align-items:flex-start}
+.feat li i{flex:none;width:20px;height:20px;display:grid;place-items:center;font-style:normal;font-weight:800;font-size:13px;margin-top:2px}
+.feat li.yes i{background:var(--good);color:var(--surface)}
+.feat li.no{color:var(--muted)}
+.feat li.no i{border:1.5px solid var(--line);color:var(--muted)}
+.plan .cta{justify-content:center;width:100%}
+.note-line{margin-top:18px;font-size:14px;color:var(--muted)}
+.note-line b{color:var(--ink)}
+
+/* platform */
+.split{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.box{background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--accent);padding:20px;display:flex;flex-direction:column;gap:6px}
+.box b{color:var(--navy);font-size:17px}
+
+/* rules + faq */
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;list-style:none;padding:0;margin:0}
+.rules li{background:var(--surface);border:1px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:4px}
+.rules li b{color:var(--navy)}
+.faq{display:flex;flex-direction:column;gap:10px;max-width:760px}
+.faq details{background:var(--surface);border:1px solid var(--line);padding:0 18px}
+.faq summary{cursor:pointer;font-weight:700;color:var(--navy);padding:16px 0;list-style:none;display:flex;justify-content:space-between;gap:12px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-weight:800;font-size:20px;line-height:1}
+.faq details[open] summary::after{content:"–"}
+.faq details p{padding-bottom:16px;color:var(--muted)}
+
+/* final cta */
+.final{background:var(--hdr);color:#fff}
+.final .wrap{padding-block:56px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px}
+.final h2{font-size:clamp(24px,3.6vw,32px);font-weight:800;max-width:560px}
+.final p{color:#DCE6FA;margin-top:8px}
+footer{padding-block:24px;font-size:14px;color:var(--muted)}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}
+</style>
+</head>
+<body>
+
+<header class="bar"><div class="wrap">
+  <a class="brand" href="/tarify" aria-label="Slovak Learn"><img src="img/logo.webp" alt=""><b>SLOVAK LEARN</b></a>
+  <nav aria-label="Меню">
+    <a href="#tarify">Тарифи</a>
+    <a class="hide-sm" href="#yak">Як почати</a>
+    <a class="hide-sm" href="#pravyla">Правила</a>
+    <a class="login" href="/">Вхід для учнів</a>
+  </nav>
+</div></header>
+
+<section class="hero"><div class="wrap">
+  <div class="hero-txt">
+    <span class="eyebrow">Онлайн-школа словацької для українців</span>
+    <h1>Заговоріть словацькою — з викладачем, який пояснює українською</h1>
+    <p class="lead">Групові та індивідуальні онлайн-уроки від A1 до B2. Після кожного уроку — PDF-вправи й шпаргалка, а для щоденної практики — онлайн-платформа з автоперевіркою.</p>
+    <div class="facts"><span>Рівні A1–B2</span><span>Уроки по 60 хв</span><span>Перша діагностика безкоштовно</span></div>
+    <div><a class="cta js-zapys" href="#tarify">Записатися на безкоштовну діагностику</a></div>
+  </div>
+  <img src="img/wave.webp" alt="Персонаж Slovak Learn махає рукою" width="220" height="220">
+</div></section>
+
+<main>
+<section class="sec" id="yak"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">Як почати</span><h2>Три кроки до першого уроку</h2></div>
+  <ol class="steps">
+    <li><b>Безкоштовна діагностика</b><span class="muted">30 хвилин онлайн: визначаємо ваш рівень і мету — робота, вступ, побут.</span></li>
+    <li><b>Обираєте формат і тариф</b><span class="muted">Група або індивідуально; Базовий, Стандарт чи Повний.</span></li>
+    <li><b>Перший урок</b><span class="muted">Оплачуєте місяць наперед і починаєте за розкладом, який вам зручний.</span></li>
+  </ol>
+</div></section>
+
+<section class="sec" id="tarify" style="padding-top:8px"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">Тарифи</span><h2>Оберіть формат навчання</h2><p class="muted">Ціни за місяць (4 тижні). Онлайн-платформа входить лише в тариф «Повний» і окремо не продається.</p></div>
+  <div class="switch" role="group" aria-label="Формат навчання">
+    <button type="button" data-fmt="group" aria-pressed="true">Група · 4–6 осіб</button>
+    <button type="button" data-fmt="solo" aria-pressed="false">Індивідуально</button>
+  </div>
+  <p class="muted" id="fmt-note" style="margin:-12px 0 24px"></p>
+  <div class="plans" id="plans"></div>
+  <p class="note-line"><b>−10 %</b> при оплаті одразу за 3 місяці. Оплата карткою онлайн, автопродовження можна вимкнути будь-коли.</p>
+</div></section>
+
+<section class="sec" style="background:var(--surface);border-block:1px solid var(--line)"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">Тариф «Повний»</span><h2>Онлайн-платформа для практики між уроками</h2><p class="muted">Особистий кабінет учня, де закріплюєте кожну тему уроку.</p></div>
+  <div class="split">
+    <div class="box"><b>Вправи до кожного уроку</b><span class="muted">Лексика, граматика й тести, відкриваються в міру проходження курсу.</span></div>
+    <div class="box"><b>Автоматична перевірка</b><span class="muted">Одразу бачите помилки й результат у відсотках, без очікування.</span></div>
+    <div class="box"><b>Викладач бачить ваш прогрес</b><span class="muted">Урок будується на тому, що вам дається найважче.</span></div>
+  </div>
+</div></section>
+
+<section class="sec" id="pravyla"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">Правила</span><h2>Коротко про оплату й скасування</h2></div>
+  <ul class="rules">
+    <li><b>Оплата наперед</b><span class="muted">За 4 тижні до першого уроку періоду, з автопродовженням.</span></li>
+    <li><b>Скасування за 12 годин</b><span class="muted">Індивідуальний урок переносимо безкоштовно. Пізніше — урок вважається проведеним.</span></li>
+    <li><b>Групові уроки</b><span class="muted">Ідуть за розкладом. Пропустили — отримуєте PDF-вправи з уроку (Стандарт і Повний).</span></li>
+    <li><b>Пауза до 4 тижнів</b><span class="muted">Раз на 6 місяців можна заморозити навчання: відпустка, хвороба, переїзд.</span></li>
+  </ul>
+</div></section>
+
+<section class="sec" style="padding-top:8px"><div class="wrap">
+  <div class="sec-h"><span class="eyebrow">Питання</span><h2>Часті запитання</h2></div>
+  <div class="faq">
+    <details><summary>Я зовсім не знаю словацької. Можна почати?</summary><p>Так. Курс починається з рівня A1, а на діагностиці ми визначимо, з якої теми вам стартувати.</p></details>
+    <details><summary>Чим група відрізняється від індивідуальних уроків?</summary><p>У групі 4–6 учнів і 8 уроків на місяць — це дешевше за урок і більше розмовної практики. Індивідуально — 4 уроки на місяць, гнучкий розклад і програма під вашу мету, наприклад вступ чи роботу.</p></details>
+    <details><summary>Чи можна змінити тариф?</summary><p>Перейти на вищий тариф можна будь-коли з доплатою різниці. На нижчий — з наступного оплаченого періоду.</p></details>
+    <details><summary>Коли стартує група?</summary><p>Коли записалося щонайменше 4 учні. Якщо група не набралась, ви обираєте: повне повернення коштів, перенесення старту або індивідуальні уроки.</p></details>
+    <details><summary>Готуєте до вступу у словацький виш?</summary><p>Так, у січні відкриваємо набір у групу «Вступ B1/B2». Для швидшого результату підійдуть індивідуальні уроки.</p></details>
+  </div>
+</div></section>
+</main>
+
+<section class="final"><div class="wrap">
+  <div><h2>Почніть з безкоштовної діагностики рівня</h2><p>30 хвилин онлайн — і ви знатимете свій рівень та план навчання.</p></div>
+  <a class="cta js-zapys" href="#tarify">Записатися</a>
+</div></section>
+
+<footer><div class="wrap"><span>© Slovak Learn</span><a href="/">Вхід для учнів</a></div></footer>
+
+<script>
+/* Where every "Записатися" button leads: a Telegram, Instagram, form or booking link. */
+var ZAPYS_URL = "";
+
+var PLANS = {
+  group: {note: "8 уроків по 60 хв на місяць у групі 4–6 осіб.", lessons: 8, items: [
+    {name:"Базовий", price:45, desc:"Онлайн-уроки з викладачем."},
+    {name:"Стандарт", price:52, desc:"Уроки та матеріали для повторення."},
+    {name:"Повний", price:59, desc:"Усе для швидкого прогресу.", rec:true}
+  ]},
+  solo: {note: "4 уроки 1:1 по 60 хв на місяць, розклад під вас.", lessons: 4, items: [
+    {name:"Базовий", price:84, desc:"Онлайн-уроки з викладачем."},
+    {name:"Стандарт", price:90, desc:"Уроки та матеріали для повторення."},
+    {name:"Повний", price:96, desc:"Усе для швидкого прогресу.", rec:true}
+  ]}
+};
+var FEATS = [
+  ["Онлайн-уроки з викладачем", [1,1,1]],
+  ["PDF-вправи з кожного уроку", [0,1,1]],
+  ["Шпаргалка до кожної теми", [0,1,1]],
+  ["Онлайн-платформа з автоперевіркою ДЗ", [0,0,1]]
+];
+
+function fmtEur(n){ return (Math.round(n*10)/10).toString().replace(".", ",") + " €"; }
+
+function render(fmt){
+  var f = PLANS[fmt], h = "";
+  f.items.forEach(function(p, i){
+    var lessonsTxt = fmt === "group" ? "8 групових уроків" : "4 індивідуальні уроки";
+    h += '<article class="plan' + (p.rec ? ' rec' : '') + '">' +
+      (p.rec ? '<span class="badge">Рекомендований</span>' : '') +
+      '<div><h3>' + p.name + '</h3><p class="desc">' + p.desc + '</p></div>' +
+      '<div class="price"><b>' + p.price + ' €</b><span>/ місяць</span></div>' +
+      '<p class="per">' + lessonsTxt + ' · ' + fmtEur(p.price / f.lessons) + ' за урок</p>' +
+      '<ul class="feat">' + FEATS.map(function(x){
+        var y = x[1][i];
+        return '<li class="' + (y ? 'yes' : 'no') + '"><i aria-hidden="true">' + (y ? '✓' : '–') + '</i><span>' + x[0] + (y ? '' : '<span class="sr"> — не входить</span>') + '</span></li>';
+      }).join("") + '</ul>' +
+      '<a class="cta js-zapys' + (p.rec ? '' : ' blue') + '" href="#">Записатися на діагностику</a>' +
+    '</article>';
+  });
+  document.getElementById("plans").innerHTML = h;
+  document.getElementById("fmt-note").textContent = f.note;
+  document.querySelectorAll(".switch button").forEach(function(b){
+    b.setAttribute("aria-pressed", b.dataset.fmt === fmt ? "true" : "false");
+  });
+  wireCta();
+}
+
+function wireCta(){
+  document.querySelectorAll(".js-zapys").forEach(function(a){
+    if (ZAPYS_URL) { a.href = ZAPYS_URL; a.target = "_blank"; a.rel = "noopener"; }
+    else { a.href = "#tarify"; }
+  });
+}
+
+document.querySelectorAll(".switch button").forEach(function(b){
+  b.addEventListener("click", function(){ render(b.dataset.fmt); });
+});
+render("group");
+</script>
+<style>.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}</style>
+</body>
+</html>
