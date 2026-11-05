@@ -103,7 +103,7 @@ function verifyFileToken(t) {
   try { const p = JSON.parse(Buffer.from(body, "base64url").toString("utf8")); return p.f === 1 && p.exp > Date.now() ? p : null; } catch { return null; }
 }
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-const publicAcc = (a) => ({ id: a.id, name: a.name, login: a.login, createdAt: a.createdAt, note: a.note || "", unlocked: a.unlocked || [1], tcfg: a.tcfg || {}, hide: a.hide || [], mclose: a.mclose || [], demo: !!a.demo });
+const publicAcc = (a) => ({ id: a.id, name: a.name, login: a.login, createdAt: a.createdAt, note: a.note || "", unlocked: a.unlocked || [1], tcfg: a.tcfg || {}, hide: a.hide || [], mopen: a.mopen || [], demo: !!a.demo });
 const cleanLessons = (arr) => {
   const list = Array.isArray(arr) ? arr : [];
   const lessons = [...new Set(list.map(Number).filter((n) => LESSONS.includes(n)))].sort((a, b) => a - b);
@@ -208,7 +208,7 @@ export default async function handler(req, res) {
       const acc = (await allAccounts()).find((a) => a.login === login);
       if (!acc || !checkPass(pass, acc.pass)) { await sleep(600); return send(res, 401, { error: "bad" }); }
       const progress = await readOne(progPath(acc.id));
-      return send(res, 200, { role: "student", id: acc.id, name: acc.name, unlocked: acc.unlocked || [1], tcfg: acc.tcfg || {}, hide: acc.hide || [], mclose: acc.mclose || [], progress, token: sign({ r: "s", id: acc.id, pv: acc.pv || 1, exp: Date.now() + 60 * DAY }), ft: fileToken("s", acc.id, acc.pv || 1) });
+      return send(res, 200, { role: "student", id: acc.id, name: acc.name, unlocked: acc.unlocked || [1], tcfg: acc.tcfg || {}, hide: acc.hide || [], mopen: acc.mopen || [], progress, token: sign({ r: "s", id: acc.id, pv: acc.pv || 1, exp: Date.now() + 60 * DAY }), ft: fileToken("s", acc.id, acc.pv || 1) });
     }
 
     if (!auth) return send(res, 401, { error: "auth" });
@@ -219,13 +219,21 @@ export default async function handler(req, res) {
       if (!acc || (acc.pv || 1) !== auth.pv) return send(res, 401, { error: "auth" });
       if (action === "me") {
         const progress = await readOne(progPath(acc.id));
-        return send(res, 200, { role: "student", id: acc.id, name: acc.name, unlocked: acc.unlocked || [1], tcfg: acc.tcfg || {}, hide: acc.hide || [], mclose: acc.mclose || [], progress, ft: fileToken("s", acc.id, acc.pv || 1) });
+        return send(res, 200, { role: "student", id: acc.id, name: acc.name, unlocked: acc.unlocked || [1], tcfg: acc.tcfg || {}, hide: acc.hide || [], mopen: acc.mopen || [], progress, ft: fileToken("s", acc.id, acc.pv || 1) });
       }
       if (action === "saveProgress") {
         const data = cleanProgress(body.progress);
         if (JSON.stringify(data).length > 200000) return send(res, 413, { error: "size" });
         await writeOne(progPath(acc.id), data);
         return send(res, 200, { ok: true });
+      }
+      if (action === "changePassword") {
+        const old = String(body.old || ""), pass = String(body.pass || "");
+        if (!checkPass(old, acc.pass)) { await sleep(600); return send(res, 400, { error: "badold" }); }
+        if (pass.length < 8 || pass.length > 200) return send(res, 400, { error: "short" });
+        acc.pass = hashPass(pass); acc.pv = (acc.pv || 1) + 1;
+        await writeOne(accPath(acc.id), acc);
+        return send(res, 200, { ok: true, token: sign({ r: "s", id: acc.id, pv: acc.pv, exp: Date.now() + 60 * DAY }), ft: fileToken("s", acc.id, acc.pv) });
       }
       return send(res, 403, { error: "forbidden" });
     }
@@ -246,7 +254,7 @@ export default async function handler(req, res) {
       const accs = await allAccounts();
       if (login === cfg.login || accs.some((a) => a.login === login)) return send(res, 409, { error: "exists" });
       const id = "s_" + Array.from(crypto.randomBytes(10)).map((b) => "abcdefghijkmnpqrstuvwxyz23456789"[b % 32]).join("");
-      const acc = { id, name, login, pass: hashPass(pass), pv: 1, createdAt: Date.now(), note: "", unlocked: [] };
+      const acc = { id, name, login, pass: hashPass(pass), pv: 1, createdAt: Date.now(), note: "", unlocked: [1], hide: Array.from({ length: 19 }, (_, i) => i + 2), mopen: [] };
       await writeOne(accPath(id), acc);
       return send(res, 200, { account: publicAcc(acc) });
     }
@@ -269,12 +277,12 @@ export default async function handler(req, res) {
       await writeOne(accPath(acc.id), acc);
       return send(res, 200, { ok: true, hide: acc.hide });
     }
-    if (action === "setMatClosed") {
+    if (action === "setMatOpen") {
       if (!acc) return send(res, 404, { error: "notfound" });
       const keys = Array.isArray(body.keys) ? body.keys : [];
-      acc.mclose = [...new Set(keys.map(String).filter((k) => /^[ch]\d{1,3}$/.test(k)))].slice(0, 400).sort();
+      acc.mopen = [...new Set(keys.map(String).filter((k) => /^[ch]\d{1,3}$/.test(k)))].slice(0, 400).sort();
       await writeOne(accPath(acc.id), acc);
-      return send(res, 200, { ok: true, mclose: acc.mclose });
+      return send(res, 200, { ok: true, mopen: acc.mopen });
     }
     if (action === "setTestCfg") {
       if (!acc) return send(res, 404, { error: "notfound" });

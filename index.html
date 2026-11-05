@@ -190,7 +190,7 @@ td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
 .stu .row{align-items:flex-start}
 .tip{margin:0;font-size:14px;line-height:1.45;padding:8px 10px;border-left:4px solid}
 .tip.bad{background:var(--bad-bg);border-color:var(--bad)} .tip.warn{background:var(--warn-bg);border-color:var(--warn)} .tip.good{background:var(--good-bg);border-color:var(--good)} .tip.info{background:var(--soft);border-color:var(--blue)}
-.lrow .prog{display:block;margin-top:6px;max-width:280px}.mtogs{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.mtog{min-height:32px;padding:4px 10px;border:2px solid var(--good);background:var(--surface);color:var(--good);font-weight:700;font-size:12.5px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}.mtog.off{border-color:var(--line);color:var(--muted)}.mtog svg{width:13px;height:13px}.matbtn.off{opacity:.6;cursor:default;display:inline-flex;align-items:center;gap:6px}.matbtn.off svg{width:13px;height:13px}
+.lrow .prog{display:block;margin-top:6px;max-width:280px}.faq{display:flex;flex-direction:column;gap:10px;max-width:820px}.faqi summary{cursor:pointer;font-weight:800;color:var(--navy);font-size:16px;list-style-position:outside}.faqi p{margin:10px 0 0;line-height:1.55}.mtogs{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.mtog{min-height:32px;padding:4px 10px;border:2px solid var(--good);background:var(--surface);color:var(--good);font-weight:700;font-size:12.5px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}.mtog.off{border-color:var(--line);color:var(--muted)}.mtog svg{width:13px;height:13px}.matbtn.off{opacity:.6;cursor:default;display:inline-flex;align-items:center;gap:6px}.matbtn.off svg{width:13px;height:13px}
 .lock{width:44px;height:44px;flex:none;border:2px solid var(--line);background:var(--surface);color:var(--muted);font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .lock[aria-pressed="true"]{background:var(--hdr);border-color:var(--hdr);color:#fff}
 .lock.ghost{cursor:default;background:var(--soft);border-color:var(--soft);color:var(--navy)}
@@ -997,7 +997,7 @@ function E(code){var e=new Error(code);e.code=code;return e;}
 function ClaudeAPI(){
   var db=null;
   function studentFrom(h){return db.doc("logins/"+h).get().then(function(snap){if(!snap.exists)throw E("bad");var d=snap.data();
-    return db.doc("progress/"+d.account).get().then(function(ps){return {role:"student",hash:h,id:d.account,name:d.name||"",unlocked:(Array.isArray(d.unlocked)?d.unlocked.slice():[1]),tcfg:d.tcfg||{},hide:d.hide||[],mclose:d.mclose||[],progress:ps.exists?normProg(ps.data()):null};});});}
+    return db.doc("progress/"+d.account).get().then(function(ps){return {role:"student",hash:h,id:d.account,name:d.name||"",unlocked:(Array.isArray(d.unlocked)?d.unlocked.slice():[1]),tcfg:d.tcfg||{},hide:d.hide||[],mopen:d.mopen||[],progress:ps.exists?normProg(ps.data()):null};});});}
   function teacherFrom(h,login){return db.doc("config/teacher").get().then(function(snap){if(!snap.exists||snap.data().hash!==h)throw E("bad");return {role:"teacher",hash:h,login:login||snap.data().login};});}
   return {
     name:"claude",
@@ -1009,16 +1009,17 @@ function ClaudeAPI(){
     teacherLoad:function(){return Promise.all([db.collection("accounts").limit(1000).get(),db.collection("progress").limit(1000).get()]).then(function(r){
       var accounts=r[0].docs.map(function(d){var x=JSON.parse(JSON.stringify(d.data()));x.id=d.id;if(!Array.isArray(x.unlocked))x.unlocked=[1];return x;});
       var progress={};r[1].docs.forEach(function(d){progress[d.id]=normProg(d.data());});return {accounts:accounts,progress:progress};});},
-    createStudent:function(o){var id="s_"+rnd(10);return credHash(o.login,o.pass).then(function(h){var acc={name:o.name,login:o.login,loginHash:h,createdAt:Date.now(),note:"",unlocked:[]};
-      return db.doc("accounts/"+id).set(acc).then(function(){return db.doc("logins/"+h).set({account:id,name:o.name,unlocked:[]});}).then(function(){acc.id=id;return acc;});});},
+    createStudent:function(o){var id="s_"+rnd(10);return credHash(o.login,o.pass).then(function(h){var acc={name:o.name,login:o.login,loginHash:h,createdAt:Date.now(),note:"",unlocked:[1],hide:[2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],mopen:[]};
+      return db.doc("accounts/"+id).set(acc).then(function(){return db.doc("logins/"+h).set({account:id,name:o.name,unlocked:[1],hide:acc.hide,mopen:[]});}).then(function(){acc.id=id;return acc;});});},
     resetPassword:function(a,pass){return credHash(a.login,pass).then(function(h){var old=a.loginHash;
-      return db.doc("logins/"+h).set({account:a.id,name:a.name,unlocked:a.unlocked,tcfg:a.tcfg||{},hide:a.hide||[],mclose:a.mclose||[]}).then(function(){return db.doc("accounts/"+a.id).update({loginHash:h});})
+      return db.doc("logins/"+h).set({account:a.id,name:a.name,unlocked:a.unlocked,tcfg:a.tcfg||{},hide:a.hide||[],mopen:a.mopen||[]}).then(function(){return db.doc("accounts/"+a.id).update({loginHash:h});})
         .then(function(){return old&&old!==h?db.doc("logins/"+old).delete():null;}).then(function(){a.loginHash=h;});});},
     deleteStudent:function(a){return Promise.all([db.doc("accounts/"+a.id).delete(),a.loginHash?db.doc("logins/"+a.loginHash).delete():null,db.doc("progress/"+a.id).delete()]);},
     saveNote:function(a,note){return db.doc("accounts/"+a.id).update({note:note});},
     setUnlocked:function(a,lessons){return db.doc("accounts/"+a.id).update({unlocked:lessons}).then(function(){return a.loginHash?db.doc("logins/"+a.loginHash).update({unlocked:lessons}):null;});},
     setHidden:function(a,hide){return db.doc("accounts/"+a.id).update({hide:hide}).then(function(){return a.loginHash?db.doc("logins/"+a.loginHash).update({hide:hide}):null;});},
-    setMatClosed:function(a,keys){return db.doc("accounts/"+a.id).update({mclose:keys}).then(function(){return a.loginHash?db.doc("logins/"+a.loginHash).update({mclose:keys}):null;});},
+    setMatOpen:function(a,keys){return db.doc("accounts/"+a.id).update({mopen:keys}).then(function(){return a.loginHash?db.doc("logins/"+a.loginHash).update({mopen:keys}):null;});},
+    changePassword:function(){return Promise.reject(E("unsupported"));},
     setTestCfg:function(a,tcfg){return db.doc("accounts/"+a.id).update({tcfg:tcfg}).then(function(){return a.loginHash?db.doc("logins/"+a.loginHash).update({tcfg:tcfg}):null;});},
     changeTeacher:function(login,pass){return credHash(login,pass).then(function(h){return db.doc("config/teacher").set({login:login,hash:h,updatedAt:Date.now()}).then(function(){return {role:"teacher",hash:h,login:login};});});}
   };
@@ -1030,7 +1031,7 @@ function RestAPI(){
       .catch(function(){throw E("offline");})
       .then(function(r){return r.json().catch(function(){return {};}).then(function(j){if(r.status===404)throw E("noapi");if(r.status===401)throw E(j.error==="bad"?"bad":"auth");if(!r.ok)throw E(j.error||"server");return j;});});
   }
-  function shape(j){if(j.token)token=j.token;if(j.ft)ft=j.ft;return {role:j.role,token:token,id:j.id,name:j.name||"",login:j.login,unlocked:j.unlocked||[1],tcfg:j.tcfg||{},hide:j.hide||[],mclose:j.mclose||[],progress:j.progress?normProg(j.progress):null};}
+  function shape(j){if(j.token)token=j.token;if(j.ft)ft=j.ft;return {role:j.role,token:token,id:j.id,name:j.name||"",login:j.login,unlocked:j.unlocked||[1],tcfg:j.tcfg||{},hide:j.hide||[],mopen:j.mopen||[],progress:j.progress?normProg(j.progress):null};}
   return {
     name:"rest",
     fileUrl:function(name){return "/api/file?f="+encodeURIComponent(name)+(ft?"&t="+encodeURIComponent(ft):"");},
@@ -1046,7 +1047,8 @@ function RestAPI(){
     saveNote:function(a,note){return call("saveNote",{id:a.id,note:note});},
     setUnlocked:function(a,lessons){return call("setUnlocked",{id:a.id,lessons:lessons});},
     setHidden:function(a,hide){return call("setHidden",{id:a.id,mods:hide});},
-    setMatClosed:function(a,keys){return call("setMatClosed",{id:a.id,keys:keys});},
+    setMatOpen:function(a,keys){return call("setMatOpen",{id:a.id,keys:keys});},
+    changePassword:function(old,pass){return call("changePassword",{old:old,pass:pass}).then(function(j){if(j.token)token=j.token;if(j.ft)ft=j.ft;return {token:token};});},
     setTestCfg:function(a,tcfg){return call("setTestCfg",{id:a.id,tcfg:tcfg});},
     changeTeacher:function(login,pass){return call("changeTeacher",{login:login,pass:pass}).then(shape);}
   };
@@ -1089,7 +1091,7 @@ function openSets(){return ALL_SETS.filter(function(id){return setOpenFor(S.unlo
 
 /* ================= sessions ================= */
 function applyStudent(r){
-  S.session=API.sessionOf(r);S.hide=nums(r.hide||[]);S.unlocked=sortKeys(r.unlocked).filter(function(k){return S.hide.indexOf(modOfKey(k))<0;});S.tcfg=r.tcfg||{};S.mclose=(r.mclose||[]).map(String);
+  S.session=API.sessionOf(r);S.hide=nums(r.hide||[]);S.unlocked=sortKeys(r.unlocked).filter(function(k){return S.hide.indexOf(modOfKey(k))<0;});S.tcfg=r.tcfg||{};S.mopen=(r.mopen||[]).map(String);
   lsSet(LS_SESSION,S.session);
   var local=normProg(lsGet(progKey()));
   S.data=r.progress?mergeProg(local,r.progress):local;
@@ -1148,13 +1150,13 @@ function renderNav(){
   role.textContent=r==="teacher"?"KABINET LEKTORA":(r?"KABINET ŠTUDENTA":"");
   function tab(v,label,match){return '<button class="tab" type="button" data-nav="'+v+'"'+(match.indexOf(S.view)>=0?' aria-current="page"':"")+'>'+label+'</button>';}
   if(r==="teacher")h=tab("t-students","Študenti",["t-students","t-student","t-new"])+tab("t-materials","Materiály",["t-materials"])+tab("t-settings","Nastavenia",["t-settings"]);
-  else if(r)h=tab("home","Cvičenia",["home","lesson","play","result","tintro"])+tab("dict","Slovník",["dict"]);
+  else if(r)h=tab("home","Cvičenia",["home","lesson","play","result","tintro"])+tab("dict","Slovník",["dict"])+tab("faq","Časté otázky",["faq"])+(r==="student"?tab("settings","Nastavenia",["settings"]):"");
   if(r)h+='<button class="tab" type="button" data-logout>Odhlásiť</button>';
   nav.innerHTML=h;
 }
 function setMenu(o){var bar=document.querySelector(".bar"),mb=document.getElementById("menubtn");bar.classList.toggle("open",!!o);mb.setAttribute("aria-expanded",o?"true":"false");}
 document.getElementById("menubtn").addEventListener("click",function(){setMenu(!document.querySelector(".bar").classList.contains("open"));});
-document.getElementById("nav").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;setMenu(false);if(b.hasAttribute("data-logout"))return logout();var v=b.getAttribute("data-nav");if(v){T.creds=null;T.confirm=null;T.msg="";go(v);}});
+document.getElementById("nav").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;setMenu(false);if(b.hasAttribute("data-logout"))return logout();var v=b.getAttribute("data-nav");if(v){T.creds=null;T.confirm=null;T.msg="";S.pw={msg:"",err:false};go(v);}});
 function updateSync(){var el=document.getElementById("sync");if(el)el.textContent=S.sync;}
 
 /* ================= login ================= */
@@ -1232,6 +1234,28 @@ function sideNav(){var cur=S.view==="lesson"?S.lesson:null;if(!S.sideExp)S.sideE
       o+='</ul>';}
     o+='</div>';});
   return o+'</div></details></nav>';}
+var FAQ=[["Забув пароль — що робити?", "Напишіть своєму лектору — він створить новий пароль. Старий одразу перестане діяти."], ["Як змінити пароль?", "Відкрийте <b>Nastavenia</b> у меню, введіть поточний пароль і двічі новий (щонайменше 8 символів). Після зміни на інших пристроях потрібно буде увійти знову."], ["Чому урок закритий?", "Так і має бути: лектор відкриває урок після вашого заняття. Нові модулі теж з’являються, коли лектор їх відкриє."], ["Чому не відкривається шпаргалка або домашнє завдання?", "Шпаргалку й ДЗ лектор відкриває окремо — зазвичай після уроку. Поки вони закриті, ви бачите сіру кнопку «відкриє лектор»."], ["Як рахуються бали?", "Правильна відповідь — 1 бал. Слово правильне, але без діакритики (byvam замість bývam) — 0,5 бала. Неправильна — 0 балів, і платформа одразу покаже правильну. Від 80 % вправа вважається пройденою."], ["Скільки разів можна проходити вправу?", "Скільки завгодно. Зберігається найкращий результат. Список помилок унизу результату варто переписати в зошит."], ["Що таке «∑ Opakovanie» і «! Moje chyby»?", "Кнопки в смузі модуля. «∑ Opakovanie» — 10 випадкових завдань з уроків модуля. «! Moje chyby» — лише ті завдання, де ви помилилися."], ["Як писати á, č, š, ž…?", "Під полем для відповіді є кнопки з літерами. Можна також увімкнути словацьку клавіатуру на телефоні чи комп’ютері."], ["Як проходить тест модуля?", "Тест відкриває лектор. Перед стартом ви побачите правила: кількість спроб і час. Під час тесту немає підказок. Не виходьте з тесту, доки не надішлете його: вихід зі сторінки = відправлення."], ["Немає звуку", "Увімкніть звук на пристрої. Якщо у браузері немає словацького голосу, слово чи число з’явиться текстом."], ["Хто бачить мої результати?", "Тільки ви і ваш лектор. Інші учні не бачать нічого."], ["Чи працює платформа на телефоні?", "Так, у будь-якому сучасному браузері — на телефоні, планшеті й комп’ютері. Прогрес зберігається у вашому акаунті."]];
+function viewFaq(){var h='<section class="sec"><div class="sec-h"><div><h2 class="h2">Časté otázky</h2><span class="muted">Відповіді на найчастіші запитання · не знайшли відповідь — напишіть лектору</span></div></div><div class="faq">';
+  FAQ.forEach(function(q,i){h+='<details class="card faqi"'+(i===0?' open':'')+'><summary>'+esc(q[0])+'</summary><p>'+q[1]+'</p></details>';});
+  return h+'</div></section>';}
+S.pw={msg:"",err:false};
+function viewSettings(){var h='<section class="sec"><div class="sec-h"><div><h2 class="h2">Nastavenia</h2><span class="muted">Ваш акаунт: <b>'+esc(S.session.name||"")+'</b></span></div></div>';
+  if(S.pw.msg)h+='<div class="'+(S.pw.err?"err":"ok-msg")+'" role="status">'+esc(S.pw.msg)+'</div>';
+  h+='<form class="card" id="spassform" novalidate style="max-width:520px"><h3>Змінити пароль</h3>'+
+    '<div class="field"><label for="sp-old">Поточний пароль</label><input id="sp-old" type="password" autocomplete="current-password"></div>'+
+    '<div class="field"><label for="sp-new">Новий пароль (мін. 8 символів)</label><input id="sp-new" type="password" autocomplete="new-password"></div>'+
+    '<div class="field"><label for="sp-new2">Повторіть новий пароль</label><input id="sp-new2" type="password" autocomplete="new-password"></div>'+
+    '<button class="btn" type="submit"'+(S.busy?" disabled":"")+'>Uložiť</button></form>';
+  h+='<p class="muted" style="font-size:13px;max-width:520px">Забули пароль? Напишіть лектору — він створить новий. Після зміни пароля на інших пристроях потрібно буде увійти знову.</p>';
+  return h+'</section>';}
+function saveStudentPass(form){var o=form.querySelector("#sp-old").value,p1=form.querySelector("#sp-new").value,p2=form.querySelector("#sp-new2").value;S.pw.err=true;
+  if(!o){S.pw.msg="Введіть поточний пароль.";return render();}
+  if(p1.length<8){S.pw.msg="Новий пароль має бути щонайменше 8 символів.";return render();}
+  if(p1!==p2){S.pw.msg="Нові паролі не збігаються.";return render();}
+  if(p1===o){S.pw.msg="Новий пароль збігається з поточним.";return render();}
+  S.busy=true;render();
+  API.changePassword(o,p1).then(function(r){S.busy=false;if(r&&r.token){S.session.token=r.token;lsSet(LS_SESSION,S.session);}S.pw={msg:"Пароль змінено. Використовуйте новий пароль під час наступного входу.",err:false};render();})
+    .catch(function(e){S.busy=false;S.pw={err:true,msg:e&&e.code==="badold"?"Поточний пароль неправильний.":e&&e.code==="unsupported"?"У цій версії платформи пароль змінює лектор. Напишіть йому.":e&&e.code==="auth"?"Сесія завершилася. Увійдіть знову.":"Не вдалося змінити пароль. Спробуйте пізніше."};render();});}
 S.dq="";S.dl=0;
 function pl(n,a,b,c){var m=n%10,k=n%100;return n+" "+(m===1&&k!==11?a:m>=2&&m<=4&&(k<12||k>14)?b:c);}
 function dictOpen(){return DICT.filter(function(w){return isOpen(w.l);});}
@@ -1266,7 +1290,7 @@ function viewHome(){
 }
 var ST_MAT={deck:"Prezentácia z hodiny",cheat:"Ťahák",hw:"Domáca úloha"};
 function studentMat(n){var m=MATERIALS[n];if(!m||!S.session||S.session.role!=="student")return "";var b="";
-  var cl=0;["cheat","hw"].forEach(function(k){if(!m[k])return;if((S.mclose||[]).indexOf((k==="cheat"?"c":"h")+n)>=0){cl++;b+='<span class="matbtn off" aria-disabled="true">'+ICON_LOCK+' '+ST_MAT[k]+' · відкриє лектор</span>';return;}b+='<a class="matbtn" href="'+fileHref(m[k])+'" target="_blank" rel="noopener">'+ST_MAT[k]+' · PDF</a>';});
+  var cl=0;["cheat","hw"].forEach(function(k){if(!m[k])return;if((S.mopen||[]).indexOf((k==="cheat"?"c":"h")+n)<0){cl++;b+='<span class="matbtn off" aria-disabled="true">'+ICON_LOCK+' '+ST_MAT[k]+' · відкриє лектор</span>';return;}b+='<a class="matbtn" href="'+fileHref(m[k])+'" target="_blank" rel="noopener">'+ST_MAT[k]+' · PDF</a>';});
   if(!b)return "";return '<div class="card smat"><b style="color:var(--navy)">Po lekcii · після уроку</b><span class="muted" style="font-size:13px">Шпаргалка для повторення й домашнє завдання — завантажте або роздрукуйте.</span><div class="mat">'+b+'</div></div>';}
 function viewLesson(){
   var l=LESSONS[S.lesson-1];if(!l||hidM(l.mod))return viewHome();
@@ -1532,10 +1556,7 @@ function viewTStudents(){
       '<p class="tip '+x.t.k+'">'+esc(x.t.t)+'</p>'+
       '<button class="btn sm" type="button" data-tstudent="'+esc(a.id)+'" style="align-self:flex-start">Відкрити →</button></div>';});
   h+='</div>';
-  h+='<details class="card"><summary><b>Відкрити урок усім учням</b> <span class="muted">— після заняття з групою</span></summary><div class="lk" style="margin-top:12px">';
-  var um=null;LESSONS.forEach(function(l){if(l.mod!==um){um=l.mod;h+='<span class="umod">'+esc(modLabel(l.mod))+'</span>';}var all=A.every(function(a){return a.unlocked.indexOf(l.n)>=0;});h+='<button type="button" data-unlockall="'+l.n+'"'+(all?' aria-pressed="true" disabled':'')+'>'+(all?"✓ ":"")+'Lekcia '+l.n+'</button>';
-    if(lastOfMod(l))testsOf(l.mod).forEach(function(t){var at=A.every(function(a){return a.unlocked.indexOf(t.gate)>=0;});h+='<button type="button" class="tbtn" data-unlockall="'+t.gate+'"'+(at?' aria-pressed="true" disabled':'')+'>'+(at?"✓ ":"")+'Test '+t.mod+'</button>';});});
-  return h+'</div></details>';
+  return h;
 }
 function credsBlock(){
   var c=T.creds;if(!c)return "";
@@ -1552,7 +1573,7 @@ function viewTNew(){
   h+='<form class="card" id="newform" novalidate style="max-width:520px"><div class="field"><label for="nw-name">Ім’я та прізвище учня</label><input id="nw-name" value="'+esc(T.newName)+'" placeholder="napr. Olena Kovaľ"></div>';
   h+='<div class="field"><label for="nw-login">Логін (підставляється сам)</label><input id="nw-login" value="'+esc(T.newLogin)+'" autocapitalize="off" spellcheck="false" placeholder="olena.k"></div>';
   h+='<div class="field"><label for="nw-pass">Пароль</label><div class="inp"><input id="nw-pass" value="'+esc(T.newPass)+'" autocapitalize="off" spellcheck="false" style="font-size:16px;padding:12px 14px"><button class="btn ghost sm" type="button" data-regen>Інший пароль</button></div></div>';
-  h+='<p class="muted" style="font-size:13px">Новому учню всі уроки закриті. Перший урок відкрийте після першого заняття.</p>';
+  h+='<p class="muted" style="font-size:13px">Новому учню відкрито лише урок 1. Видно тільки модуль 1 (A1), інші модулі приховані — показуйте їх кнопкою «Показати учню». Шпаргалки й ДЗ закриті, доки ви їх не відкриєте.</p>';
   h+='<button class="btn" type="submit"'+(S.busy?" disabled":"")+'>'+(S.busy?"Vytváram…":"Vytvoriť účet")+'</button></form>';
   return h;
 }
@@ -1622,7 +1643,7 @@ function viewTSettings(){
   var h='<div><span class="eyebrow">Kabinet lektora</span><h2 class="h2">Nastavenia</h2></div>';
   if(T.msg)h+='<div class="'+(T.msgErr?"err":"ok-msg")+'">'+esc(T.msg)+'</div>';
   h+='<form class="card" id="tpassform" novalidate style="max-width:520px"><h3>Мій логін і пароль</h3><div class="field"><label for="tp-login">Логін</label><input id="tp-login" value="'+esc(S.session.login||"lektor")+'" autocapitalize="off" spellcheck="false"></div><div class="field"><label for="tp-pass">Новий пароль (мін. 8 символів)</label><input id="tp-pass" type="password" autocomplete="new-password"></div><div class="field"><label for="tp-pass2">Повторіть пароль</label><input id="tp-pass2" type="password" autocomplete="new-password"></div><button class="btn" type="submit">Зберегти</button></form>';
-  h+='<div class="note" style="max-width:720px">Учні входять за логіном і паролем, які ви створюєте в «Moji študenti». Новому учню всі уроки закриті — відкривайте кожен урок після заняття.'+(API.name==="rest"?' Посилання для учнів: <b>'+esc(location.origin)+'</b>':'')+'</div>';
+  h+='<div class="note" style="max-width:720px">Учні входять за логіном і паролем, які ви створюєте в «Moji študenti». Новому учню відкрито лише урок 1 модуля 1, інші модулі приховані, шпаргалки й ДЗ закриті — відкривайте їх після занять.'+(API.name==="rest"?' Посилання для учнів: <b>'+esc(location.origin)+'</b>':'')+'</div>';
   return h;
 }
 
@@ -1638,7 +1659,7 @@ function createStudent(form){
   if(pass.length<6){T.msg="Пароль має бути щонайменше 6 символів.";render();return;}
   S.busy=true;render();
   API.createStudent({name:name,login:login,pass:pass}).then(function(acc){
-    if(!Array.isArray(acc.unlocked))acc.unlocked=[];T.accounts.push(acc);T.creds={name:name,login:login,pass:pass};T.newName="";T.newLogin="";T.newPass=genPass();T.autoLogin=true;S.busy=false;render();
+    if(!Array.isArray(acc.unlocked))acc.unlocked=[1];if(!Array.isArray(acc.hide))acc.hide=[];if(!Array.isArray(acc.mopen))acc.mopen=[];T.accounts.push(acc);T.creds={name:name,login:login,pass:pass};T.newName="";T.newLogin="";T.newPass=genPass();T.autoLogin=true;S.busy=false;render();
   }).catch(function(e){tfail(e,e&&e.code==="exists"?"Такий логін уже є. Виберіть інший.":"Не вдалося створити обліковий запис. Спробуйте ще раз.");});
 }
 function resetPass(a){var pass=genPass();API.resetPassword(a,pass).then(function(){T.creds={name:a.name,login:a.login,pass:pass,reset:true};T.msg="";render();window.scrollTo(0,0);}).catch(function(e){tfail(e,"Не вдалося змінити пароль.");});}
@@ -1649,12 +1670,12 @@ function toggleLesson(a,n){
   var prev=a.unlocked;a.unlocked=next;T.msg="";render();
   API.setUnlocked(a,next).catch(function(e){a.unlocked=prev;tfail(e,"Не вдалося змінити доступ.");});
 }
-function matToggles(a,n){var m=MATERIALS[n];if(!m||(!m.cheat&&!m.hw))return "";var cl=a.mclose||[],h='<span class="mtogs">';
-  [["cheat","c","Ťahák"],["hw","h","Domáca úloha"]].forEach(function(x){if(!m[x[0]])return;var k=x[1]+n,off=cl.indexOf(k)>=0;h+='<button type="button" class="mtog'+(off?' off':'')+'" data-mtog="'+k+'" aria-pressed="'+(!off)+'" title="'+(off?'Учень не бачить — натисніть, щоб відкрити':'Учень бачить — натисніть, щоб закрити')+'">'+(off?ICON_LOCK:'✓')+' '+x[2]+'</button>';});
+function matToggles(a,n){var m=MATERIALS[n];if(!m||(!m.cheat&&!m.hw))return "";var op=a.mopen||[],h='<span class="mtogs">';
+  [["cheat","c","Ťahák"],["hw","h","Domáca úloha"]].forEach(function(x){if(!m[x[0]])return;var k=x[1]+n,off=op.indexOf(k)<0;h+='<button type="button" class="mtog'+(off?' off':'')+'" data-mtog="'+k+'" aria-pressed="'+(!off)+'" title="'+(off?'Учень не бачить — натисніть, щоб відкрити':'Учень бачить — натисніть, щоб закрити')+'">'+(off?ICON_LOCK:'✓')+' '+x[2]+'</button>';});
   return h+'</span>';}
-function toggleMat(a,k){var prev=(a.mclose||[]).slice(),off=prev.indexOf(k)>=0,next=off?prev.filter(function(x){return x!==k;}):prev.concat([k]).sort();
-  a.mclose=next;T.msg="";render();var nm=(k[0]==="c"?"Ťahák":"Domáca úloha")+" (lekcia "+k.slice(1)+")";
-  API.setMatClosed(a,next).then(function(){T.msgErr=false;T.msg=nm+(off?" відкрито учню.":" закрито: учень не зможе відкрити PDF, доки ви його не відкриєте.");render();}).catch(function(e){a.mclose=prev;tfail(e,"Не вдалося змінити доступ до матеріалу.");});}
+function toggleMat(a,k){var prev=(a.mopen||[]).slice(),off=prev.indexOf(k)<0,next=off?prev.concat([k]).sort():prev.filter(function(x){return x!==k;});
+  a.mopen=next;T.msg="";render();var nm=(k[0]==="c"?"Ťahák":"Domáca úloha")+" (lekcia "+k.slice(1)+")";
+  API.setMatOpen(a,next).then(function(){T.msgErr=false;T.msg=nm+(off?" відкрито учню.":" закрито: учень не зможе відкрити PDF, доки ви його не відкриєте.");render();}).catch(function(e){a.mopen=prev;tfail(e,"Не вдалося змінити доступ до матеріалу.");});}
 function toggleHide(a,m){var prev=(a.hide||[]).slice(),on=prev.indexOf(m)>=0,next=on?prev.filter(function(x){return x!==m;}):prev.concat([m]).sort(function(x,y){return x-y;});
   a.hide=next;T.msg="";render();
   API.setHidden(a,next).then(function(){T.msgErr=false;T.msg="Modul "+m+(on?" знову видно учню.":" приховано від учня: він не бачить уроків, тесту й слів цього модуля. Доступи до уроків збережено.");render();}).catch(function(e){a.hide=prev;tfail(e,"Не вдалося змінити видимість модуля.");});}
@@ -1680,6 +1701,8 @@ function render(){
   if(v==="login")h=viewLogin();
   else if(v==="home")h=viewHome();
   else if(v==="dict")h=viewDict();
+  else if(v==="faq")h=viewFaq();
+  else if(v==="settings")h=S.session.role==="student"?viewSettings():viewHome();
   else if(v==="tintro")h=viewTIntro();
   else if(v==="lesson")h=viewLesson();
   else if(v==="play")h=quitBar()+viewPlay();
@@ -1699,6 +1722,7 @@ app.addEventListener("submit",function(e){
   if(f.id==="newform")return createStudent(f);
   if(f.id==="noteform"){var a=T.accounts.find(function(x){return x.id===T.sel;});if(a)saveNote(a,f);return;}
   if(f.id==="tpassform")return saveTeacherCreds(f);
+  if(f.id==="spassform")return saveStudentPass(f);
 });
 app.addEventListener("click",function(e){
   var b=e.target.closest("button");if(!b||b.disabled||b.type==="submit")return;
