@@ -1288,10 +1288,10 @@ function viewHome(){
     h+=lessonCard(l);if(lastOfMod(l))testsOf(l.mod).forEach(function(t){h+=testCard(t);});});
   return h+'</div></section>';
 }
-var ST_MAT={deck:"Prezentácia z hodiny",cheat:"Ťahák",hw:"Domáca úloha"};
+var ST_MAT={deck:"Prezentácia z hodiny",cheat:"Ťahák",hw:"Domáca úloha",ex:"Precvičovanie"};var MAT_KEY={cheat:"c",hw:"h",ex:"p"};
 function studentMat(n){var m=MATERIALS[n];if(!m||!S.session||S.session.role!=="student")return "";var b="";
-  var cl=0;["cheat","hw"].forEach(function(k){if(!m[k])return;if((S.mopen||[]).indexOf((k==="cheat"?"c":"h")+n)<0){cl++;b+='<span class="matbtn off" aria-disabled="true">'+ICON_LOCK+' '+ST_MAT[k]+' · відкриє лектор</span>';return;}b+='<a class="matbtn" href="'+fileHref(m[k])+'" target="_blank" rel="noopener">'+ST_MAT[k]+' · PDF</a>';});
-  if(!b)return "";return '<div class="card smat"><b style="color:var(--navy)">Po lekcii · після уроку</b><span class="muted" style="font-size:13px">Шпаргалка для повторення й домашнє завдання — завантажте або роздрукуйте.</span><div class="mat">'+b+'</div></div>';}
+  var cl=0;["cheat","hw","ex"].forEach(function(k){if(!m[k])return;if((S.mopen||[]).indexOf(MAT_KEY[k]+n)<0){cl++;b+='<span class="matbtn off" aria-disabled="true">'+ICON_LOCK+' '+ST_MAT[k]+' · відкриє лектор</span>';return;}b+='<a class="matbtn" href="'+fileHref(m[k])+'" target="_blank" rel="noopener">'+ST_MAT[k]+' · PDF</a>';});
+  if(!b)return "";return '<div class="card smat"><b style="color:var(--navy)">Po lekcii · після уроку</b><span class="muted" style="font-size:13px">Шпаргалка, домашнє завдання й додаткові вправи — завантажте або роздрукуйте.</span><div class="mat">'+b+'</div></div>';}
 function viewLesson(){
   var l=LESSONS[S.lesson-1];if(!l||hidM(l.mod))return viewHome();
   var h='<button class="back" type="button" data-home>← Všetky lekcie</button>';
@@ -1527,13 +1527,13 @@ function statusPill(account){var a=advice(account),s=summary(account);
 /* ================= teacher: views ================= */
 var CL="https://claude.ai/artifact/";
 /* Матеріали: PDF видає захищений сервер (/api/file) — учень отримує лише шпаргалку й ДЗ відкритих уроків, лектор — усе */
-var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15,16,17].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};MATERIALS[18]={deck:"l18-prezentacia"};
+var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15,16,17].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};MATERIALS[18]={deck:"l18-prezentacia"};for(var _n=1;_n<=18;_n++)MATERIALS[_n].ex="l"+_n+"-precvicovanie";
 var TEST_MAT={t1:{test:"test1",key:"test1-kluc",label:"Test 1"},t2:{test:"test2",key:"test2-kluc",label:"Test 2"},t3:{test:"test3",key:"test3-kluc",label:"Test 3"}};
 var MAT="materials/";function fileHref(name){return API.fileUrl?API.fileUrl(name):MAT+name+".pdf";}
 var GUIDES={student:"prirucka-student",teacher:"prirucka-lektor"};
-var MAT_LABEL={deck:"Prezentácia",cheat:"Ťahák",hw:"Domáca úloha",test:"Test",key:"Kľúč k testu"};
+var MAT_LABEL={deck:"Prezentácia",cheat:"Ťahák",hw:"Domáca úloha",ex:"Precvičovanie",test:"Test",key:"Kľúč k testu"};
 function matLinks(n){var m=typeof n==="string"?TEST_MAT[n]:MATERIALS[n];if(!m)return "";var h='<div class="mat">';
-  ["deck","cheat","hw","test","key"].forEach(function(k){if(m[k])h+='<a class="matbtn" href="'+fileHref(m[k])+'" target="_blank" rel="noopener">'+(k==="test"&&m.label?m.label:MAT_LABEL[k])+' · PDF</a>';});
+  ["deck","cheat","hw","ex","test","key"].forEach(function(k){if(m[k])h+='<a class="matbtn" href="'+fileHref(m[k])+'" target="_blank" rel="noopener">'+(k==="test"&&m.label?m.label:MAT_LABEL[k])+' · PDF</a>';});
   return h+'</div>';}
 function tGuard(){if(T.err)return '<div class="card empty">'+esc(T.err)+'</div>';if(!T.loaded)return '<div class="card empty">Načítavam…</div>';return "";}
 function topAdvice(a){var adv=advice(a);return adv.find(function(x){return x.k==="bad";})||adv.find(function(x){return x.k==="warn";})||adv[0];}
@@ -1670,11 +1670,11 @@ function toggleLesson(a,n){
   var prev=a.unlocked;a.unlocked=next;T.msg="";render();
   API.setUnlocked(a,next).catch(function(e){a.unlocked=prev;tfail(e,"Не вдалося змінити доступ.");});
 }
-function matToggles(a,n){var m=MATERIALS[n];if(!m||(!m.cheat&&!m.hw))return "";var op=a.mopen||[],h='<span class="mtogs">';
-  [["cheat","c","Ťahák"],["hw","h","Domáca úloha"]].forEach(function(x){if(!m[x[0]])return;var k=x[1]+n,off=op.indexOf(k)<0;h+='<button type="button" class="mtog'+(off?' off':'')+'" data-mtog="'+k+'" aria-pressed="'+(!off)+'" title="'+(off?'Учень не бачить — натисніть, щоб відкрити':'Учень бачить — натисніть, щоб закрити')+'">'+(off?ICON_LOCK:'✓')+' '+x[2]+'</button>';});
+function matToggles(a,n){var m=MATERIALS[n];if(!m||(!m.cheat&&!m.hw&&!m.ex))return "";var op=a.mopen||[],h='<span class="mtogs">';
+  [["cheat","c","Ťahák"],["hw","h","Domáca úloha"],["ex","p","Precvičovanie"]].forEach(function(x){if(!m[x[0]])return;var k=x[1]+n,off=op.indexOf(k)<0;h+='<button type="button" class="mtog'+(off?' off':'')+'" data-mtog="'+k+'" aria-pressed="'+(!off)+'" title="'+(off?'Учень не бачить — натисніть, щоб відкрити':'Учень бачить — натисніть, щоб закрити')+'">'+(off?ICON_LOCK:'✓')+' '+x[2]+'</button>';});
   return h+'</span>';}
 function toggleMat(a,k){var prev=(a.mopen||[]).slice(),off=prev.indexOf(k)<0,next=off?prev.concat([k]).sort():prev.filter(function(x){return x!==k;});
-  a.mopen=next;T.msg="";render();var nm=(k[0]==="c"?"Ťahák":"Domáca úloha")+" (lekcia "+k.slice(1)+")";
+  a.mopen=next;T.msg="";render();var nm=({c:"Ťahák",h:"Domáca úloha",p:"Precvičovanie"})[k[0]]+" (lekcia "+k.slice(1)+")";
   API.setMatOpen(a,next).then(function(){T.msgErr=false;T.msg=nm+(off?" відкрито учню.":" закрито: учень не зможе відкрити PDF, доки ви його не відкриєте.");render();}).catch(function(e){a.mopen=prev;tfail(e,"Не вдалося змінити доступ до матеріалу.");});}
 function toggleHide(a,m){var prev=(a.hide||[]).slice(),on=prev.indexOf(m)>=0,next=on?prev.filter(function(x){return x!==m;}):prev.concat([m]).sort(function(x,y){return x-y;});
   a.hide=next;T.msg="";render();

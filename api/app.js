@@ -280,7 +280,7 @@ export default async function handler(req, res) {
     if (action === "setMatOpen") {
       if (!acc) return send(res, 404, { error: "notfound" });
       const keys = Array.isArray(body.keys) ? body.keys : [];
-      acc.mopen = [...new Set(keys.map(String).filter((k) => /^[ch]\d{1,3}$/.test(k)))].slice(0, 400).sort();
+      acc.mopen = [...new Set(keys.map(String).filter((k) => /^[chp]\d{1,3}$/.test(k)))].slice(0, 400).sort();
       await writeOne(accPath(acc.id), acc);
       return send(res, 200, { ok: true, mopen: acc.mopen });
     }

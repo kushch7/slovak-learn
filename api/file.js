@@ -3,7 +3,7 @@ import path from "node:path";
 import { verifyFileToken, findAccount, teacherConfig } from "./app.js";
 
 /* Захищена видача PDF-матеріалів.
-   Учень: шпаргалка й домашнє завдання лише відкритих йому уроків + довідник для учнів.
+   Учень: шпаргалка, домашнє завдання й Precvičovanie лише відкритих йому уроків + довідник для учнів.
    Лектор: усе (презентації, тести з ключами, довідники). */
 const DIR = path.join(process.cwd(), "api", "_files");
 
@@ -29,10 +29,10 @@ export default async function handler(req, res) {
     } else if (tok.r === "s") {
       const acc = await findAccount(tok.id);
       if (acc && (acc.pv || 1) === tok.pv) {
-        const m = f.match(/^l(\d{1,2})-(tahak|domaca-uloha)$/);
+        const m = f.match(/^l(\d{1,2})-(tahak|domaca-uloha|precvicovanie)$/);
         const hidden = (acc.hide || []).map(Number);
         // modules have 6 lessons each (1–6 → 1, 7–12 → 2, …)
-        ok = f === "prirucka-student" || (!!m && (acc.unlocked || [1]).map(Number).includes(+m[1]) && !hidden.includes(Math.ceil(+m[1] / 6)) && (acc.mopen || []).includes((m[2] === "tahak" ? "c" : "h") + (+m[1])));
+        ok = f === "prirucka-student" || (!!m && (acc.unlocked || [1]).map(Number).includes(+m[1]) && !hidden.includes(Math.ceil(+m[1] / 6)) && (acc.mopen || []).includes(({ tahak: "c", "domaca-uloha": "h", precvicovanie: "p" })[m[2]] + (+m[1])));
       }
     }
     if (!ok) return page(res, 403, "Цей матеріал вам ще недоступний. Його відкриє лектор після заняття.");
