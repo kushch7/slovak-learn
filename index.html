@@ -949,7 +949,47 @@ var LESSONS=[
    {ua:"Яка ваша дата народження?",a:"Aký je váš dátum narodenia?"},
    {ua:"Сьогодні п’яте листопада.",a:"Dnes je piateho novembra."},
    {ua:"Можете повторити повільніше?",a:"Môžete to zopakovať pomalšie?"},
-   {ua:"Мені ще потрібне фото.",a:"Potrebujem ešte fotku."}]}]}
+   {ua:"Мені ще потрібне фото.",a:"Potrebujem ešte fotku."}]}]},
+ {n:20,mod:4,title:"U lekára",sets:[
+  {id:"l20-telo",type:"vocab",title:"Telo a zdravie",ua:"Картки: знаю / ще ні",items:[
+   {sk:"hlava",g:"tá",ua:"голова",ex:"Bolí ma hlava."},{sk:"hrdlo",g:"to",ua:"горло",ex:"Hrdlo je červené."},
+   {sk:"brucho",g:"to",ua:"живіт",ex:"Bolí ho brucho."},{sk:"chrbát",g:"ten",ua:"спина",ex:"Bolí ju chrbát."},
+   {sk:"oči",g:"",ua:"очі",ex:"Bolia ma oči."},{sk:"zub",g:"ten",ua:"зуб",ex:"Bolí ma zub."},
+   {sk:"horúčka",g:"tá",ua:"температура",ex:"Mám horúčku."},{sk:"kašeľ",g:"ten",ua:"кашель",ex:"Mám kašeľ."},
+   {sk:"nádcha",g:"tá",ua:"нежить",ex:"Mám nádchu."},{sk:"chrípka",g:"tá",ua:"грип",ex:"Máte chrípku."},
+   {sk:"lekáreň",g:"tá",ua:"аптека",ex:"Idem do lekárne."},{sk:"recept",g:"ten",ua:"рецепт",ex:"Dám vám recept."}]},
+  {id:"l20-boli",type:"choice",title:"Bolí, alebo bolia?",ua:"Виберіть правильну форму",opts:["Bolí","Bolia"],items:[
+   {q:"___ ma hlava.",a:"Bolí",why:"hlava — одна → bolí"},
+   {q:"___ ma nohy.",a:"Bolia",why:"nohy — кілька → bolia"},
+   {q:"___ ho zub.",a:"Bolí",why:"zub — один → bolí"},
+   {q:"___ ju oči.",a:"Bolia",why:"oči — множина → bolia"},
+   {q:"___ vás hrdlo?",a:"Bolí",why:"hrdlo — одне → bolí"},
+   {q:"___ ma zuby.",a:"Bolia",why:"zuby — множина → bolia"},
+   {q:"___ ťa brucho?",a:"Bolí",why:"brucho — одне → bolí"}]},
+  {id:"l20-zamena",type:"type",title:"Bolí ma · Je mi zle",ua:"Напишіть потрібне слово",items:[
+   {q:"(on) Bolí ___ chrbát.",a:["ho"],why:"on → Bolí ho…"},
+   {q:"(ona) Bolí ___ hlava.",a:["ju"],why:"ona → Bolí ju…"},
+   {q:"(ja) Je ___ zle.",a:["mi"],why:"ja → Je mi zle."},
+   {q:"(on) Je ___ zle.",a:["mu"],why:"on → Je mu zle."},
+   {q:"(ona) Je ___ lepšie.",a:["jej"],why:"ona → Je jej lepšie."},
+   {q:"(vy) Bolí ___ hrdlo?",a:["vás"],why:"vy → Bolí vás…?"},
+   {q:"Mám ___ .",hint:"температура",a:["horúčku"],why:"tá horúčka → Mám horúčku."},
+   {q:"Mám ___ .",hint:"нежить",a:["nádchu"],why:"tá nádcha → Mám nádchu."}]},
+  {id:"l20-odd",type:"odd",title:"Čo sem nepatrí?",ua:"Знайдіть зайве слово",items:[
+   {opts:["hlava","noha","ruka","horúčka"],a:"horúčka",why:"horúčka — симптом, решта — частини тіла"},
+   {opts:["kašeľ","nádcha","chrípka","koleno"],a:"koleno",why:"koleno — частина тіла, решта — хвороби"},
+   {opts:["tabletka","sirup","kvapky","zub"],a:"zub",why:"zub — частина тіла, решта — ліки"},
+   {opts:["112","155","158","38"],a:"38",why:"38 — температура, решта — екстрені номери"},
+   {opts:["Otvorte ústa.","Dýchajte zhlboka.","Dám vám recept.","Mám kašeľ."],a:"Mám kašeľ.",why:"Mám kašeľ — каже пацієнт, решта — лікар"},
+   {opts:["lekáreň","nemocnica","pohotovosť","kaviareň"],a:"kaviareň",why:"kaviareň — кав’ярня, решта — медицина"}]},
+  {id:"l20-frazy",type:"match",title:"U lekára a v lekárni",ua:"З’єднайте пари",labels:["Slovensky","Po ukrajinsky"],pairs:[
+   ["Čo vás trápi?","Що вас турбує?"],["Je mi zle.","Мені погано."],["Otvorte ústa.","Відкрийте рот."],["Odkedy?","Відколи?"],["Máte niečo na kašeľ?","У вас є щось від кашлю?"],["Je to na predpis?","Це за рецептом?"],["Pošlite záchranku!","Надішліть швидку!"]]},
+  {id:"l20-vety",type:"order",title:"U lekára",ua:"Складіть речення зі слів",items:[
+   {ua:"У мене болить голова.",a:"Bolí ma hlava."},
+   {ua:"Мені погано з понеділка.",a:"Je mi zle od pondelka."},
+   {ua:"У мене температура і кашель.",a:"Mám horúčku a kašeľ."},
+   {ua:"Як мені приймати ліки?",a:"Ako mám užívať lieky?"},
+   {ua:"Тричі на день після їжі.",a:"Trikrát denne po jedle."}]}]}
 ];
 var TYPE_LABEL={chyby:"Chyby",choice:"Výber",type:"Písanie",match:"Spájanie",order:"Poradie slov",listen:"Počúvanie",cards:"Kartičky",odd:"Čo nepatrí?",error:"Nájdi chybu",mixed:"Mix",test:"Test"};
 var MODULES=[{n:1,level:"A1",title:"Prvé kroky",ua:"Перші кроки"},{n:2,level:"A1",title:"V meste",ua:"У місті"},{n:3,level:"A1",title:"Domov",ua:"Дім"},{n:4,level:"A1",title:"Úrady a služby",ua:"Установи й послуги"}];
@@ -1567,7 +1607,7 @@ function statusPill(account){var a=advice(account),s=summary(account);
 /* ================= teacher: views ================= */
 var CL="https://claude.ai/artifact/";
 /* Матеріали: PDF видає захищений сервер (/api/file) — учень отримує лише шпаргалку й ДЗ відкритих уроків, лектор — усе */
-var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15,16,17,19].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};MATERIALS[18]={deck:"l18-prezentacia"};for(var _n=1;_n<=19;_n++)MATERIALS[_n].ex="l"+_n+"-precvicovanie";
+var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15,16,17,19,20].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};MATERIALS[18]={deck:"l18-prezentacia"};for(var _n=1;_n<=20;_n++)MATERIALS[_n].ex="l"+_n+"-precvicovanie";
 var TEST_MAT={t1:{test:"test1",key:"test1-kluc",label:"Test 1"},t2:{test:"test2",key:"test2-kluc",label:"Test 2"},t3:{test:"test3",key:"test3-kluc",label:"Test 3"}};
 var MAT="materials/";function fileHref(name){return API.fileUrl?API.fileUrl(name):MAT+name+".pdf";}
 var GUIDES={student:"prirucka-student",teacher:"prirucka-lektor"};
