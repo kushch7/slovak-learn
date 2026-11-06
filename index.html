@@ -1196,7 +1196,48 @@ var LESSONS=[
    {ua:"Я вмію водити фургон.",a:"Viem šoférovať dodávku."},
    {ua:"Ви знаєте програму Excel?",a:"Poznáte program Excel?"},
    {ua:"Можу почати з понеділка.",a:"Môžem začať od pondelka."},
-   {ua:"Маю п’ять років досвіду.",a:"Mám päť rokov skúseností."}]}]}
+   {ua:"Маю п’ять років досвіду.",a:"Mám päť rokov skúseností."}]}]},
+ {n:26,mod:5,title:"V práci",sets:[
+  {id:"l26-slova",type:"vocab",title:"V práci",ua:"Картки: знаю / ще ні",items:[
+   {sk:"kolega",g:"ten",ua:"колега",ex:"Môj kolega sa volá Peter."},{sk:"kolegyňa",g:"tá",ua:"колега (жінка)",ex:"Kolegyňa je dnes chorá."},
+   {sk:"vedúci",g:"ten",ua:"керівник",ex:"Zavolajte vedúceho."},{sk:"zmena",g:"tá",ua:"зміна",ex:"Dnes mám nočnú zmenu."},
+   {sk:"rozpis zmien",g:"ten",ua:"графік змін",ex:"Pozrite, tu je rozpis zmien."},{sk:"prestávka",g:"tá",ua:"перерва",ex:"Kedy mám prestávku?"},
+   {sk:"šatňa",g:"tá",ua:"роздягальня",ex:"Tu je šatňa."},{sk:"stroj",g:"ten",ua:"машина, верстат",ex:"Vypnite stroj."},
+   {sk:"nadčas",g:"ten",ua:"понаднормова робота",ex:"Za nadčas dostanem viac."},{sk:"dovolenka",g:"tá",ua:"відпустка",ex:"V auguste mám dovolenku."},
+   {sk:"výplata",g:"tá",ua:"виплата зарплати",ex:"Kedy je výplata?"},{sk:"rukavice",g:"",ua:"рукавиці",ex:"Noste rukavice."}]},
+  {id:"l26-tvar",type:"choice",title:"Robte! Čakajte!",ua:"Виберіть правильну форму наказового способу",items:[
+   {q:"robiť → vy!",opts:["Robte!","Robite!","Robíte!"],a:"Robte!",why:"robia → rob → robte"},
+   {q:"čakať → vy!",opts:["Čakajte!","Čakate!","Čakaťe!"],a:"Čakajte!",why:"čakajú → čakaj → čakajte"},
+   {q:"pracovať → ty!",opts:["Pracuj!","Pracuje!","Pracovaj!"],a:"Pracuj!",why:"pracujú → pracuj"},
+   {q:"zavrieť → vy!",opts:["Zavrite!","Zavrte!","Zavrete!"],a:"Zavrite!",why:"дві приголосні → -ite"},
+   {q:"Ходіть зі мною! (vy)",opts:["Poďte so mnou!","Choďte so mnou!","Idete so mnou!"],a:"Poďte so mnou!",why:"poďte — ходіть сюди, зі мною"},
+   {q:"Не куріть!",opts:["Nefajčite!","Ne fajčite!","Fajčite nie!"],a:"Nefajčite!",why:"ne- пишемо разом"},
+   {q:"jesť → vy!",opts:["Jedzte!","Jeste!","Jedite!"],a:"Jedzte!",why:"неправильна форма: jedz, jedzte"}]},
+  {id:"l26-rozkaz",type:"type",title:"Pokyny",ua:"Напишіть наказовий спосіб (vy)",items:[
+   {q:"___ chvíľu, prosím.",hint:"čakať",a:["čakajte"],why:"čakajú → čakajte"},
+   {q:"___ rukavice.",hint:"nosiť",a:["noste"],why:"nosia → noste"},
+   {q:"___ e-mail vedúcej.",hint:"písať",a:["píšte"],why:"píšu → píšte"},
+   {q:"___ stroj.",hint:"vypnúť",a:["vypnite"],why:"vypnú → vypnite"},
+   {q:"___ k Petrovi.",hint:"ísť",a:["choďte"],why:"ísť → choďte"},
+   {q:"___ vedúceho.",hint:"zavolať",a:["zavolajte"],why:"zavolajú → zavolajte"},
+   {q:"___ mobil!",hint:"používať, nie",a:["nepoužívajte"],why:"заборона: ne- разом"},
+   {q:"___ mi, kde je šatňa.",hint:"povedať",a:["povedzte"],why:"неправильна: povedz, povedzte"}]},
+  {id:"l26-odd",type:"odd",title:"Čo sem nepatrí?",ua:"Знайдіть зайве слово",items:[
+   {opts:["ranná","poobedná","nočná","pracovná"],a:"pracovná",why:"решта — види змін"},
+   {opts:["Robte!","Čakajte!","Píšte!","Robíte"],a:"Robíte",why:"robíte — теперішній час, решта — наказ"},
+   {opts:["kolega","vedúci","kolegyňa","stroj"],a:"stroj",why:"stroj — машина, решта — люди"},
+   {opts:["prestávka","dovolenka","nadčas","balík"],a:"balík",why:"balík — пошта, решта — робочий час"},
+   {opts:["Nefajčite!","Nevstupujte!","Nepoužívajte!","Noste!"],a:"Noste!",why:"решта — заборони"},
+   {opts:["poďte","choďte","príďte","vediete"],a:"vediete",why:"решта — наказовий спосіб"}]},
+  {id:"l26-pokyny",type:"match",title:"Pokyny v práci",ua:"З’єднайте пари",labels:["Slovensky","Po ukrajinsky"],pairs:[
+   ["Poďte so mnou.","Ходіть зі мною."],["Umyte si ruky.","Помийте руки."],["Vypnite stroj.","Вимкніть машину."],
+   ["Nefajčite!","Не куріть!"],["Nevstupujte!","Не входити!"],["Zavolajte vedúceho.","Покличте керівника."],["Pýtajte sa!","Питайте!"]]},
+  {id:"l26-vety",type:"order",title:"V práci",ua:"Складіть речення зі слів",items:[
+   {ua:"Цього тижня в мене ранкова зміна.",a:"Tento týždeň mám rannú zmenu."},
+   {ua:"Коли в мене перерва?",a:"Kedy mám prestávku?"},
+   {ua:"Можеш помінятися зі мною зміною?",a:"Môžeš si so mnou vymeniť zmenu?"},
+   {ua:"На складі не користуйтеся мобільним.",a:"V sklade nepoužívajte mobil."},
+   {ua:"Ідіть до Петра.",a:"Choďte k Petrovi."}]}]}
 ];
 var TYPE_LABEL={chyby:"Chyby",choice:"Výber",type:"Písanie",match:"Spájanie",order:"Poradie slov",listen:"Počúvanie",cards:"Kartičky",odd:"Čo nepatrí?",error:"Nájdi chybu",mixed:"Mix",test:"Test"};
 var MODULES=[{n:1,level:"A1",title:"Prvé kroky",ua:"Перші кроки"},{n:2,level:"A1",title:"V meste",ua:"У місті"},{n:3,level:"A1",title:"Domov",ua:"Дім"},{n:4,level:"A1",title:"Úrady a služby",ua:"Установи й послуги"},{n:5,level:"A1",title:"Práca a voľný čas",ua:"Робота й дозвілля"}];
@@ -1831,7 +1872,7 @@ function statusPill(account){var a=advice(account),s=summary(account);
 /* ================= teacher: views ================= */
 var CL="https://claude.ai/artifact/";
 /* Матеріали: PDF видає захищений сервер (/api/file) — учень отримує лише шпаргалку й ДЗ відкритих уроків, лектор — усе */
-var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15,16,17,19,20,21,22,23,25].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};MATERIALS[18]={deck:"l18-prezentacia"};MATERIALS[24]={deck:"l24-prezentacia"};for(var _n=1;_n<=25;_n++)MATERIALS[_n].ex="l"+_n+"-precvicovanie";
+var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15,16,17,19,20,21,22,23,25,26].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};MATERIALS[18]={deck:"l18-prezentacia"};MATERIALS[24]={deck:"l24-prezentacia"};for(var _n=1;_n<=26;_n++)MATERIALS[_n].ex="l"+_n+"-precvicovanie";
 var TEST_MAT={t1:{test:"test1",key:"test1-kluc",label:"Test 1"},t2:{test:"test2",key:"test2-kluc",label:"Test 2"},t3:{test:"test3",key:"test3-kluc",label:"Test 3"},t4:{test:"test4",key:"test4-kluc",label:"Test 4"}};
 var MAT="materials/";function fileHref(name){return API.fileUrl?API.fileUrl(name):MAT+name+".pdf";}
 var GUIDES={student:"prirucka-student",teacher:"prirucka-lektor"};
