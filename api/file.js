@@ -7,6 +7,11 @@ import { verifyFileToken, findAccount, teacherConfig } from "./app.js";
    Лектор: усе (презентації, тести з ключами, довідники). */
 const DIR = path.join(process.cwd(), "api", "_files");
 
+/* Перший урок кожного модуля (A1: модулі 1–4 по 6 уроків, модуль 5 — уроки 25–29).
+   Новий модуль → додайте сюди номер його першого уроку (так само, як mod у LESSONS в index.html). */
+const MODULE_STARTS = [1, 7, 13, 19, 25, 30];
+const moduleOf = (n) => MODULE_STARTS.filter((x) => x <= n).length;
+
 function page(res, code, msg) {
   res.statusCode = code;
   res.setHeader("content-type", "text/html; charset=utf-8");
@@ -31,8 +36,7 @@ export default async function handler(req, res) {
       if (acc && (acc.pv || 1) === tok.pv) {
         const m = f.match(/^l(\d{1,2})-(tahak|domaca-uloha|precvicovanie)$/);
         const hidden = (acc.hide || []).map(Number);
-        // modules have 6 lessons each (1–6 → 1, 7–12 → 2, …)
-        ok = f === "prirucka-student" || (!!m && (acc.unlocked || [1]).map(Number).includes(+m[1]) && !hidden.includes(Math.ceil(+m[1] / 6)) && (acc.mopen || []).includes(({ tahak: "c", "domaca-uloha": "h", precvicovanie: "p" })[m[2]] + (+m[1])));
+        ok = f === "prirucka-student" || (!!m && (acc.unlocked || [1]).map(Number).includes(+m[1]) && !hidden.includes(moduleOf(+m[1])) && (acc.mopen || []).includes(({ tahak: "c", "domaca-uloha": "h", precvicovanie: "p" })[m[2]] + (+m[1])));
       }
     }
     if (!ok) return page(res, 403, "Цей матеріал вам ще недоступний. Його відкриє лектор після заняття.");
