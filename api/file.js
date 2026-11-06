@@ -7,9 +7,9 @@ import { verifyFileToken, findAccount, teacherConfig } from "./app.js";
    Лектор: усе (презентації, тести з ключами, довідники). */
 const DIR = path.join(process.cwd(), "api", "_files");
 
-/* Перший урок кожного модуля (A1: модулі 1–4 по 6 уроків, модуль 5 — уроки 25–29).
+/* Перший урок кожного модуля (A1: модулі 1–4 по 6 уроків, модуль 5 — уроки 25–30).
    Новий модуль → додайте сюди номер його першого уроку (так само, як mod у LESSONS в index.html). */
-const MODULE_STARTS = [1, 7, 13, 19, 25, 30];
+const MODULE_STARTS = [1, 7, 13, 19, 25, 31];
 const moduleOf = (n) => MODULE_STARTS.filter((x) => x <= n).length;
 
 function page(res, code, msg) {
