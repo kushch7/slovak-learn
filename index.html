@@ -1278,7 +1278,48 @@ var LESSONS=[
    {ua:"Не хочеш піти з нами в кіно?",a:"Nechceš ísť s nami do kina?"},
    {ua:"Іду на концерт із сестрою.",a:"Idem na koncert so sestrou."},
    {ua:"Коли і де зустрінемося?",a:"Kedy a kde sa stretneme?"},
-   {ua:"На жаль, увечері не можу.",a:"Žiaľ, večer nemôžem."}]}]}
+   {ua:"На жаль, увечері не можу.",a:"Žiaľ, večer nemôžem."}]}]},
+ {n:28,mod:5,title:"Počasie a oblečenie",sets:[
+  {id:"l28-slova",type:"vocab",title:"Počasie a oblečenie",ua:"Картки: знаю / ще ні",items:[
+   {sk:"počasie",g:"to",ua:"погода",ex:"Aké je dnes počasie?"},{sk:"dážď",g:"ten",ua:"дощ",ex:"Zober si dáždnik, bude dážď."},
+   {sk:"sneh",g:"ten",ua:"сніг",ex:"Na horách je sneh."},{sk:"vietor",g:"ten",ua:"вітер",ex:"Fúka silný vietor."},
+   {sk:"prší",g:"",ua:"іде дощ",ex:"Vonku prší."},{sk:"stupeň",g:"ten",ua:"градус",ex:"Je dvadsať stupňov."},
+   {sk:"bunda",g:"tá",ua:"куртка",ex:"Obleč si teplú bundu."},{sk:"sveter",g:"ten",ua:"светр",ex:"Mám sivý sveter."},
+   {sk:"nohavice",g:"tie",ua:"штани",ex:"Kúpim si čierne nohavice."},{sk:"tričko",g:"to",ua:"футболка",ex:"V lete nosím tričko."},
+   {sk:"topánky",g:"tie",ua:"взуття",ex:"Obuj si topánky."},{sk:"čiapka",g:"tá",ua:"шапка",ex:"Zober si čiapku."}]},
+  {id:"l28-pocasie",type:"choice",title:"Aké je počasie?",ua:"Виберіть правильний варіант",items:[
+   {q:"Мені холодно.",opts:["Je mi zima.","Som zima.","Je ma zima."],a:"Je mi zima.",why:"Je mi zima — як Je mi zle"},
+   {q:"Холодно. (надворі)",opts:["Je zima.","Je studený.","Som chladno."],a:"Je zima.",why:"погода без «воно»: Je zima"},
+   {q:"Іде дощ.",opts:["Prší.","Je dážď ide.","Dážď prší."],a:"Prší.",why:"одним словом: Prší"},
+   {q:"взимку",opts:["v zime","v zima","na zimu"],a:"v zime",why:"v zime, v lete, na jar, na jeseň"},
+   {q:"Je dvadsať ___ .",opts:["stupňov","stupne","stupeň"],a:"stupňov",why:"5+ → stupňov"},
+   {q:"Sú tri ___ .",opts:["stupne","stupňov","stupeň"],a:"stupne",why:"2–4 → stupne"},
+   {q:"навесні",opts:["na jar","v jari","na jari"],a:"na jar",why:"na jar — запам’ятати"}]},
+  {id:"l28-farby",type:"type",title:"Farby",ua:"Напишіть колір у правильній формі",items:[
+   {q:"___ bunda",hint:"červený",a:["červená"],why:"tá → -á"},
+   {q:"___ sveter",hint:"modrý",a:["modrý"],why:"ten → -ý"},
+   {q:"___ tričko",hint:"biely",a:["biele"],why:"to → -é"},
+   {q:"___ topánky",hint:"čierny",a:["čierne"],why:"tie → -é"},
+   {q:"___ čiapka",hint:"žltý",a:["žltá"],why:"tá → -á"},
+   {q:"___ nohavice",hint:"sivý",a:["sivé"],why:"tie → -é"},
+   {q:"___ kabát",hint:"hnedý",a:["hnedý"],why:"ten → -ý"},
+   {q:"Obleč si ___ !",hint:"светр",a:["sveter"],why:"ten sveter"}]},
+  {id:"l28-odd",type:"odd",title:"Čo sem nepatrí?",ua:"Знайдіть зайве слово",items:[
+   {opts:["bunda","sveter","kabát","dáždnik"],a:"dáždnik",why:"решта — одяг"},
+   {opts:["prší","sneží","fúka","varí"],a:"varí",why:"решта — погода"},
+   {opts:["jar","leto","jeseň","jún"],a:"jún",why:"jún — місяць, решта — пори року"},
+   {opts:["červený","modrý","zelený","veľký"],a:"veľký",why:"решта — кольори"},
+   {opts:["nohavice","džínsy","šaty","košeľa"],a:"košeľa",why:"košeľa — однина (tá), решта — tie"},
+   {opts:["Je teplo.","Je zima.","Je horúco.","Je mi zle."],a:"Je mi zle.",why:"решта — погода"}]},
+  {id:"l28-frazy",type:"match",title:"V obchode s oblečením",ua:"З’єднайте пари",labels:["Slovensky","Po ukrajinsky"],pairs:[
+   ["Môžem si to vyskúšať?","Можна приміряти?"],["Máte to vo veľkosti M?","Є розмір M?"],["Akú veľkosť potrebujete?","Який розмір вам потрібен?"],
+   ["Sedí vám to?","Вам підходить?"],["Je to v zľave.","Це зі знижкою."],["Hľadám zimnú bundu.","Шукаю зимову куртку."],["Máte to v modrej farbe?","Є в синьому кольорі?"]]},
+  {id:"l28-vety",type:"order",title:"Počasie a oblečenie",ua:"Складіть речення зі слів",items:[
+   {ua:"Сьогодні холодно і йде дощ.",a:"Dnes je zima a prší."},
+   {ua:"Мені не холодно.",a:"Nie je mi zima."},
+   {ua:"Одягни теплу куртку.",a:"Obleč si teplú bundu."},
+   {ua:"Влітку двадцять п’ять градусів.",a:"V lete je dvadsaťpäť stupňov."},
+   {ua:"Можна мені це приміряти?",a:"Môžem si to vyskúšať?"}]}]}
 ];
 var TYPE_LABEL={chyby:"Chyby",choice:"Výber",type:"Písanie",match:"Spájanie",order:"Poradie slov",listen:"Počúvanie",cards:"Kartičky",odd:"Čo nepatrí?",error:"Nájdi chybu",mixed:"Mix",test:"Test"};
 var MODULES=[{n:1,level:"A1",title:"Prvé kroky",ua:"Перші кроки"},{n:2,level:"A1",title:"V meste",ua:"У місті"},{n:3,level:"A1",title:"Domov",ua:"Дім"},{n:4,level:"A1",title:"Úrady a služby",ua:"Установи й послуги"},{n:5,level:"A1",title:"Práca a voľný čas",ua:"Робота й дозвілля"}];
@@ -1913,7 +1954,7 @@ function statusPill(account){var a=advice(account),s=summary(account);
 /* ================= teacher: views ================= */
 var CL="https://claude.ai/artifact/";
 /* Матеріали: PDF видає захищений сервер (/api/file) — учень отримує лише шпаргалку й ДЗ відкритих уроків, лектор — усе */
-var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15,16,17,19,20,21,22,23,25,26,27].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};MATERIALS[18]={deck:"l18-prezentacia"};MATERIALS[24]={deck:"l24-prezentacia"};for(var _n=1;_n<=27;_n++)MATERIALS[_n].ex="l"+_n+"-precvicovanie";
+var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15,16,17,19,20,21,22,23,25,26,27,28].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};MATERIALS[18]={deck:"l18-prezentacia"};MATERIALS[24]={deck:"l24-prezentacia"};for(var _n=1;_n<=28;_n++)MATERIALS[_n].ex="l"+_n+"-precvicovanie";
 var TEST_MAT={t1:{test:"test1",key:"test1-kluc",label:"Test 1"},t2:{test:"test2",key:"test2-kluc",label:"Test 2"},t3:{test:"test3",key:"test3-kluc",label:"Test 3"},t4:{test:"test4",key:"test4-kluc",label:"Test 4"}};
 var MAT="materials/";function fileHref(name){return API.fileUrl?API.fileUrl(name):MAT+name+".pdf";}
 var GUIDES={student:"prirucka-student",teacher:"prirucka-lektor"};
