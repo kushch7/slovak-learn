@@ -1237,7 +1237,48 @@ var LESSONS=[
    {ua:"Коли в мене перерва?",a:"Kedy mám prestávku?"},
    {ua:"Можеш помінятися зі мною зміною?",a:"Môžeš si so mnou vymeniť zmenu?"},
    {ua:"На складі не користуйтеся мобільним.",a:"V sklade nepoužívajte mobil."},
-   {ua:"Ідіть до Петра.",a:"Choďte k Petrovi."}]}]}
+   {ua:"Ідіть до Петра.",a:"Choďte k Petrovi."}]}]},
+ {n:27,mod:5,title:"Voľný čas",sets:[
+  {id:"l27-slova",type:"vocab",title:"Voľný čas",ua:"Картки: знаю / ще ні",items:[
+   {sk:"voľný čas",g:"ten",ua:"вільний час",ex:"Vo voľnom čase čítam."},{sk:"koníček",g:"ten",ua:"хобі",ex:"Môj koníček je turistika."},
+   {sk:"kino",g:"to",ua:"кіно",ex:"Ideme do kina?"},{sk:"divadlo",g:"to",ua:"театр",ex:"V piatok idem do divadla."},
+   {sk:"koncert",g:"ten",ua:"концерт",ex:"Idem na koncert so sestrou."},{sk:"prechádzka",g:"tá",ua:"прогулянка",ex:"Ideme na prechádzku do parku."},
+   {sk:"turistika",g:"tá",ua:"походи в гори",ex:"V nedeľu idem na turistiku."},{sk:"plávanie",g:"to",ua:"плавання",ex:"Deti majú plávanie."},
+   {sk:"posilňovňa",g:"tá",ua:"спортзал",ex:"Chodím do posilňovne."},{sk:"žiaľ",g:"",ua:"на жаль",ex:"Žiaľ, nemôžem."},
+   {sk:"nabudúce",g:"",ua:"наступного разу",ex:"Možno nabudúce."},{sk:"teším sa",g:"",ua:"чекаю, тішуся",ex:"Super, teším sa!"}]},
+  {id:"l27-skym",type:"type",title:"S kým?",ua:"Напишіть слово в правильній формі",items:[
+   {q:"Idem do kina s ___ .",hint:"kamarát",a:["kamarátom"],why:"ten → -om"},
+   {q:"Varím so ___ .",hint:"sestra",a:["sestrou"],why:"tá → -ou"},
+   {q:"Hrám futbal s ___ .",hint:"kolegovia",a:["kolegami"],why:"s kolegami"},
+   {q:"Telefonujem s ___ .",hint:"mama",a:["mamou"],why:"tá mama → s mamou"},
+   {q:"Idem do parku s ___ .",hint:"deti",a:["deťmi"],why:"s deťmi — запам’ятати"},
+   {q:"Idem na prechádzku s ___ .",hint:"manžel",a:["manželom"],why:"ten manžel → s manželom"},
+   {q:"Poď ___ !",hint:"ja",a:["so mnou"],why:"so mnou"},
+   {q:"Idete ___ ?",hint:"my",a:["s nami"],why:"s nami"}]},
+  {id:"l27-zamena",type:"choice",title:"So mnou, s tebou",ua:"Виберіть правильний варіант",items:[
+   {q:"Hrám tenis ___ . (on)",opts:["s ním","s ňou","s nimi"],a:"s ním",why:"on → s ním"},
+   {q:"Idem na kávu ___ . (ona)",opts:["s ňou","s ním","s nami"],a:"s ňou",why:"ona → s ňou"},
+   {q:"Rád sa ___ rozprávam. (vy)",opts:["s vami","s nami","s tebou"],a:"s vami",why:"vy → s vami"},
+   {q:"Ideš ___ ? (ja)",opts:["so mnou","s mnou","s ja"],a:"so mnou",why:"so mnou"},
+   {q:"___ sestrou",opts:["so","s"],a:"so",why:"перед s → so"},
+   {q:"Nechceš ísť do kina? — Ні, на жаль.",opts:["Žiaľ, nemôžem.","Rád!","Teším sa!"],a:"Žiaľ, nemôžem.",why:"ввічлива відмова"},
+   {q:"ísť ___ koncert",opts:["na","do"],a:"na",why:"na koncert, na prechádzku; do kina, do divadla"}]},
+  {id:"l27-odd",type:"odd",title:"Čo sem nepatrí?",ua:"Знайдіть зайве слово",items:[
+   {opts:["futbal","tenis","plávanie","kuchyňa"],a:"kuchyňa",why:"решта — спорт"},
+   {opts:["kino","divadlo","koncert","pošta"],a:"pošta",why:"решта — культура"},
+   {opts:["s kamarátom","s mamou","so sestrou","v obchode"],a:"v obchode",why:"решта — з ким?"},
+   {opts:["so mnou","s tebou","s nami","mňa"],a:"mňa",why:"решта — з ким?"},
+   {opts:["Super nápad!","Rád!","Teším sa!","Žiaľ, nemôžem."],a:"Žiaľ, nemôžem.",why:"решта — згода"},
+   {opts:["čítať","plávať","hrať","bolieť"],a:"bolieť",why:"решта — дозвілля"}]},
+  {id:"l27-frazy",type:"match",title:"Pozvanie",ua:"З’єднайте пари",labels:["Slovensky","Po ukrajinsky"],pairs:[
+   ["Máš čas v sobotu?","Маєш час у суботу?"],["Nechceš ísť do kina?","Не хочеш піти в кіно?"],["Kedy a kde sa stretneme?","Коли і де зустрінемося?"],
+   ["Žiaľ, nemôžem.","На жаль, не можу."],["Možno nabudúce.","Може, наступного разу."],["Super nápad!","Чудова ідея!"],["Teším sa!","Чекаю з нетерпінням!"]]},
+  {id:"l27-vety",type:"order",title:"Voľný čas",ua:"Складіть речення зі слів",items:[
+   {ua:"У суботу граю у футбол із колегами.",a:"V sobotu hrám futbal s kolegami."},
+   {ua:"Не хочеш піти з нами в кіно?",a:"Nechceš ísť s nami do kina?"},
+   {ua:"Іду на концерт із сестрою.",a:"Idem na koncert so sestrou."},
+   {ua:"Коли і де зустрінемося?",a:"Kedy a kde sa stretneme?"},
+   {ua:"На жаль, увечері не можу.",a:"Žiaľ, večer nemôžem."}]}]}
 ];
 var TYPE_LABEL={chyby:"Chyby",choice:"Výber",type:"Písanie",match:"Spájanie",order:"Poradie slov",listen:"Počúvanie",cards:"Kartičky",odd:"Čo nepatrí?",error:"Nájdi chybu",mixed:"Mix",test:"Test"};
 var MODULES=[{n:1,level:"A1",title:"Prvé kroky",ua:"Перші кроки"},{n:2,level:"A1",title:"V meste",ua:"У місті"},{n:3,level:"A1",title:"Domov",ua:"Дім"},{n:4,level:"A1",title:"Úrady a služby",ua:"Установи й послуги"},{n:5,level:"A1",title:"Práca a voľný čas",ua:"Робота й дозвілля"}];
@@ -1872,7 +1913,7 @@ function statusPill(account){var a=advice(account),s=summary(account);
 /* ================= teacher: views ================= */
 var CL="https://claude.ai/artifact/";
 /* Матеріали: PDF видає захищений сервер (/api/file) — учень отримує лише шпаргалку й ДЗ відкритих уроків, лектор — усе */
-var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15,16,17,19,20,21,22,23,25,26].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};MATERIALS[18]={deck:"l18-prezentacia"};MATERIALS[24]={deck:"l24-prezentacia"};for(var _n=1;_n<=26;_n++)MATERIALS[_n].ex="l"+_n+"-precvicovanie";
+var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15,16,17,19,20,21,22,23,25,26,27].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};MATERIALS[18]={deck:"l18-prezentacia"};MATERIALS[24]={deck:"l24-prezentacia"};for(var _n=1;_n<=27;_n++)MATERIALS[_n].ex="l"+_n+"-precvicovanie";
 var TEST_MAT={t1:{test:"test1",key:"test1-kluc",label:"Test 1"},t2:{test:"test2",key:"test2-kluc",label:"Test 2"},t3:{test:"test3",key:"test3-kluc",label:"Test 3"},t4:{test:"test4",key:"test4-kluc",label:"Test 4"}};
 var MAT="materials/";function fileHref(name){return API.fileUrl?API.fileUrl(name):MAT+name+".pdf";}
 var GUIDES={student:"prirucka-student",teacher:"prirucka-lektor"};
