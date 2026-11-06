@@ -107,14 +107,14 @@ const publicAcc = (a) => ({ id: a.id, name: a.name, login: a.login, createdAt: a
 const cleanLessons = (arr) => {
   const list = Array.isArray(arr) ? arr : [];
   const lessons = [...new Set(list.map(Number).filter((n) => LESSONS.includes(n)))].sort((a, b) => a - b);
-  const tests = [...new Set(list.filter((x) => typeof x === "string" && /^t\d{1,2}$/.test(x)))].sort();
+  const tests = [...new Set(list.filter((x) => typeof x === "string" && /^t(\d{1,2}|a1|a2|b1|b2)$/.test(x)))].sort();
   return [...lessons, ...tests];
 };
 const cleanTcfg = (o) => {
   const out = {};
   if (!o || typeof o !== "object") return out;
   for (const [k, v] of Object.entries(o).slice(0, 20)) {
-    if (!/^t\d{1,2}$/.test(k) || !v || typeof v !== "object") continue;
+    if (!/^t(\d{1,2}|a1|a2|b1|b2)$/.test(k) || !v || typeof v !== "object") continue;
     out[k] = { tries: Math.max(0, Math.min(9, Math.round(+v.tries || 0))), min: Math.max(0, Math.min(240, Math.round(+v.min || 0))) };
   }
   return out;
