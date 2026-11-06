@@ -103,7 +103,7 @@ function verifyFileToken(t) {
   try { const p = JSON.parse(Buffer.from(body, "base64url").toString("utf8")); return p.f === 1 && p.exp > Date.now() ? p : null; } catch { return null; }
 }
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-const publicAcc = (a) => ({ id: a.id, name: a.name, login: a.login, createdAt: a.createdAt, note: a.note || "", unlocked: a.unlocked || [1], tcfg: a.tcfg || {}, hide: a.hide || [], mopen: a.mopen || [], demo: !!a.demo });
+const publicAcc = (a) => ({ id: a.id, name: a.name, login: a.login, createdAt: a.createdAt, note: a.note || "", unlocked: a.unlocked || [1], tcfg: a.tcfg || {}, hide: a.hide || [], mopen: a.mopen || [], demo: !!a.demo, terms: a.terms || null });
 const cleanLessons = (arr) => {
   const list = Array.isArray(arr) ? arr : [];
   const lessons = [...new Set(list.map(Number).filter((n) => LESSONS.includes(n)))].sort((a, b) => a - b);
@@ -207,6 +207,10 @@ export default async function handler(req, res) {
       }
       const acc = (await allAccounts()).find((a) => a.login === login);
       if (!acc || !checkPass(pass, acc.pass)) { await sleep(600); return send(res, 401, { error: "bad" }); }
+      // Згода з Умовами використання матеріалів: обов'язкова при кожному вході учня, дата першого прийняття версії зберігається
+      if (body.agree !== true) return send(res, 400, { error: "terms" });
+      const tv = Math.max(1, Math.min(99, parseInt(body.tv, 10) || 1));
+      if (!acc.terms || acc.terms.v !== tv) { acc.terms = { v: tv, at: Date.now() }; await writeOne(accPath(acc.id), acc); }
       const progress = await readOne(progPath(acc.id));
       return send(res, 200, { role: "student", id: acc.id, name: acc.name, unlocked: acc.unlocked || [1], tcfg: acc.tcfg || {}, hide: acc.hide || [], mopen: acc.mopen || [], progress, token: sign({ r: "s", id: acc.id, pv: acc.pv || 1, exp: Date.now() + 60 * DAY }), ft: fileToken("s", acc.id, acc.pv || 1) });
     }

@@ -37,6 +37,8 @@ button,input,textarea{font-family:inherit;font-size:inherit;color:inherit}
 .bar nav{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap;align-items:center}
 .tab{background:none;border:0;color:var(--hdr-ink);font-weight:600;font-size:14px;padding:8px 12px;min-height:40px;cursor:pointer}
 .tab[aria-current="page"]{background:var(--accent);color:var(--accent-ink)}
+a.tab{display:inline-flex;align-items:center;text-decoration:none}
+a.go-b{text-decoration:none}
 .chip-xp{border:1.5px solid var(--accent);color:var(--accent);font-weight:700;font-size:13px;padding:5px 10px;font-variant-numeric:tabular-nums;white-space:nowrap}
 main{max-width:1040px;margin:0 auto;padding-block:24px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:26px}
 .eyebrow{font-size:12px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--blue)}
@@ -108,6 +110,14 @@ button.card:disabled{cursor:default}
 .err{background:var(--bad-bg);color:var(--bad);padding:10px 14px;font-weight:600;font-size:14px}
 .ok-msg{background:var(--good-bg);color:var(--good);padding:10px 14px;font-weight:600;font-size:14px}
 .note{background:var(--soft);padding:10px 14px;font-size:13px;color:var(--ink)}
+.agree{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.5;color:var(--ink);cursor:pointer}
+.agree input{width:20px;height:20px;flex:none;margin:1px 0 0;accent-color:var(--blue);cursor:pointer}
+.agree .linkbtn{font-size:13px;display:inline}
+.ovl{position:fixed;inset:0;z-index:50;background:rgba(7,18,43,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.ovl-c{background:var(--surface);color:var(--ink);border-top:6px solid var(--accent);max-width:620px;width:100%;max-height:calc(100vh - 32px);overflow:auto;padding:22px 24px;display:flex;flex-direction:column;gap:12px;font-size:14px;line-height:1.6}
+.ovl-c h2{font-size:20px;font-weight:800;color:var(--navy)}.ovl-c h3{font-size:15px;font-weight:800;color:var(--navy);margin-top:4px}.ovl-c ul{padding-left:20px;display:flex;flex-direction:column;gap:4px}
+.demo{border-top:5px solid var(--accent);flex-direction:row;flex-wrap:wrap;align-items:center;gap:12px 18px}.demo .t{flex:1 1 300px;display:flex;flex-direction:column;gap:4px}.demo b{color:var(--navy)}
+.btn.a{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
 .ptop{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .ptop .t{flex:1 1 200px;min-width:0}
 .ptop .cnt{font-weight:700;font-variant-numeric:tabular-nums}
@@ -1155,7 +1165,7 @@ function modRowStudent(m){var x=modOf(m),nm=activeMist(m).length,canMix=buildMix
   if(canMix)b+='<button class="modbtn" type="button" data-start="mix-'+m+'">∑ Opakovanie'+(r?' · '+r.best+' %':'')+'</button>';
   if(nm)b+='<button class="modbtn warnb" type="button" data-start="chyby-'+m+'">! Moje chyby · '+nm+'</button>';
   return '<div class="modh"><b>'+esc((x.level?x.level+" · ":"")+"Modul "+x.n)+'</b><span>'+esc(x.title)+(x.ua?' · '+esc(x.ua):'')+'</span>'+(b?'<span class="modacts">'+b+'</span>':'')+'</div>';}
-function hidM(m){return !!(S.session&&S.session.role==="student"&&S.hide&&S.hide.indexOf(m)>=0);}
+function hidM(m){if(S.session&&S.session.role==="guest")return m!==LESSONS[DEMO_LESSONS[0]-1].mod;return !!(S.session&&S.session.role==="student"&&S.hide&&S.hide.indexOf(m)>=0);}
 function modOfKey(k){if(typeof k==="number")return (LESSONS[k-1]||{}).mod;var m=/^t(\d+)$/.exec(k);return m?+m[1]:null;}
 function modRowT(a,m){var x=modOf(m),off=(a.hide||[]).indexOf(m)>=0;return '<div class="modh'+(off?' off':'')+'"><b>'+esc((x.level?x.level+" · ":"")+"Modul "+x.n)+'</b><span>'+esc(x.title)+(x.ua?' · '+esc(x.ua):'')+'</span>'+(off?'<span class="pill warn">ПРИХОВАНО ВІД УЧНЯ</span>':'')+'<button class="mhide" type="button" data-hidemod="'+m+'" aria-pressed="'+off+'">'+(off?'Показати учню':'Сховати від учня')+'</button></div>';}
 function modRow(m){var x=modOf(m);return '<div class="modh"><b>'+esc((x.level?x.level+" · ":"")+"Modul "+x.n)+'</b><span>'+esc(x.title)+(x.ua?' · '+esc(x.ua):'')+'</span></div>';}
@@ -1272,7 +1282,7 @@ function RestAPI(){
     name:"rest",
     fileUrl:function(name){return "/api/file?f="+encodeURIComponent(name)+(ft?"&t="+encodeURIComponent(ft):"");},
     ready:function(){return Promise.resolve(true);},
-    login:function(role,login,pass){return call("login",{role:role,login:login,pass:pass}).then(shape);},
+    login:function(role,login,pass,agree){return call("login",{role:role,login:login,pass:pass,agree:!!agree,tv:TERMS_V}).then(shape);},
     restore:function(s){token=s.token;return call("me").then(shape).catch(function(e){if(e.code==="auth"||e.code==="bad")return null;throw e;});},
     sessionOf:function(r){return {role:r.role,token:r.token,id:r.id,name:r.name,login:r.login};},
     saveProgress:function(s,data){return call("saveProgress",{progress:{xp:data.xp,days:data.days,results:data.results,stats:data.stats,mist:data.mist||{},tests:data.tests||{}}});},
@@ -1295,6 +1305,13 @@ var API=(window.claude&&typeof window.claude.use==="function")?ClaudeAPI():RestA
 var S={ready:false,online:false,session:null,data:emptyProg(),unlocked:[1],view:"login",lesson:1,play:null,sync:"",loginTab:"student",loginErr:"",busy:false,lgLogin:""};
 var T={accounts:[],progress:{},loaded:false,err:"",sel:null,creds:null,confirm:null,msg:"",msgErr:false,newPass:genPass(),newName:"",newLogin:"",autoLogin:true};
 var LS_SESSION="slovaklearn-session-v3";
+var TERMS_V=1;
+var TERMS_HTML='<h2 id="terms-h">Умови використання матеріалів Slovak Learn</h2>'+
+'<p>Вхід у кабінет дає вам особистий доступ до матеріалів школи Slovak Learn: онлайн-вправ, тестів, словника, презентацій, шпаргалок, домашніх завдань і додаткових вправ у PDF. Усі ці матеріали створені школою та є її інтелектуальною власністю.</p>'+
+'<h3>Що можна</h3><ul><li>Користуватися матеріалами для власного навчання.</li><li>Завантажувати й друкувати PDF-матеріали для себе.</li></ul>'+
+'<h3>Що заборонено</h3><ul><li>Поширювати матеріали будь-яким способом: пересилати файли, публікувати в соцмережах, месенджерах, на сайтах і в хмарних сховищах.</li><li>Копіювати, змінювати чи видавати матеріали за свої, зокрема фрагментами або скриншотами.</li><li>Використовувати матеріали, щоб навчати інших людей або з комерційною метою.</li><li>Передавати комусь свій логін і пароль або давати доступ до кабінету іншим людям.</li></ul>'+
+'<h3>Порушення</h3><p>Якщо умови порушено, школа може призупинити або закрити доступ до кабінету та матеріалів.</p>'+
+'<p class="muted" style="font-size:13px">Запитання щодо умов — напишіть своєму лектору.</p>';
 function progKey(){return "slovaklearn-prog-"+(S.session&&S.session.role==="student"?S.session.id:"guest");}
 var saveTimer=null;
 function save(){
@@ -1323,6 +1340,9 @@ function setMod(s){return s.mod||(LESSONS[s.lesson-1]||{}).mod;}
 function activeMist(mod){var m=S.data.mist||{};return Object.keys(m).filter(function(k){return m[k]>0&&ITEMS[k]&&ITEMS[k].set.type!=="test"&&setOpenFor(S.unlocked,ITEMS[k].set)&&(!mod||setMod(ITEMS[k].set)===mod);}).sort(function(x,y){return m[y]-m[x];});}
 function wrapItem(k){var x=ITEMS[k],s=x.set;return s.type==="test"?{it:x.it,set:{type:x.it.t,ua:x.it.h,opts:x.it.opts,nospace:x.it.nospace}}:{it:x.it,set:s};}
 function isOpen(n){return S.unlocked.indexOf(n)>=0;}
+var DEMO_LESSONS=[1];
+function isGuest(){return !!(S.session&&S.session.role==="guest");}
+function startGuest(){S.session={role:"guest",name:""};S.unlocked=DEMO_LESSONS.slice();lsSet(LS_SESSION,S.session);S.data=normProg(lsGet(progKey()));S.sideExp=null;go("home");}
 function openSets(){return ALL_SETS.filter(function(id){return setOpenFor(S.unlocked,SETS[id]);});}
 
 /* ================= sessions ================= */
@@ -1340,7 +1360,7 @@ function boot(){
     S.ready=true;S.online=ok;
     var sess=lsGet(LS_SESSION);
     if(!sess){render();return;}
-    if(sess.role==="guest"){S.session=sess;S.unlocked=ALL_KEYS.slice();S.data=normProg(lsGet(progKey()));go("home");return;}
+    if(sess.role==="guest"){startGuest();return;}
     if(!ok){render();return;}
     return API.restore(sess).then(function(r){
       if(!r){lsSet(LS_SESSION,null);S.loginErr=sess.role==="student"?"Ваші дані для входу змінилися. Увійдіть знову.":"";render();return;}
@@ -1350,10 +1370,12 @@ function boot(){
 }
 function doLogin(form){
   var login=form.querySelector("#lg-login").value.trim(),pass=form.querySelector("#lg-pass").value;S.lgLogin=login;
+  var agEl=form.querySelector("#lg-agree"),agree=!!(agEl&&agEl.checked);S.lgAgree=agree;
   if(!login||!pass){S.loginErr="Введіть логін і пароль.";render();return;}
-  if(!S.online){S.loginErr="Немає з’єднання із сервером. Спробуйте пізніше або відкрийте вправи без входу.";render();return;}
+  if(S.loginTab!=="teacher"&&!agree){var em="Щоб увійти, підтвердіть згоду з Умовами використання матеріалів.",ee=form.querySelector(".err");if(!ee){ee=document.createElement("div");ee.className="err";ee.setAttribute("role","alert");form.insertBefore(ee,form.firstChild);}ee.textContent=em;if(agEl)agEl.focus();return;}
+  if(!S.online){S.loginErr="Немає з’єднання із сервером. Спробуйте пізніше або відкрийте демо-урок.";render();return;}
   S.busy=true;S.loginErr="";render();
-  API.login(S.loginTab,login,pass).then(function(r){
+  API.login(S.loginTab,login,pass,agree).then(function(r){
     S.busy=false;
     if(r.role==="teacher"){S.session=API.sessionOf(r);lsSet(LS_SESSION,S.session);go("t-students");}else applyStudent(r);
   }).catch(function(e){S.busy=false;
@@ -1364,6 +1386,7 @@ function loginErrText(c){
   if(c==="storage")return "Сервер не бачить сховище даних (Blob). Підключіть Blob-сховище до проєкту у Vercel (Storage) і зробіть Redeploy.";
   if(c==="noapi")return "Серверна частина не знайдена: перевірте, що папка api є в репозиторії.";
   if(c==="offline")return "Немає з’єднання з інтернетом. Спробуйте ще раз.";
+  if(c==="terms")return "Щоб увійти, підтвердіть згоду з Умовами використання матеріалів.";
   return "Помилка сервера (код: "+(c||"невідомо")+"). Спробуйте ще раз.";
 }
 function logout(){var wasT=S.session&&S.session.role==="teacher";lsSet(LS_SESSION,null);if(wasT&&routeRole()!=="teacher"){try{location.hash="lektor";}catch(e){}}S.session=null;S.data=emptyProg();S.unlocked=[1];S.play=null;T.loaded=false;T.sel=null;T.creds=null;S.loginErr="";go("login");}
@@ -1383,11 +1406,12 @@ function go(view,extra){if(S.view==="play"&&view!=="play"&&view!=="result"&&S.pl
 document.getElementById("brand").addEventListener("click",function(){if(!S.session)go("login");else go(S.session.role==="teacher"?"t-students":"home");});
 function renderNav(){
   var nav=document.getElementById("nav"),role=document.getElementById("role"),h="",r=S.session&&S.session.role;
-  role.textContent=r==="teacher"?"KABINET LEKTORA":(r?"KABINET ŠTUDENTA":"");
+  role.textContent=r==="teacher"?"KABINET LEKTORA":(r==="guest"?"UKÁŽKA · ДЕМО":(r?"KABINET ŠTUDENTA":""));
   function tab(v,label,match){return '<button class="tab" type="button" data-nav="'+v+'"'+(match.indexOf(S.view)>=0?' aria-current="page"':"")+'>'+label+'</button>';}
   if(r==="teacher")h=tab("t-students","Študenti",["t-students","t-student","t-new"])+tab("t-materials","Materiály",["t-materials"])+tab("t-settings","Nastavenia",["t-settings"]);
+  else if(r==="guest")h=tab("home","Cvičenia",["home","lesson","play","result","tintro"])+tab("dict","Slovník",["dict"])+'<a class="tab" href="/tarify">Tarify a zápis</a>';
   else if(r)h=tab("home","Cvičenia",["home","lesson","play","result","tintro"])+tab("dict","Slovník",["dict"])+tab("faq","Časté otázky",["faq"])+(r==="student"?tab("settings","Nastavenia",["settings"]):"");
-  if(r)h+='<button class="tab" type="button" data-logout>Odhlásiť</button>';
+  if(r)h+='<button class="tab" type="button" data-logout>'+(r==="guest"?"Ukončiť ukážku":"Odhlásiť")+'</button>';
   nav.innerHTML=h;
 }
 function setMenu(o){var bar=document.querySelector(".bar"),mb=document.getElementById("menubtn");bar.classList.toggle("open",!!o);mb.setAttribute("aria-expanded",o?"true":"false");}
@@ -1406,10 +1430,11 @@ function viewLogin(){
   if(S.loginErr)h+='<div class="err" role="alert">'+esc(S.loginErr)+'</div>';
   h+='<div class="field"><label for="lg-login">Prihlasovacie meno · логін</label><input id="lg-login" autocomplete="username" autocapitalize="off" spellcheck="false" value="'+esc(S.lgLogin)+'" placeholder="'+(teacher?"lektor":"napr. olena.k")+'"></div>';
   h+='<div class="field"><label for="lg-pass">Heslo · пароль</label><input id="lg-pass" type="password" autocomplete="current-password"></div>';
+  if(!teacher)h+='<label class="agree"><input type="checkbox" id="lg-agree"'+(S.lgAgree?" checked":"")+'><span>Я погоджуюся з <button type="button" class="linkbtn" data-terms>Умовами використання матеріалів</button> і не поширюватиму матеріали школи.</span></label>';
   h+='<button class="btn" type="submit"'+(S.busy||!S.ready?" disabled":"")+'>'+(S.busy?"Prihlasujem…":(!S.ready?"Načítavam…":(teacher?"Vstúpiť do kabinetu lektora":"Prihlásiť sa")))+'</button></form>';
   if(teacher)h+='<button class="linkbtn" type="button" data-tostudent style="align-self:center">← Вхід для учнів</button>';
-  else h+='<button class="linkbtn" type="button" data-guest style="align-self:center">Skúsiť cvičenia bez prihlásenia</button><p class="muted" style="font-size:13px;text-align:center">Без входу прогрес зберігається лише в цьому браузері, і лектор його не бачить.</p><a class="linkbtn" href="/tarify" style="align-self:center">Ще не вчитеся з нами? Тарифи та запис →</a>';
-  if(S.ready&&!S.online)h+='<div class="note">Сервер зараз недоступний, тож вхід за логіном не працює.'+(teacher?'':' Можна спробувати вправи без входу.')+'</div>';
+  else h+='<button class="linkbtn" type="button" data-guest style="align-self:center">Vyskúšať ukážku · демо-урок без входу</button><p class="muted" style="font-size:13px;text-align:center">У демо-версії відкритий лише перший урок. Прогрес зберігається тільки в цьому браузері.</p><a class="linkbtn" href="/tarify" style="align-self:center">Ще не вчитеся з нами? Тарифи та запис →</a>';
+  if(S.ready&&!S.online)h+='<div class="note">Сервер зараз недоступний, тож вхід за логіном не працює.'+(teacher?'':' Можна спробувати демо-урок без входу.')+'</div>';
   return h+'</div>';
 }
 
@@ -1421,7 +1446,7 @@ function nextSet(){var open=openSets().filter(function(id){return SETS[id].type!
   var weak=open.filter(function(id){return res[id]&&res[id].best<80;}).sort(function(x,y){return res[x].best-res[y].best;});
   if(fresh.length)return {id:fresh[0],why:"Нова вправа"};if(weak.length)return {id:weak[0],why:"Варто повторити: "+res[weak[0]].best+" %"};return null;}
 function lessonCard(l){var rv=l.review?'<span class="pill revp">OPAKOVANIE</span>':'';
-  if(!isOpen(l.n))return '<div class="card locked'+(l.review?' review':'')+'" aria-label="Lekcia '+l.n+' — zamknutá"><div class="row"><span class="num">'+l.n+'</span>'+rv+'<span class="pill type">'+ICON_LOCK+' ZAMKNUTÉ</span></div><h3>'+esc(l.title)+'</h3></div>';
+  if(!isOpen(l.n))return '<div class="card locked'+(l.review?' review':'')+'" aria-label="Lekcia '+l.n+' — zamknutá"><div class="row"><span class="num">'+l.n+'</span>'+rv+'<span class="pill type">'+ICON_LOCK+' ZAMKNUTÉ</span></div><h3>'+esc(l.title)+'</h3>'+(isGuest()?'<span class="muted">У повному курсі</span>':'')+'</div>';
   var d=lessonDone(l),pct=Math.round(d/l.sets.length*100);
   return '<button class="card'+(l.review?' review':'')+'" type="button" data-lesson="'+l.n+'"><div class="row"><span class="num">'+l.n+'</span>'+rv+'<span class="muted">'+d+' / '+l.sets.length+' hotovo</span></div><h3>'+esc(l.title)+'</h3><div class="prog" aria-label="Pokrok '+pct+' %"><i style="width:'+pct+'%"></i></div></button>';}
 var TDEF={tries:1,min:0};
@@ -1466,7 +1491,7 @@ function sideNav(){var cur=S.view==="lesson"?S.lesson:null;if(!S.sideExp)S.sideE
     o+='<div class="side-m'+(ex?' ex':'')+'"><button type="button" class="side-mh" data-modx="'+md.n+'" aria-expanded="'+ex+'"><span class="chev" aria-hidden="true">'+(ex?'▾':'▸')+'</span><span class="mt"><b>'+esc(md.level+' · Modul '+md.n)+'</b><span>'+esc(md.title)+'</span></span><span class="mc">'+opened+'/'+ls.length+'</span></button>';
     if(ex){o+='<ul>';
       ls.forEach(function(l){var open=isOpen(l.n);o+='<li>'+(open?'<button type="button" class="side-l'+(cur===l.n?' on':'')+(l.review?' rv':'')+'" data-lesson="'+l.n+'"'+(cur===l.n?' aria-current="page"':'')+'><span class="sn">'+l.n+'</span>'+esc(l.title)+'</button>':'<span class="side-l off'+(l.review?' rv':'')+'"><span class="sn">'+l.n+'</span>'+esc(l.title)+ICON_LOCK+'</span>')+'</li>';});
-      testsOf(md.n).forEach(function(t){var open=setOpenFor(S.unlocked,t);o+='<li>'+(open?'<button type="button" class="side-l tt" data-start="'+t.id+'"><span class="sn">T</span>Test '+t.mod+'</button>':'<span class="side-l off tt"><span class="sn">T</span>Test '+t.mod+ICON_LOCK+'</span>')+'</li>';});
+      if(!isGuest())testsOf(md.n).forEach(function(t){var open=setOpenFor(S.unlocked,t);o+='<li>'+(open?'<button type="button" class="side-l tt" data-start="'+t.id+'"><span class="sn">T</span>Test '+t.mod+'</button>':'<span class="side-l off tt"><span class="sn">T</span>Test '+t.mod+ICON_LOCK+'</span>')+'</li>';});
       o+='</ul>';}
     o+='</div>';});
   return o+'</div></details></nav>';}
@@ -1515,13 +1540,15 @@ function viewHome(){
   var h=(S.notice?'<div class="confirm" role="status" style="margin-bottom:16px"><span style="flex:1 1 260px">'+esc(S.notice)+'</span></div>':'')+'<section class="hero"><div class="hero-txt"><h1>'+(first?"Ahoj, "+esc(first)+"!":"Ahoj!")+'</h1>';
   if(nx){var s=SETS[nx.id];
     h+='<button class="go" type="button" data-start="'+nx.id+'"><span class="go-t"><span class="go-k">'+(s.type==="test"?"Modul "+s.mod+" · Test":"Lekcia "+s.lesson+" · "+TYPE_LABEL[s.type])+' · '+esc(nx.why)+'</span><b>'+esc(s.title)+'</b></span><span class="go-b">Pokračovať →</span></button>';}
+  else if(guest)h+='<div class="go done"><span class="go-t"><span class="go-k">Демо-урок пройдено!</span><b>Výborne! Решта уроків — у повному курсі.</b></span><a class="go-b" href="/tarify">Тарифи →</a></div>';
   else if(!nums(S.unlocked).length)h+='<div class="go done"><span class="go-t"><span class="go-k">Vitajte v Slovak Learn!</span><b>Перший урок відкриє лектор після заняття.</b></span></div>';
   else h+='<div class="go done"><span class="go-t"><span class="go-k">Усі відкриті вправи пройдено на 80 %+</span><b>Výborne! Чекайте наступний урок.</b></span>'+(nums(S.unlocked).length>=2?'<button class="go-b" type="button" data-start="mix">Opakovanie →</button>':'')+'</div>';
-  h+='<span class="sync" id="sync">'+esc(guest?"Режим без входу: прогрес лише в цьому браузері":(S.sync||""))+'</span></div><img src="img/wave.webp" alt="Персонаж Slovak Learn махає рукою"></section>';
-  h+='<section class="sec"><div class="sec-h"><h2>Lekcie</h2><span class="muted">Нові уроки відкриває лектор після заняття</span></div><div class="grid">';
+  h+='<span class="sync" id="sync">'+esc(guest?"Демо-версія: прогрес зберігається лише в цьому браузері":(S.sync||""))+'</span></div><img src="img/wave.webp" alt="Персонаж Slovak Learn махає рукою"></section>';
+  if(guest)h+='<div class="card demo" style="margin-top:16px"><div class="t"><b>Це демо-версія Slovak Learn</b><span class="muted">Тут відкритий лише урок 1 «'+esc(LESSONS[DEMO_LESSONS[0]-1].title)+'». Учні школи отримують увесь курс A1–B2: онлайн-вправи до кожного уроку, тести модулів, шпаргалки й домашні завдання в PDF, а лектор бачить їхній прогрес.</span></div><a class="btn y a" href="/tarify">Тарифи та запис →</a></div>';
+  h+='<section class="sec"><div class="sec-h"><h2>Lekcie</h2><span class="muted">'+(guest?"У демо-версії відкритий лише перший урок":"Нові уроки відкриває лектор після заняття")+'</span></div><div class="grid">';
   var lastMod=null;LESSONS.forEach(function(l){if(hidM(l.mod))return;
     if(l.mod!==lastMod){lastMod=l.mod;h+=modRowStudent(l.mod);}
-    h+=lessonCard(l);if(lastOfMod(l))testsOf(l.mod).forEach(function(t){h+=testCard(t);});});
+    h+=lessonCard(l);if(lastOfMod(l)&&!guest)testsOf(l.mod).forEach(function(t){h+=testCard(t);});});
   return h+'</div></section>';
 }
 var ST_MAT={deck:"Prezentácia z hodiny",cheat:"Ťahák",hw:"Domáca úloha",ex:"Precvičovanie"};var MAT_KEY={cheat:"c",hw:"h",ex:"p"};
@@ -1841,7 +1868,7 @@ function viewTStudent(){
   var a=T.accounts.find(function(x){return x.id===T.sel;});
   if(!a)return '<button class="back" type="button" data-nav2="t-students">← Moji študenti</button><div class="card empty">Учня не знайдено.</div>';
   var s=summary(a),p=s.p;
-  var h='<button class="back" type="button" data-nav2="t-students">← Moji študenti</button><div class="sec-h"><div><span class="eyebrow">Študent'+(a.demo?' · ukážka':'')+'</span><h2 class="h2">'+esc(a.name)+'</h2><span class="muted">Логін: <b>'+esc(a.login)+'</b> · '+p.xp+' XP · '+s.streak+' дн. поспіль · '+esc(ago(s.last))+'</span></div>'+statusPill(a)+'</div>';
+  var h='<button class="back" type="button" data-nav2="t-students">← Moji študenti</button><div class="sec-h"><div><span class="eyebrow">Študent'+(a.demo?' · ukážka':'')+'</span><h2 class="h2">'+esc(a.name)+'</h2><span class="muted">Логін: <b>'+esc(a.login)+'</b> · '+p.xp+' XP · '+s.streak+' дн. поспіль · '+esc(ago(s.last))+'</span><span class="muted" style="font-size:13px">'+(a.terms&&a.terms.at?'Умови використання прийнято '+new Date(a.terms.at).toLocaleDateString("uk-UA"):'Умови використання ще не прийнято (учень ще не входив після їх появи)')+'</span></div>'+statusPill(a)+'</div>';
   if(T.creds)h+=credsBlock();
   if(T.msg)h+='<div class="'+(T.msgErr?"err":"ok-msg")+'">'+esc(T.msg)+'</div>';
   h+='<section class="sec"><h2 class="h3">Що зробити</h2><div class="adv">';
@@ -1964,7 +1991,8 @@ app.addEventListener("click",function(e){
   var b=e.target.closest("button");if(!b||b.disabled||b.type==="submit")return;
   var P=S.play,a;
   if(b.hasAttribute("data-tostudent")){S.loginErr="";S.lgLogin="";if(location.pathname.replace(/\/+$/,"")==="/lektor"){location.href="/";return;}try{history.replaceState(null,"",location.pathname+location.search);}catch(e){location.hash="";}return render();}
-  if(b.hasAttribute("data-guest")){S.session={role:"guest",name:""};S.unlocked=ALL_KEYS.slice();lsSet(LS_SESSION,S.session);S.data=normProg(lsGet(progKey()));return go("home");}
+  if(b.hasAttribute("data-guest"))return startGuest();
+  if(b.hasAttribute("data-terms"))return openTerms(b);
   if(b.hasAttribute("data-start"))return start(b.getAttribute("data-start"));
   if(b.hasAttribute("data-lesson"))return go("lesson",{lesson:+b.getAttribute("data-lesson")});
   if(b.hasAttribute("data-home"))return go("home");
@@ -2031,6 +2059,13 @@ app.addEventListener("change",function(e){var t=e.target;
 window.addEventListener("pagehide",function(){try{saveTestInput();tPersist();}catch(e){}});
 setInterval(function(){var P=S.play;if(!P||!P.set||!P.set.test||!P.deadline||P.done||S.view!=="play")return;var left=P.deadline-Date.now(),el=document.getElementById("tmr");
   if(el){el.textContent="⏱ "+fmtLeft(left);el.classList.toggle("low",left<300000);}if(left<=0)gradeTest(true);},1000);
+app.addEventListener("change",function(e){if(e.target.id==="lg-agree")S.lgAgree=e.target.checked;});
+/* Умови використання — окреме вікно поверх сторінки, без перерендеру (щоб не стерлися логін і пароль) */
+function openTerms(from){closeTerms();var o=document.createElement("div");o.className="ovl";o.id="terms-ovl";o.setAttribute("role","dialog");o.setAttribute("aria-modal","true");o.setAttribute("aria-labelledby","terms-h");
+  o.innerHTML='<div class="ovl-c">'+TERMS_HTML+'<button class="btn" type="button" id="terms-x">Зрозуміло</button></div>';
+  o.addEventListener("click",function(e){if(e.target===o||e.target.id==="terms-x")closeTerms(from);});document.body.appendChild(o);document.getElementById("terms-x").focus();}
+function closeTerms(back){var o=document.getElementById("terms-ovl");if(!o)return;o.remove();if(back&&back.focus)back.focus();}
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&document.getElementById("terms-ovl"))closeTerms(document.querySelector("[data-terms]"));});
 app.addEventListener("keydown",function(e){if(e.target.id==="ans"&&e.key==="Enter"){e.preventDefault();if(S.play&&S.play.set.test){if(S.play.i<S.play.items.length-1)testGo(S.play.i+1);}else checkTyped();}});
 
 /* ================= theme ================= */
