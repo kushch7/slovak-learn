@@ -52,6 +52,8 @@ img{max-width:100%;height:auto}
 .cta:hover{box-shadow:0 0 0 3px rgba(255,210,90,.45)}
 .cta.blue{background:var(--btn);color:var(--btn-ink)}
 .cta.blue:hover{box-shadow:0 0 0 3px var(--soft)}
+.cta.ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.6);padding:12px 20px}
+.cta.ghost:hover{border-color:var(--accent);box-shadow:none}
 
 /* hero */
 .hero{background:var(--hdr);color:#fff}
@@ -146,7 +148,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}
     <h1>Заговоріть словацькою — з викладачем, який пояснює українською</h1>
     <p class="lead">Індивідуальні онлайн-уроки від A1 до B2 — 8 уроків на місяць за розкладом, зручним саме вам. Після кожного уроку — PDF-вправи й шпаргалка, а для щоденної практики — онлайн-платформа з автоперевіркою.</p>
     <div class="facts"><span>Рівні A1–B2</span><span>Уроки по 60 хв</span><span>Перша діагностика безкоштовно</span></div>
-    <div><a class="cta js-zapys" href="#tarify">Записатися на безкоштовну діагностику</a></div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center"><a class="cta js-zapys" href="#tarify">Записатися на безкоштовну діагностику</a><a class="cta ghost" href="/diagnostika">Онлайн-тест рівня · 15 хв</a></div>
   </div>
   <img src="img/wave.webp" alt="Персонаж Slovak Learn махає рукою" width="220" height="220">
 </div></section>
@@ -155,7 +157,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}
 <section class="sec" id="yak"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Як почати</span><h2>Три кроки до першого уроку</h2></div>
   <ol class="steps">
-    <li><b>Безкоштовна діагностика</b><span class="muted">30 хвилин онлайн: визначаємо ваш рівень і мету — робота, вступ, побут.</span></li>
+    <li><b>Безкоштовна діагностика</b><span class="muted">Онлайн-тест рівня без реєстрації, а потім 30 хвилин розмови з лектором: уточнюємо рівень і мету — робота, вступ, побут.</span><a href="/diagnostika" style="font-weight:700;color:var(--blue)">Пройти тест рівня →</a></li>
     <li><b>Обираєте тариф</b><span class="muted">Базовий, Стандарт чи Повний — від 12 € за урок.</span></li>
     <li><b>Перший урок</b><span class="muted">Оплачуєте місяць наперед і починаєте за розкладом, який вам зручний.</span></li>
   </ol>
@@ -190,7 +192,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}
 <section class="sec" style="padding-top:8px"><div class="wrap">
   <div class="sec-h"><span class="eyebrow">Питання</span><h2>Часті запитання</h2></div>
   <div class="faq">
-    <details><summary>Я зовсім не знаю словацької. Можна почати?</summary><p>Так. Курс починається з рівня A1, а на діагностиці ми визначимо, з якої теми вам стартувати.</p></details>
+    <details><summary>Я зовсім не знаю словацької. Можна почати?</summary><p>Так. Курс починається з рівня A1, а на діагностиці ми визначимо, з якої теми вам стартувати. Якщо вже трохи знаєте мову, пройдіть <a href="/diagnostika">онлайн-тест рівня</a>.</p></details>
     <details><summary>Як проходять уроки?</summary><p>Онлайн, 1:1 з викладачем, 8 уроків по 60 хвилин на місяць. Розклад і програма — під вашу мету: робота, вступ, побут.</p></details>
     <details><summary>Чи можна змінити тариф?</summary><p>Перейти на вищий тариф можна будь-коли з доплатою різниці. На нижчий — з наступного оплаченого періоду.</p></details>
     <details><summary>Готуєте до вступу у словацький виш?</summary><p>Так. На діагностиці складемо план підготовки до рівня B1/B2, який потрібен для вступу.</p></details>
@@ -200,7 +202,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}
 
 <section class="final"><div class="wrap">
   <div><h2>Почніть з безкоштовної діагностики рівня</h2><p>30 хвилин онлайн — і ви знатимете свій рівень та план навчання.</p></div>
-  <a class="cta js-zapys" href="#tarify">Записатися</a>
+  <div style="display:flex;flex-wrap:wrap;gap:12px"><a class="cta js-zapys" href="#tarify">Записатися</a><a class="cta ghost" href="/diagnostika">Спершу пройти тест</a></div>
 </div></section>
 
 <footer><div class="wrap"><span>© Slovak Learn</span><a href="/">Вхід для учнів</a></div></footer>

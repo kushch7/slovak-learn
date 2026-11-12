@@ -7,6 +7,10 @@
     {
       "source": "/tarify",
       "destination": "/tarify.html"
+    },
+    {
+      "source": "/diagnostika",
+      "destination": "/diagnostika.html"
     }
   ],
   "headers": [
@@ -21,6 +25,15 @@
     },
     {
       "source": "/lektor",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
+    },
+    {
+      "source": "/diagnostika",
       "headers": [
         {
           "key": "Cache-Control",

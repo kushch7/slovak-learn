@@ -1677,7 +1677,7 @@ function viewLogin(){
   if(!teacher)h+='<label class="agree"><input type="checkbox" id="lg-agree"'+(S.lgAgree?" checked":"")+'><span>Я погоджуюся з <button type="button" class="linkbtn" data-terms>Умовами використання матеріалів</button> і не поширюватиму матеріали школи.</span></label>';
   h+='<button class="btn" type="submit"'+(S.busy||!S.ready?" disabled":"")+'>'+(S.busy?"Prihlasujem…":(!S.ready?"Načítavam…":(teacher?"Vstúpiť do kabinetu lektora":"Prihlásiť sa")))+'</button></form>';
   if(teacher)h+='<button class="linkbtn" type="button" data-tostudent style="align-self:center">← Вхід для учнів</button>';
-  else h+='<button class="linkbtn" type="button" data-guest style="align-self:center">Vyskúšať ukážku · демо-урок без входу</button><p class="muted" style="font-size:13px;text-align:center">У демо-версії відкритий лише перший урок. Прогрес зберігається тільки в цьому браузері.</p><a class="linkbtn" href="/tarify" style="align-self:center">Ще не вчитеся з нами? Тарифи та запис →</a>';
+  else h+='<button class="linkbtn" type="button" data-guest style="align-self:center">Vyskúšať ukážku · демо-урок без входу</button><p class="muted" style="font-size:13px;text-align:center">У демо-версії відкритий лише перший урок. Прогрес зберігається тільки в цьому браузері.</p><a class="linkbtn" href="/diagnostika" style="align-self:center">Перевірити свій рівень · онлайн-тест без реєстрації</a><a class="linkbtn" href="/tarify" style="align-self:center">Ще не вчитеся з нами? Тарифи та запис →</a>';
   if(S.ready&&!S.online)h+='<div class="note">Сервер зараз недоступний, тож вхід за логіном не працює.'+(teacher?'':' Можна спробувати демо-урок без входу.')+'</div>';
   return h+'</div>';
 }
@@ -2144,6 +2144,7 @@ function viewTMaterials(){
   var mm=null;LESSONS.forEach(function(l){if(l.mod!==mm){mm=l.mod;h+=modRow(l.mod);}h+='<div class="li lrow'+(l.review?' revl':'')+'"><span class="num">'+l.n+'</span><div class="t"><b>'+esc(l.title)+'</b><span class="muted" style="font-size:13px">'+l.sets.length+' онлайн-вправ на платформі</span></div>'+matLinks(l.n)+'</div>';
     if(lastOfMod(l))testsOf(l.mod).forEach(function(t){h+='<div class="li lrow tst"><span class="num tnum">T</span><div class="t"><b>'+esc(t.title)+'</b><span class="muted" style="font-size:13px">'+t.items.length+' завдань онлайн · паперова версія й ключ</span></div>'+matLinks(t.gate)+'</div>';});});
   h+='</div>';
+  h+='<section class="sec"><h2 class="h3">Diagnostika úrovne</h2><p class="muted">Онлайн-тест рівня без реєстрації, а потім 30-хвилинна розмова з лектором за сценарієм. Результат тесту учень надсилає вам у повідомленні.</p><div class="mat"><a class="matbtn" href="/diagnostika" target="_blank" rel="noopener">Online test úrovne</a><a class="matbtn" href="'+fileHref("diagnostika-rozhovor")+'" target="_blank" rel="noopener">Scenár rozhovoru · PDF</a></div></section>';
   h+='<section class="sec"><h2 class="h3">Довідники</h2><div class="mat"><a class="matbtn" href="'+fileHref(GUIDES.student)+'" target="_blank" rel="noopener">Довідник для учнів · PDF</a><a class="matbtn" href="'+fileHref(GUIDES.teacher)+'" target="_blank" rel="noopener">Довідник для лекторів · PDF</a></div></section>';
   return h;
 }
