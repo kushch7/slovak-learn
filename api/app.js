@@ -63,6 +63,9 @@ async function readGroup(prefix) {
 }
 const accPath = (id) => `accounts/${id}/`;
 const progPath = (id) => `progress/${id}/`;
+const leadPath = (id) => `leads/${id}/`;
+const LEAD_CH = ["telegram", "instagram", "whatsapp", "viber", "email", "phone"];
+const LEAD_ST = ["new", "contacted", "booked", "student", "closed"];
 
 /* ---------- passwords & tokens ---------- */
 function hashPass(p) {
@@ -215,6 +218,24 @@ export default async function handler(req, res) {
       return send(res, 200, { role: "student", id: acc.id, name: acc.name, unlocked: acc.unlocked || [1], tcfg: acc.tcfg || {}, hide: acc.hide || [], mopen: acc.mopen || [], progress, token: sign({ r: "s", id: acc.id, pv: acc.pv || 1, exp: Date.now() + 60 * DAY }), ft: fileToken("s", acc.id, acc.pv || 1) });
     }
 
+    /* ----- public: request from the level test (no login) ----- */
+    if (action === "lead") {
+      if (body.hp) return send(res, 200, { ok: true });
+      const str = (v, n) => String(v == null ? "" : v).trim().slice(0, n);
+      const name = str(body.name, 80), contact = str(body.contact, 120);
+      const channel = LEAD_CH.includes(body.channel) ? body.channel : "other";
+      if (!name || contact.length < 3 || body.consent !== true) return send(res, 400, { error: "invalid" });
+      const r = body.result && typeof body.result === "object" ? body.result : null;
+      const lead = {
+        id: "d_" + Date.now().toString(36) + crypto.randomBytes(3).toString("hex"),
+        name, contact, channel, goal: str(body.goal, 40), when: str(body.when, 200), msg: str(body.msg, 600),
+        result: r ? { text: str(r.text, 1500), start: Math.max(0, Math.min(60, parseInt(r.start, 10) || 0)), a2: !!r.a2, self: str(r.self, 10) } : null,
+        status: "new", note: "", createdAt: Date.now()
+      };
+      await writeOne(leadPath(lead.id), lead);
+      return send(res, 200, { ok: true });
+    }
+
     if (!auth) return send(res, 401, { error: "auth" });
 
     /* ----- student ----- */
@@ -249,8 +270,20 @@ export default async function handler(req, res) {
 
     if (action === "me") return send(res, 200, { role: "teacher", login: cfg.login, ft: fileToken("t", null, cfg.v || 1) });
     if (action === "teacherLoad") {
-      const [accs, prog] = await Promise.all([allAccounts(), readGroup("progress/")]);
-      return send(res, 200, { accounts: accs.map(publicAcc), progress: prog });
+      const [accs, prog, leads] = await Promise.all([allAccounts(), readGroup("progress/"), readGroup("leads/")]);
+      return send(res, 200, { accounts: accs.map(publicAcc), progress: prog, leads: Object.values(leads).sort((x, y) => y.createdAt - x.createdAt) });
+    }
+    if (action === "setLead" || action === "deleteLead") {
+      const id = String(body.id || "");
+      if (!/^d_[a-z0-9]{8,24}$/.test(id)) return send(res, 400, { error: "invalid" });
+      const lead = await readOne(leadPath(id));
+      if (!lead) return send(res, 404, { error: "notfound" });
+      if (action === "deleteLead") { await removeAll(leadPath(id)); return send(res, 200, { ok: true }); }
+      if (LEAD_ST.includes(body.status)) lead.status = body.status;
+      if (typeof body.note === "string") lead.note = body.note.slice(0, 2000);
+      lead.updatedAt = Date.now();
+      await writeOne(leadPath(id), lead);
+      return send(res, 200, { ok: true, lead });
     }
     if (action === "createStudent") {
       const name = String(body.name || "").trim().slice(0, 80), login = String(body.login || "").trim().toLowerCase(), pass = String(body.pass || "");

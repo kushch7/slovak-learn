@@ -121,6 +121,26 @@ main{flex:1;padding-block:32px 56px}
 .code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;background:var(--bg);border:1px solid var(--line);padding:12px;white-space:pre-wrap;word-break:break-word}
 .h2{font-size:20px;font-weight:800;color:var(--navy)}
 ul.list{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+form.lead{display:flex;flex-direction:column;gap:14px;border-top:1px solid var(--line);padding-top:16px}
+.f2{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.field{display:flex;flex-direction:column;gap:6px;border:0;margin:0;padding:0;min-width:0}
+.field label,.field legend{font-size:14px;font-weight:700;color:var(--navy);padding:0}
+.field .opt{font-weight:500;color:var(--muted);font-size:13px}
+.field input,.field select{font:inherit;font-size:16px;padding:12px 14px;border:2px solid var(--line);background:var(--bg);color:var(--ink);width:100%;min-height:48px}
+.field input:focus,.field select:focus{border-color:var(--blue);outline:none}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.chip{position:relative;cursor:pointer}
+.chip input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.chip span{display:inline-flex;align-items:center;min-height:44px;padding:8px 14px;border:2px solid var(--line);background:var(--bg);font-weight:600;font-size:15px}
+.chip input:checked+span{border-color:var(--blue);background:var(--soft);color:var(--navy)}
+.chip input:focus-visible+span{outline:3px solid var(--accent);outline-offset:2px}
+.agree{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--muted);cursor:pointer}
+.agree input{width:20px;height:20px;flex:none;margin-top:2px;accent-color:var(--blue)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.err{background:var(--weak-bg);color:var(--weak);padding:10px 14px;font-weight:600;font-size:14px}
+.sent{background:var(--good-bg);color:var(--ink);border-left:5px solid var(--good);padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.sent b{color:var(--good);font-size:17px}
+.next a{color:var(--blue);font-weight:700}
 footer{padding-block:20px;font-size:14px;color:var(--muted);border-top:1px solid var(--line)}
 footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;max-width:1080px}
 </style>
@@ -333,13 +353,46 @@ function resultText(o){
   lines.push("Samohodnotenie: " + ({zero:"začiatočník", some:"pozná slová a frázy", talk:"trochu komunikuje"}[st.self] || "—"));
   return lines.join("\n");
 }
-function nextBox(o){
-  return '<div class="next"><h2>Наступний крок: розмова з лектором</h2>' +
-    '<p>Онлайн-тест не перевіряє говоріння. На безкоштовній 30-хвилинній діагностиці лектор поговорить з вами словацькою, уточнить стартовий урок і складе план під вашу мету: робота, навчання чи побут.</p>' +
-    (o ? '<p class="muted" style="font-size:14px">Скопіюйте результат і надішліть його нам у повідомленні, щоб лектор підготувався до розмови.</p><div class="code" id="code">' + esc(resultText(o)) + '</div>' : '') +
-    '<div class="row"><a class="btn yellow" href="' + ZAPYS_URL + '" target="_blank" rel="noopener">Записатися на діагностику</a>' +
-    (o ? '<button class="btn ghost" data-act="copy">Скопіювати результат</button>' : '') + '<a class="linkbtn" href="/tarify">Тарифи</a></div></div>';
+var CH = [["telegram","Telegram","@нік або номер телефону"],["instagram","Instagram","@нік"],["whatsapp","WhatsApp","+421 …"],["viber","Viber","+421 …"],["email","E-mail","name@example.com"],["phone","Телефон","+421 …"]];
+var GOALS = [["work","Робота"],["study","Навчання / вступ"],["life","Побут і документи"],["other","Інше"]];
+var form = {busy:false, err:""};
+function draft(){ return st.lead || (st.lead = {name:"", channel:"telegram", contact:"", goal:"", when:"", msg:"", consent:false}); }
+function leadForm(o){
+  if(st.sent) return '<div class="sent" role="status"><b>Дякуємо, заявку надіслано!</b><p>Лектор напише вам протягом доби й запропонує час для розмови. Якщо потрібно щось уточнити, пишіть нам в <a href="' + ZAPYS_URL + '" target="_blank" rel="noopener">Instagram</a>.</p></div>';
+  var d = draft(), ch = CH.find(function(c){ return c[0] === d.channel; }) || CH[0];
+  var h = '<form class="lead" id="leadform" novalidate>';
+  if(form.err) h += '<div class="err" role="alert">' + esc(form.err) + '</div>';
+  h += '<div class="f2"><div class="field"><label for="ld-name">Ваше ім’я *</label><input id="ld-name" data-f="name" autocomplete="name" maxlength="80" value="' + esc(d.name) + '"></div>' +
+    '<div class="field"><label for="ld-ch">Де вам написати? *</label><select id="ld-ch" data-f="channel">' + CH.map(function(c){ return '<option value="' + c[0] + '"' + (c[0] === d.channel ? ' selected' : '') + '>' + c[1] + '</option>'; }).join("") + '</select></div></div>';
+  h += '<div class="field"><label for="ld-contact">' + ch[1] + ' *</label><input id="ld-contact" data-f="contact" maxlength="120" autocapitalize="off" spellcheck="false" placeholder="' + esc(ch[2]) + '" value="' + esc(d.contact) + '"' + (d.channel === "email" ? ' type="email" autocomplete="email"' : (/phone|whatsapp|viber/.test(d.channel) ? ' type="tel" autocomplete="tel"' : '')) + '></div>';
+  h += '<fieldset class="field"><legend>Навіщо вам словацька?</legend><div class="chips">' + GOALS.map(function(g){ return '<label class="chip"><input type="radio" name="goal" data-f="goal" value="' + g[0] + '"' + (d.goal === g[0] ? ' checked' : '') + '><span>' + g[1] + '</span></label>'; }).join("") + '</div></fieldset>';
+  h += '<div class="field"><label for="ld-when">Коли вам зручно поговорити? <span class="opt">необов’язково</span></label><input id="ld-when" data-f="when" maxlength="200" placeholder="напр. будні після 18:00" value="' + esc(d.when) + '"></div>';
+  h += '<input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">';
+  h += '<label class="agree"><input type="checkbox" data-f="consent"' + (d.consent ? ' checked' : '') + '><span>Погоджуюся, що Slovak Learn збереже ці дані' + (o ? ' й результат тесту' : '') + ', щоб зв’язатися зі мною щодо діагностики. Дані не передаються третім особам, їх можна видалити на запит.</span></label>';
+  h += '<div class="row"><button class="btn yellow" type="submit"' + (form.busy ? ' disabled' : '') + '>' + (form.busy ? 'Надсилаю…' : (o ? 'Надіслати результат і записатися' : 'Записатися на діагностику')) + '</button></div></form>';
+  return h;
 }
+function nextBox(o){
+  return '<div class="next" id="next"><h2>Наступний крок: розмова з лектором</h2>' +
+    '<p>Онлайн-тест не перевіряє говоріння. На безкоштовній 30-хвилинній діагностиці лектор поговорить з вами словацькою, уточнить стартовий урок і складе план під вашу мету: робота, навчання чи побут.</p>' +
+    leadForm(o) +
+    '<p class="muted" style="font-size:14px">Зручніше написати самостійно? <a href="' + ZAPYS_URL + '" target="_blank" rel="noopener">Напишіть нам в Instagram</a>' + (o && !st.sent ? ' і вставте результат: <button class="linkbtn" data-act="copy" type="button">скопіювати результат</button>' : '') + '. <a href="/tarify">Тарифи</a></p></div>';
+}
+function sendLead(){
+  var d = draft(), o = st.step === "result" ? outcome() : null;
+  form.err = "";
+  if(!d.name.trim()) form.err = "Вкажіть, будь ласка, ваше ім’я.";
+  else if(d.contact.trim().length < 3) form.err = "Вкажіть контакт, щоб лектор міг вам написати.";
+  else if(!d.consent) form.err = "Поставте, будь ласка, позначку згоди внизу форми.";
+  if(form.err) return rerenderForm();
+  var hp = app.querySelector(".hp");
+  form.busy = true; rerenderForm();
+  fetch("/api/app", {method:"POST", headers:{"content-type":"application/json"}, body: JSON.stringify({action:"lead", hp: hp ? hp.value : "", name:d.name, channel:d.channel, contact:d.contact, goal:d.goal, when:d.when, consent:true,
+    result: o ? {text: resultText(o), start: o.start || 0, a2: o.a2, self: st.self || ""} : {text:"", start:1, a2:false, self: st.self || "zero"}})})
+    .then(function(r){ if(!r.ok) throw new Error(r.status); form.busy = false; st.sent = true; st.sentCh = d.channel; save(); rerenderForm(); })
+    .catch(function(){ form.busy = false; form.err = "Не вдалося надіслати заявку. Спробуйте ще раз або напишіть нам в Instagram."; rerenderForm(); });
+}
+function rerenderForm(){ render(); var n = document.getElementById("next"); if(n) n.scrollIntoView({block:"start"}); var e = app.querySelector(".err,.sent"); if(e && e.focus){ e.setAttribute("tabindex","-1"); e.focus({preventScroll:true}); } }
 function vResult(){
   var o = outcome(), h = '<div class="stack">';
   if(o.a2){
@@ -375,13 +428,17 @@ app.addEventListener("click", function(e){
   var a = b.getAttribute("data-act");
   if(a === "self") return go("self");
   if(a === "begin") return begin();
-  if(a === "restart"){ st = fresh(); save(); return go("intro"); }
+  if(a === "restart"){ var keep = st.lead; st = fresh(); st.lead = keep; save(); return go("intro"); }
   if(a === "showtext"){ st.show[curItem().id] = true; save(); return render(); }
   if(a === "next") return answer();
   if(a === "nextblock"){ st.block++; st.idx = 0; st.sel = null; return go("q"); }
   if(a === "finish") return finish();
   if(a === "copy"){ var t = resultText(outcome()); copyText(t, b); return; }
 });
+app.addEventListener("input", function(e){ var f = e.target.getAttribute && e.target.getAttribute("data-f"); if(!f || f === "channel" || f === "consent" || f === "goal") return; draft()[f] = e.target.value; save(); });
+app.addEventListener("change", function(e){ var t = e.target, f = t.getAttribute && t.getAttribute("data-f"); if(!f) return; var d = draft();
+  if(f === "consent") d.consent = t.checked; else if(f === "goal") d.goal = t.value; else if(f === "channel"){ d.channel = t.value; save(); render(); var c = document.getElementById("ld-contact"); if(c) c.focus(); return; } else d[f] = t.value; save(); });
+app.addEventListener("submit", function(e){ if(e.target.id === "leadform"){ e.preventDefault(); sendLead(); } });
 function begin(){ st.block = 0; st.idx = 0; st.ans = {}; st.ord = {}; st.show = {}; st.sel = null; st.date = null; go("q"); }
 function answer(){
   var it = curItem(); if(st.sel === null) return;
@@ -394,9 +451,10 @@ function answer(){
 }
 function finish(){ st.date = Date.now(); go("result"); }
 function copyText(t, btn){
-  function done(){ btn.textContent = "Скопійовано ✓"; setTimeout(function(){ btn.textContent = "Скопіювати результат"; }, 2000); }
+  var orig = btn.textContent;
+  function done(){ btn.textContent = "скопійовано ✓"; setTimeout(function(){ btn.textContent = orig; }, 2000); }
+  function fallback(){ var ta = document.createElement("textarea"); ta.value = t; ta.setAttribute("readonly",""); ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.appendChild(ta); ta.select(); try{ document.execCommand("copy"); done(); }catch(e){} document.body.removeChild(ta); }
   if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(done, fallback); } else fallback();
-  function fallback(){ var r = document.createRange(), el = document.getElementById("code"); if(!el) return; r.selectNodeContents(el); var s = getSelection(); s.removeAllRanges(); s.addRange(r); try{ document.execCommand("copy"); done(); }catch(e){} }
 }
 document.addEventListener("keydown", function(e){
   if(st.step !== "q" || e.target.closest && e.target.closest("input,textarea")) return;
