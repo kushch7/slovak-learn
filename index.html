@@ -2157,7 +2157,7 @@ var MAT="materials/";function fileHref(name){return API.fileUrl?API.fileUrl(name
 var GUIDES={student:"prirucka-student",teacher:"prirucka-lektor"};
 var MAT_LABEL={deck:"Prezentácia",cheat:"Ťahák",hw:"Domáca úloha",ex:"Precvičovanie",test:"Test",key:"Kľúč k testu"};
 function matLinks(n){var m=typeof n==="string"?TEST_MAT[n]:MATERIALS[n];if(!m)return "";var h='<div class="mat">';
-  ["deck","cheat","hw","ex","test","key"].forEach(function(k){if(!m[k])return;if(k==="deck"){h+='<a class="matbtn" href="'+fileHref(m.deck)+'" target="_blank" rel="noopener">Prezentácia · PDF</a>';if(DECK_GD[n])h+='<a class="matbtn" href="'+deckHref(n)+'" target="_blank" rel="noopener">Prezentácia · Google Slides</a>';return;}h+='<a class="matbtn" href="'+fileHref(m[k])+'" target="_blank" rel="noopener">'+(k==="test"&&m.label?m.label:MAT_LABEL[k])+' · PDF</a>';});
+  ["deck","cheat","hw","ex","test","key"].forEach(function(k){if(!m[k])return;if(k==="deck"){h+='<a class="matbtn" href="'+fileHref(m.deck)+'" target="_blank" rel="noopener">Prezentácia · PDF</a>';return;}h+='<a class="matbtn" href="'+fileHref(m[k])+'" target="_blank" rel="noopener">'+(k==="test"&&m.label?m.label:MAT_LABEL[k])+' · PDF</a>';});
   return h+'</div>';}
 function tGuard(){if(T.err)return '<div class="card empty">'+esc(T.err)+'</div>';if(!T.loaded)return '<div class="card empty">Načítavam…</div>';return "";}
 function topAdvice(a){var adv=advice(a);return adv.find(function(x){return x.k==="bad";})||adv.find(function(x){return x.k==="warn";})||adv[0];}
@@ -2301,7 +2301,7 @@ function viewTStudent(){
   return h+'</details>';
 }
 function viewTMaterials(){
-  var h='<div><span class="eyebrow">Kabinet lektora</span><h2 class="h2">Materiály</h2><p class="muted" style="margin-top:6px">Презентації, шпаргалки й домашні завдання до кожного уроку. Усі матеріали — захищені PDF, доступні лише після входу. Де презентація вже є на Google Drive, поруч є кнопка Google Slides. <b>Презентації й тести з ключем</b> бачите тільки ви; учень отримує шпаргалку й домашнє завдання лише тих уроків, які ви йому відкрили.</p></div><div class="list">';
+  var h='<div><span class="eyebrow">Kabinet lektora</span><h2 class="h2">Materiály</h2><p class="muted" style="margin-top:6px">Презентації, шпаргалки й домашні завдання до кожного уроку. Усі матеріали — захищені PDF, доступні лише після входу. <b>Презентації й тести з ключем</b> бачите тільки ви; учень отримує шпаргалку й домашнє завдання лише тих уроків, які ви йому відкрили.</p></div><div class="list">';
   var mm=null;LESSONS.forEach(function(l){if(l.mod!==mm){mm=l.mod;h+=modRow(l.mod);}h+='<div class="li lrow'+(l.review?' revl':'')+'"><span class="num">'+l.n+'</span><div class="t"><b>'+esc(l.title)+'</b><span class="muted" style="font-size:13px">'+l.sets.length+' онлайн-вправ на платформі</span></div>'+matLinks(l.n)+'</div>';
     if(lastOfMod(l))testsOf(l.mod).forEach(function(t){h+='<div class="li lrow tst"><span class="num tnum">T</span><div class="t"><b>'+esc(t.title)+'</b><span class="muted" style="font-size:13px">'+t.items.length+' завдань онлайн · паперова версія й ключ</span></div>'+matLinks(t.gate)+'</div>';});});
   h+='</div>';
