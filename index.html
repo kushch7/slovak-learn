@@ -1462,7 +1462,56 @@ var LESSONS=[
    {ua:"Де ти народився?",a:"Kde si sa narodil?"},
    {ua:"Три роки тому ми переїхали до Словаччини.",a:"Pred troma rokmi sme sa presťahovali na Slovensko."},
    {ua:"Раніше я (чоловік) працював у банку.",a:"Predtým som pracoval v banke."},
-   {ua:"У 2015 році ми одружилися.",a:"V roku 2015 sme sa zobrali."}]}]}
+   {ua:"У 2015 році ми одружилися.",a:"V roku 2015 sme sa zobrali."}]}]},
+ {n:32,mod:6,title:"Cestovanie a dovolenka",sets:[
+  {id:"l32-slova",type:"vocab",title:"Cestovanie a dovolenka",ua:"Картки: знаю / ще ні",items:[
+   {sk:"dovolenka",g:"tá",ua:"відпустка",ex:"V auguste idem na dovolenku."},{sk:"výlet",g:"ten",ua:"поїздка, екскурсія",ex:"V nedeľu ideme na výlet."},
+   {sk:"letisko",g:"to",ua:"аеропорт",ex:"Letisko je za mestom."},{sk:"lietadlo",g:"to",ua:"літак",ex:"Lietadlom je to rýchlejšie."},
+   {sk:"letenka",g:"tá",ua:"авіаквиток",ex:"Kúpila som si letenku do Ríma."},{sk:"kufor",g:"ten",ua:"валіза",ex:"Môj kufor je veľmi ťažký."},
+   {sk:"batoh",g:"ten",ua:"рюкзак",ex:"Beriem si iba batoh."},{sk:"pas",g:"ten",ua:"паспорт",ex:"Váš pas, prosím."},
+   {sk:"ubytovanie",g:"to",ua:"житло (у поїздці)",ex:"Ubytovanie máme v penzióne."},{sk:"pláž",g:"tá",ua:"пляж",ex:"Každé ráno chodíme na pláž."},
+   {sk:"more",g:"to",ua:"море",ex:"V lete ideme k moru."},{sk:"Šťastnú cestu!",g:"",ua:"Щасливої дороги!",ex:"Šťastnú cestu a pekné počasie!"}]},
+  {id:"l32-ist",type:"choice",title:"Ísť, alebo chodiť?",ua:"Виберіть правильне дієслово",items:[
+   {q:"Každý deň ___ do práce autobusom.",opts:["chodím","idem","pôjdem"],a:"chodím",why:"každý deň → chodiť"},
+   {q:"Zajtra ___ do Viedne.",opts:["idem","chodím","lietam"],a:"idem",why:"zajtra, raz → ísť"},
+   {q:"V sobotu ___ do Ríma. (lietadlom)",opts:["letím","lietam","chodím"],a:"letím",why:"raz → letieť"},
+   {q:"Často ___ do Varšavy. (lietadlom)",opts:["lietam","letím","idem"],a:"lietam",why:"často → lietať"},
+   {q:"Budúci rok ___ k moru.",opts:["pôjdeme","budeme ísť","chodíme"],a:"pôjdeme",why:"budúcnosť: pôjdem, pôjdeme"},
+   {q:"Každé leto ___ do Tatier.",opts:["chodíme","ideme","pôjdeme"],a:"chodíme",why:"každé leto → chodiť"},
+   {q:"Kam ___ teraz? (ty)",opts:["ideš","chodíš","pôjdeš"],a:"ideš",why:"teraz → ísť"}]},
+  {id:"l32-kam",type:"choice",title:"Kam?",ua:"Виберіть do, na або k",items:[
+   {q:"Idem ___ Viedne.",opts:["do","na","k"],a:"do",why:"mesto → do"},
+   {q:"Letíme ___ Slovensko.",opts:["na","do","k"],a:"na",why:"na Slovensko"},
+   {q:"V lete ideme ___ moru.",opts:["k","do","na"],a:"k",why:"k moru"},
+   {q:"Zajtra ideme ___ Tatier.",opts:["do","na","k"],a:"do",why:"hory s menom → do Tatier"},
+   {q:"V auguste idem ___ dovolenku.",opts:["na","do","k"],a:"na",why:"na dovolenku"},
+   {q:"V nedeľu idem ___ babke.",opts:["k","do","na"],a:"k",why:"k + človek"},
+   {q:"Minulý rok sme boli ___ Tatrách.",opts:["v","do","na"],a:"v",why:"Kde? → v Tatrách"}]},
+  {id:"l32-tvary",type:"type",title:"Idem, chodím, letím",ua:"Напишіть дієслово в правильній формі",items:[
+   {q:"My ___ do Talianska.",hint:"ísť",a:["ideme"],why:"my → ideme"},
+   {q:"Deti ___ do školy pešo.",hint:"chodiť",a:["chodia"],why:"oni → chodia"},
+   {q:"Kedy ___ do Londýna? (vy)",hint:"letieť",a:["letíte"],why:"vy → letíte"},
+   {q:"Včera som ___ do Bratislavy.",hint:"ísť, žena",a:["išla"],why:"žena → išla"},
+   {q:"Minulý rok sme ___ do Španielska.",hint:"letieť",a:["leteli"],why:"my → leteli"},
+   {q:"Zajtra ___ autom.",hint:"ísť, ja, budúcnosť",a:["pôjdem"],why:"budúcnosť → pôjdem"},
+   {q:"V piatok ___ do Paríža.",hint:"letieť, my, budúcnosť",a:["poletíme"],why:"budúcnosť → poletíme"},
+   {q:"Peter často ___ do Prahy.",hint:"lietať",a:["lieta"],why:"on → lieta"}]},
+  {id:"l32-chyby",type:"error",title:"Nájdi chybu",ua:"Натисніть на слово з помилкою",items:[
+   {q:"Každý deň idem do práce.",opts:["Každý","deň","idem","do","práce"],a:"idem",why:"každý deň → chodím"},
+   {q:"Zajtra chodím do Viedne.",opts:["Zajtra","chodím","do","Viedne"],a:"chodím",why:"zajtra, raz → idem"},
+   {q:"Letím do Slovensko.",opts:["Letím","do","Slovensko"],a:"do",why:"na Slovensko"},
+   {q:"Minulý rok sme boli do Tatier.",opts:["Minulý","rok","sme","boli","do","Tatier"],a:"do",why:"Kde? → v Tatrách"},
+   {q:"Ideme na dovolenku do Taliansko.",opts:["Ideme","na","dovolenku","do","Taliansko"],a:"Taliansko",why:"do Talianska"},
+   {q:"Zajtra pôjdem k babka.",opts:["Zajtra","pôjdem","k","babka"],a:"babka",why:"k babke"}]},
+  {id:"l32-frazy",type:"match",title:"Hotel, stanica, letisko",ua:"З’єднайте пари",labels:["Slovensky","Po ukrajinsky"],pairs:[
+   ["Mám rezerváciu na meno Kovaľ.","У мене бронювання на ім’я Коваль."],["Sú raňajky v cene?","Сніданок входить у ціну?"],["Prosím si spiatočný lístok.","Квиток туди й назад, будь ласка."],
+   ["Kde je odbavenie?","Де реєстрація на рейс?"],["Na koľko nocí?","На скільки ночей?"],["Let mešká hodinu.","Рейс затримується на годину."],["Šťastnú cestu!","Щасливої дороги!"]]},
+  {id:"l32-vety",type:"order",title:"Na cestách",ua:"Складіть речення зі слів",items:[
+   {ua:"У серпні ми їдемо до моря.",a:"V auguste ideme k moru."},
+   {ua:"Щоліта ми їздимо в Татри.",a:"Každé leto chodíme do Tatier."},
+   {ua:"Завтра я лечу до Відня.",a:"Zajtra letím do Viedne."},
+   {ua:"Наступного року ми поїдемо в Італію.",a:"Budúci rok pôjdeme do Talianska."},
+   {ua:"Сніданок входить у ціну?",a:"Sú raňajky v cene?"}]}]}
 ];
 var TYPE_LABEL={chyby:"Chyby",choice:"Výber",type:"Písanie",match:"Spájanie",order:"Poradie slov",listen:"Počúvanie",cards:"Kartičky",odd:"Čo nepatrí?",error:"Nájdi chybu",mixed:"Mix",test:"Test"};
 var MODULES=[{n:1,level:"A1",title:"Prvé kroky",ua:"Перші кроки"},{n:2,level:"A1",title:"V meste",ua:"У місті"},{n:3,level:"A1",title:"Domov",ua:"Дім"},{n:4,level:"A1",title:"Úrady a služby",ua:"Установи й послуги"},{n:5,level:"A1",title:"Práca a voľný čas",ua:"Робота й дозвілля"},{n:6,level:"A2",title:"Môj príbeh",ua:"Моя історія"}];
@@ -2100,9 +2149,9 @@ function statusPill(account){var a=advice(account),s=summary(account);
 /* ================= teacher: views ================= */
 var CL="https://claude.ai/artifact/";
 /* Матеріали: PDF видає захищений сервер (/api/file) — учень отримує лише шпаргалку й ДЗ відкритих уроків, лектор — усе */
-var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15,16,17,19,20,21,22,23,25,26,27,28,30,31].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};MATERIALS[18]={deck:"l18-prezentacia"};MATERIALS[24]={deck:"l24-prezentacia"};MATERIALS[29]={deck:"l29-prezentacia"};for(var _n=1;_n<=31;_n++)MATERIALS[_n].ex="l"+_n+"-precvicovanie";
+var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15,16,17,19,20,21,22,23,25,26,27,28,30,31,32].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};MATERIALS[18]={deck:"l18-prezentacia"};MATERIALS[24]={deck:"l24-prezentacia"};MATERIALS[29]={deck:"l29-prezentacia"};for(var _n=1;_n<=32;_n++)MATERIALS[_n].ex="l"+_n+"-precvicovanie";
 var TEST_MAT={t1:{test:"test1",key:"test1-kluc",label:"Test 1"},t2:{test:"test2",key:"test2-kluc",label:"Test 2"},t3:{test:"test3",key:"test3-kluc",label:"Test 3"},t4:{test:"test4",key:"test4-kluc",label:"Test 4"},t5:{test:"test5",key:"test5-kluc",label:"Test 5"},ta1:{test:"test-a1",key:"test-a1-kluc",label:"Záverečný test A1"}};
-var DECK_GD={"1":"1Nvjqbqbw3gKn0ED9GN69juoSQKbULq2c","2":"1-YjPOJgrfF-Q6HCNfA23gd-JbwEETk8Y","3":"1_WKOXAuoonRLEW6OARO9oAJYAfp2-pFt","4":"13S4EaYPRAi-HkdDorNxSBSj18AtWUFfR","5":"1afNXHRjIxSis70CfuLn5Q7OftbqEe2A8","6":"1ldBz_a0ef463oWeuIWoM_4Cnm-7UA1m5","7":"110ap7U3sqOBl5O7LFk106MmYALVrQwu_","8":"12dlWkQ9odkdAWCbqQXpg6pKtU1Wage8q","9":"17sXzHcZTnl5jhME0qJbsek6UEuZ8WWom","10":"1qHUrjITUP3nWFj6tb0cFQycZqxcqAZ8u","11":"1YdWAeEs1lzAtDEo4w_wzd-i-hDkoL5US","12":"1Gl8nrjqc0gumd2C55ohG7vUztZ8hGsBf","13":"1snTMob2vbJby9sXk1dvhv1Cs3h5el-eG","14":"1vzms-7w3a-mV7_y9-EmP3tDbJpQhZH1i","15":"1XfRSw6jBfrCg-0hYNAlb8DXis_WiQf0w","16":"1-v2h7nq_RBBtRHBNy4NVR6AOkSJRSnID","17":"15Cor9zbXZIgo_P648_FLdXbR91jR_bys","18":"1FnAsZ3zukpMxZiHNBRmEymbFx5y6EFZ1","19":"1N6sKFPuyOwgoby_2JxUMbqC7UoPJBJs2","20":"1xKUlgrSGvf78ze3lNtFZqY6am_xdqg4U","21":"1zmx-GiLoduOvZeMo8V0_UBitDG6PaRuP","22":"14498XPCln75qUv9avD2ZT6-kkk2qctSb","23":"12UI34K8W9QG3qaZ43aaXtZ1tCxTunVRC","24":"1h-2gh3X4r20OGtDGuqfw8l9OB358OdnK","25":"1BLBlogbW_NAY-Bh8QJvGApCSXHLlDmBY","26":"1q_4MVQph9w2UEJGP2bRqupjLQbQKSFXO","27":"1UVgkbK8XjuaEYH1Tmi-XhS7U_fqsVT6F","28":"13e-W-vGIk7atFpDsHOevJXgdQFzuRj6i","29":"1Z8mYZbUvU-E47OFauZNp92LeGMvtczeK","30":"15qX0qqHEly_xC8Qa0UUFL-7rnhfTyfEa"};var DECK_ART={"31":"8fq9n7PsqC91sAnmRbafJL"};
+var DECK_GD={"1":"1Nvjqbqbw3gKn0ED9GN69juoSQKbULq2c","2":"1-YjPOJgrfF-Q6HCNfA23gd-JbwEETk8Y","3":"1_WKOXAuoonRLEW6OARO9oAJYAfp2-pFt","4":"13S4EaYPRAi-HkdDorNxSBSj18AtWUFfR","5":"1afNXHRjIxSis70CfuLn5Q7OftbqEe2A8","6":"1ldBz_a0ef463oWeuIWoM_4Cnm-7UA1m5","7":"110ap7U3sqOBl5O7LFk106MmYALVrQwu_","8":"12dlWkQ9odkdAWCbqQXpg6pKtU1Wage8q","9":"17sXzHcZTnl5jhME0qJbsek6UEuZ8WWom","10":"1qHUrjITUP3nWFj6tb0cFQycZqxcqAZ8u","11":"1YdWAeEs1lzAtDEo4w_wzd-i-hDkoL5US","12":"1Gl8nrjqc0gumd2C55ohG7vUztZ8hGsBf","13":"1snTMob2vbJby9sXk1dvhv1Cs3h5el-eG","14":"1vzms-7w3a-mV7_y9-EmP3tDbJpQhZH1i","15":"1XfRSw6jBfrCg-0hYNAlb8DXis_WiQf0w","16":"1-v2h7nq_RBBtRHBNy4NVR6AOkSJRSnID","17":"15Cor9zbXZIgo_P648_FLdXbR91jR_bys","18":"1FnAsZ3zukpMxZiHNBRmEymbFx5y6EFZ1","19":"1N6sKFPuyOwgoby_2JxUMbqC7UoPJBJs2","20":"1xKUlgrSGvf78ze3lNtFZqY6am_xdqg4U","21":"1zmx-GiLoduOvZeMo8V0_UBitDG6PaRuP","22":"14498XPCln75qUv9avD2ZT6-kkk2qctSb","23":"12UI34K8W9QG3qaZ43aaXtZ1tCxTunVRC","24":"1h-2gh3X4r20OGtDGuqfw8l9OB358OdnK","25":"1BLBlogbW_NAY-Bh8QJvGApCSXHLlDmBY","26":"1q_4MVQph9w2UEJGP2bRqupjLQbQKSFXO","27":"1UVgkbK8XjuaEYH1Tmi-XhS7U_fqsVT6F","28":"13e-W-vGIk7atFpDsHOevJXgdQFzuRj6i","29":"1Z8mYZbUvU-E47OFauZNp92LeGMvtczeK","30":"15qX0qqHEly_xC8Qa0UUFL-7rnhfTyfEa"};var DECK_ART={"31":"8fq9n7PsqC91sAnmRbafJL","32":"DjbgFtGvRB3s6CgbrnBREE"};
 function deckHref(n){var id=DECK_GD[n];if(id)return "https://docs.google.com/presentation/d/"+id+"/edit?rtpof=true&sd=true";var ar=DECK_ART[n];return ar?"https://claude.ai/artifact/"+ar:"";}
 var MAT="materials/";function fileHref(name){return API.fileUrl?API.fileUrl(name):MAT+name+".pdf";}
 var GUIDES={student:"prirucka-student",teacher:"prirucka-lektor"};
