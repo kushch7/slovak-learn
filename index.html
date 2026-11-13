@@ -1559,7 +1559,55 @@ var LESSONS=[
    {ua:"Щоліта я їздив до дідуся.",a:"Každé leto som chodil k dedkovi."},
    {ua:"Одного разу я впала з дерева.",a:"Raz som spadla zo stromu."},
    {ua:"Я ніколи не хотів спати.",a:"Nikdy som nechcel spať."},
-   {ua:"Бабуся читала нам казки.",a:"Babka nám čítala rozprávky."}]}]}
+   {ua:"Бабуся читала нам казки.",a:"Babka nám čítala rozprávky."}]}]},
+ {n:34,mod:6,title:"Už som to vybavil",sets:[
+  {id:"l34-slova",type:"vocab",title:"Už som to vybavil",ua:"Картки: знаю / ще ні",items:[
+   {sk:"účet",g:"ten",ua:"рахунок",ex:"Účet za elektrinu som už zaplatil."},{sk:"nájom",g:"ten",ua:"оренда (плата)",ex:"Nájom platíme každý mesiac."},
+   {sk:"balík",g:"ten",ua:"посилка",ex:"Balík som vyzdvihla na pošte."},{sk:"zmluva",g:"tá",ua:"договір",ex:"Zmluvu som ešte nepodpísal."},
+   {sk:"termín",g:"ten",ua:"запис, дата",ex:"Mám termín v utorok o desiatej."},{sk:"tlačivo",g:"to",ua:"бланк",ex:"Vyplňte toto tlačivo, prosím."},
+   {sk:"potvrdenie",g:"to",ua:"довідка, підтвердження",ex:"Potvrdenie som dostala hneď."},{sk:"poisťovňa",g:"tá",ua:"страхова",ex:"Zavolám do poisťovne poobede."},
+   {sk:"vybaviť",g:"",ua:"владнати, оформити",ex:"Už som to vybavil."},{sk:"vyzdvihnúť",g:"",ua:"забрати",ex:"Musím vyzdvihnúť balík."},
+   {sk:"podpísať",g:"",ua:"підписати",ex:"Podpíšte tu, prosím."},{sk:"stihnúť",g:"",ua:"встигнути",ex:"Ešte som to nestihla."}]},
+  {id:"l34-vid",type:"choice",title:"Proces, alebo výsledok?",ua:"Виберіть дієслово",items:[
+   {q:"Celé dopoludnie som ___ e-maily.",opts:["písal","napísal"],a:"písal",why:"celé dopoludnie, proces → písať"},
+   {q:"Konečne som ___ všetky e-maily.",opts:["poslal","posielal"],a:"poslal",why:"konečne, hotovo → poslať"},
+   {q:"Už som ___ nájom.",opts:["zaplatil","platil"],a:"zaplatil",why:"už, hotovo → zaplatiť"},
+   {q:"Každý mesiac ___ nájom cez aplikáciu.",opts:["platím","zaplatím"],a:"platím",why:"každý mesiac → platiť"},
+   {q:"Zajtra ti ___ .",opts:["zavolám","budem zavolať","volám"],a:"zavolám",why:"dokonavé sloveso = budúcnosť: zavolám"},
+   {q:"Včera som celý deň ___ dokumenty.",opts:["vybavoval","vybavil"],a:"vybavoval",why:"celý deň, proces → vybavovať"},
+   {q:"Nakoniec som všetko ___ .",opts:["vybavila","vybavovala"],a:"vybavila",why:"nakoniec, výsledok → vybaviť"}]},
+  {id:"l34-uz",type:"choice",title:"Už, ešte nie, práve",ua:"Виберіть правильне слово",items:[
+   {q:"Zaplatil si? — Nie, ešte som ___ .",opts:["nezaplatil","zaplatil","neplatím"],a:"nezaplatil",why:"ešte + ne-: nezaplatil"},
+   {q:"___ som to poslala, pred minútou.",opts:["Práve","Ešte","Nikdy"],a:"Práve",why:"pred minútou → práve"},
+   {q:"Zmluvu? Už som ___ podpísal.",opts:["ju","ho","ich"],a:"ju",why:"tá zmluva → ju"},
+   {q:"Balík? Už som ___ vyzdvihla.",opts:["ho","ju","ich"],a:"ho",why:"ten balík → ho"},
+   {q:"E-maily? Už som ___ poslal.",opts:["ich","ho","ju"],a:"ich",why:"tie e-maily → ich"},
+   {q:"Stihla si vlak? — Nie, ___ .",opts:["nestihla som","stihla som","nestihol"],a:"nestihla som",why:"žena → nestihla som"}]},
+  {id:"l34-tvary",type:"type",title:"Už som to urobil",ua:"Напишіть дієслово в правильній формі",items:[
+   {q:"Už som ___ účet.",hint:"zaplatiť, muž",a:["zaplatil"],why:"ja, muž → zaplatil"},
+   {q:"Ešte som ___ do banky.",hint:"zavolať, žena",a:["nezavolala"],why:"ešte + ne-: nezavolala"},
+   {q:"Zajtra ti to ___ .",hint:"poslať, ja",a:["pošlem"],why:"budúcnosť → pošlem"},
+   {q:"Práve sme ___ zmluvu.",hint:"podpísať",a:["podpísali"],why:"my → podpísali"},
+   {q:"___ si už balík?",hint:"vyzdvihnúť, ty, žena",a:["Vyzdvihla","vyzdvihla"],why:"ty, žena → vyzdvihla si"},
+   {q:"Nestihli sme to, ___ to zajtra.",hint:"urobiť, my",a:["urobíme"],why:"budúcnosť → urobíme"},
+   {q:"Celý deň som ___ dokumenty.",hint:"vybavovať, žena",a:["vybavovala"],why:"celý deň → vybavovala"},
+   {q:"Konečne som to ___ !",hint:"vybaviť, muž",a:["vybavil"],why:"konečne → vybavil"}]},
+  {id:"l34-chyby",type:"error",title:"Nájdi chybu",ua:"Натисніть на слово з помилкою",items:[
+   {q:"Celé dopoludnie som napísal e-maily.",opts:["Celé","dopoludnie","som","napísal","e-maily"],a:"napísal",why:"celé dopoludnie → písal"},
+   {q:"Ešte som zaplatil nájom.",opts:["Ešte","som","zaplatil","nájom"],a:"zaplatil",why:"ešte + ne-: nezaplatil"},
+   {q:"Zmluvu? Už som ho podpísal.",opts:["Zmluvu?","Už","som","ho","podpísal"],a:"ho",why:"tá zmluva → ju"},
+   {q:"Zajtra budem zavolať do banky.",opts:["Zajtra","budem","zavolať","do","banky"],a:"budem",why:"budúcnosť → zavolám"},
+   {q:"Balík som vyzdvihla na poštu.",opts:["Balík","som","vyzdvihla","na","poštu"],a:"poštu",why:"Kde? → na pošte"},
+   {q:"Práve som to vybavujem.",opts:["Práve","som","to","vybavujem"],a:"vybavujem",why:"som + minulý čas → vybavil"}]},
+  {id:"l34-frazy",type:"match",title:"Vybavené!",ua:"З’єднайте пари",labels:["Slovensky","Po ukrajinsky"],pairs:[
+   ["Už je to vybavené.","Це вже владнано."],["Ešte som to nestihol.","Я ще не встиг."],["Hneď to urobím.","Зараз же зроблю."],
+   ["Zabudol som na to.","Я про це забув."],["Kedy to bude hotové?","Коли це буде готово?"],["Vyplňte toto tlačivo.","Заповніть цей бланк."],["Podpíšte tu, prosím.","Підпишіть тут, будь ласка."]]},
+  {id:"l34-vety",type:"order",title:"Zoznam úloh",ua:"Складіть речення зі слів",items:[
+   {ua:"Я вже заплатив оренду.",a:"Už som zaplatil nájom."},
+   {ua:"Я ще не підписала договір.",a:"Ešte som nepodpísala zmluvu."},
+   {ua:"Я щойно забрала посилку.",a:"Práve som vyzdvihla balík."},
+   {ua:"Завтра я подзвоню в банк.",a:"Zajtra zavolám do banky."},
+   {ua:"Я весь ранок писав листи.",a:"Celé ráno som písal e-maily."}]}]}
 ];
 var TYPE_LABEL={chyby:"Chyby",choice:"Výber",type:"Písanie",match:"Spájanie",order:"Poradie slov",listen:"Počúvanie",cards:"Kartičky",odd:"Čo nepatrí?",error:"Nájdi chybu",mixed:"Mix",test:"Test"};
 var MODULES=[{n:1,level:"A1",title:"Prvé kroky",ua:"Перші кроки"},{n:2,level:"A1",title:"V meste",ua:"У місті"},{n:3,level:"A1",title:"Domov",ua:"Дім"},{n:4,level:"A1",title:"Úrady a služby",ua:"Установи й послуги"},{n:5,level:"A1",title:"Práca a voľný čas",ua:"Робота й дозвілля"},{n:6,level:"A2",title:"Môj príbeh",ua:"Моя історія"}];
@@ -2197,9 +2245,9 @@ function statusPill(account){var a=advice(account),s=summary(account);
 /* ================= teacher: views ================= */
 var CL="https://claude.ai/artifact/";
 /* Матеріали: PDF видає захищений сервер (/api/file) — учень отримує лише шпаргалку й ДЗ відкритих уроків, лектор — усе */
-var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15,16,17,19,20,21,22,23,25,26,27,28,30,31,32,33].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};MATERIALS[18]={deck:"l18-prezentacia"};MATERIALS[24]={deck:"l24-prezentacia"};MATERIALS[29]={deck:"l29-prezentacia"};for(var _n=1;_n<=33;_n++)MATERIALS[_n].ex="l"+_n+"-precvicovanie";
+var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15,16,17,19,20,21,22,23,25,26,27,28,30,31,32,33,34].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};MATERIALS[18]={deck:"l18-prezentacia"};MATERIALS[24]={deck:"l24-prezentacia"};MATERIALS[29]={deck:"l29-prezentacia"};for(var _n=1;_n<=34;_n++)MATERIALS[_n].ex="l"+_n+"-precvicovanie";
 var TEST_MAT={t1:{test:"test1",key:"test1-kluc",label:"Test 1"},t2:{test:"test2",key:"test2-kluc",label:"Test 2"},t3:{test:"test3",key:"test3-kluc",label:"Test 3"},t4:{test:"test4",key:"test4-kluc",label:"Test 4"},t5:{test:"test5",key:"test5-kluc",label:"Test 5"},ta1:{test:"test-a1",key:"test-a1-kluc",label:"Záverečný test A1"}};
-var DECK_GD={"1":"1Nvjqbqbw3gKn0ED9GN69juoSQKbULq2c","2":"1-YjPOJgrfF-Q6HCNfA23gd-JbwEETk8Y","3":"1_WKOXAuoonRLEW6OARO9oAJYAfp2-pFt","4":"13S4EaYPRAi-HkdDorNxSBSj18AtWUFfR","5":"1afNXHRjIxSis70CfuLn5Q7OftbqEe2A8","6":"1ldBz_a0ef463oWeuIWoM_4Cnm-7UA1m5","7":"110ap7U3sqOBl5O7LFk106MmYALVrQwu_","8":"12dlWkQ9odkdAWCbqQXpg6pKtU1Wage8q","9":"17sXzHcZTnl5jhME0qJbsek6UEuZ8WWom","10":"1qHUrjITUP3nWFj6tb0cFQycZqxcqAZ8u","11":"1YdWAeEs1lzAtDEo4w_wzd-i-hDkoL5US","12":"1Gl8nrjqc0gumd2C55ohG7vUztZ8hGsBf","13":"1snTMob2vbJby9sXk1dvhv1Cs3h5el-eG","14":"1vzms-7w3a-mV7_y9-EmP3tDbJpQhZH1i","15":"1XfRSw6jBfrCg-0hYNAlb8DXis_WiQf0w","16":"1-v2h7nq_RBBtRHBNy4NVR6AOkSJRSnID","17":"15Cor9zbXZIgo_P648_FLdXbR91jR_bys","18":"1FnAsZ3zukpMxZiHNBRmEymbFx5y6EFZ1","19":"1N6sKFPuyOwgoby_2JxUMbqC7UoPJBJs2","20":"1xKUlgrSGvf78ze3lNtFZqY6am_xdqg4U","21":"1zmx-GiLoduOvZeMo8V0_UBitDG6PaRuP","22":"14498XPCln75qUv9avD2ZT6-kkk2qctSb","23":"12UI34K8W9QG3qaZ43aaXtZ1tCxTunVRC","24":"1h-2gh3X4r20OGtDGuqfw8l9OB358OdnK","25":"1BLBlogbW_NAY-Bh8QJvGApCSXHLlDmBY","26":"1q_4MVQph9w2UEJGP2bRqupjLQbQKSFXO","27":"1UVgkbK8XjuaEYH1Tmi-XhS7U_fqsVT6F","28":"13e-W-vGIk7atFpDsHOevJXgdQFzuRj6i","29":"1Z8mYZbUvU-E47OFauZNp92LeGMvtczeK","30":"15qX0qqHEly_xC8Qa0UUFL-7rnhfTyfEa"};var DECK_ART={"31":"8fq9n7PsqC91sAnmRbafJL","32":"DjbgFtGvRB3s6CgbrnBREE","33":"CFGy7L1EXcNArZw9PPUa3b"};
+var DECK_GD={"1":"1Nvjqbqbw3gKn0ED9GN69juoSQKbULq2c","2":"1-YjPOJgrfF-Q6HCNfA23gd-JbwEETk8Y","3":"1_WKOXAuoonRLEW6OARO9oAJYAfp2-pFt","4":"13S4EaYPRAi-HkdDorNxSBSj18AtWUFfR","5":"1afNXHRjIxSis70CfuLn5Q7OftbqEe2A8","6":"1ldBz_a0ef463oWeuIWoM_4Cnm-7UA1m5","7":"110ap7U3sqOBl5O7LFk106MmYALVrQwu_","8":"12dlWkQ9odkdAWCbqQXpg6pKtU1Wage8q","9":"17sXzHcZTnl5jhME0qJbsek6UEuZ8WWom","10":"1qHUrjITUP3nWFj6tb0cFQycZqxcqAZ8u","11":"1YdWAeEs1lzAtDEo4w_wzd-i-hDkoL5US","12":"1Gl8nrjqc0gumd2C55ohG7vUztZ8hGsBf","13":"1snTMob2vbJby9sXk1dvhv1Cs3h5el-eG","14":"1vzms-7w3a-mV7_y9-EmP3tDbJpQhZH1i","15":"1XfRSw6jBfrCg-0hYNAlb8DXis_WiQf0w","16":"1-v2h7nq_RBBtRHBNy4NVR6AOkSJRSnID","17":"15Cor9zbXZIgo_P648_FLdXbR91jR_bys","18":"1FnAsZ3zukpMxZiHNBRmEymbFx5y6EFZ1","19":"1N6sKFPuyOwgoby_2JxUMbqC7UoPJBJs2","20":"1xKUlgrSGvf78ze3lNtFZqY6am_xdqg4U","21":"1zmx-GiLoduOvZeMo8V0_UBitDG6PaRuP","22":"14498XPCln75qUv9avD2ZT6-kkk2qctSb","23":"12UI34K8W9QG3qaZ43aaXtZ1tCxTunVRC","24":"1h-2gh3X4r20OGtDGuqfw8l9OB358OdnK","25":"1BLBlogbW_NAY-Bh8QJvGApCSXHLlDmBY","26":"1q_4MVQph9w2UEJGP2bRqupjLQbQKSFXO","27":"1UVgkbK8XjuaEYH1Tmi-XhS7U_fqsVT6F","28":"13e-W-vGIk7atFpDsHOevJXgdQFzuRj6i","29":"1Z8mYZbUvU-E47OFauZNp92LeGMvtczeK","30":"15qX0qqHEly_xC8Qa0UUFL-7rnhfTyfEa"};var DECK_ART={"31":"8fq9n7PsqC91sAnmRbafJL","32":"DjbgFtGvRB3s6CgbrnBREE","33":"CFGy7L1EXcNArZw9PPUa3b","34":"PkrXg6gpPa17hvwKT5ajG3"};
 function deckHref(n){var id=DECK_GD[n];if(id)return "https://docs.google.com/presentation/d/"+id+"/edit?rtpof=true&sd=true";var ar=DECK_ART[n];return ar?"https://claude.ai/artifact/"+ar:"";}
 var MAT="materials/";function fileHref(name){return API.fileUrl?API.fileUrl(name):MAT+name+".pdf";}
 var GUIDES={student:"prirucka-student",teacher:"prirucka-lektor"};
