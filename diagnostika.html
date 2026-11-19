@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Slovak Learn — тест рівня</title>
-<meta name="description" content="Безкоштовний онлайн-тест рівня словацької A1 без реєстрації: 15–20 хвилин, результат і рекомендований урок для старту.">
+<meta name="description" content="Безкоштовний онлайн-тест рівня словацької A1–B2 без реєстрації: близько 30 хвилин, ваш рівень і рекомендований урок для старту.">
 <link rel="icon" href="img/logo.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap">
@@ -112,6 +112,7 @@ main{flex:1;padding-block:32px 56px}
 .pill{display:inline-block;font-size:12px;font-weight:800;padding:2px 8px;margin-left:6px;vertical-align:middle}
 .pill.pass{background:var(--good-bg);color:var(--good)}
 .pill.fail{background:var(--weak-bg);color:var(--weak)}
+.pill.part{background:#FFF3CC;color:#6B4E00}
 .skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .skill{border:1px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:2px;background:var(--surface)}
 .skill b{font-size:26px;font-weight:800;color:var(--navy);font-variant-numeric:tabular-nums;line-height:1.1}
@@ -162,84 +163,109 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;m
 <script>
 /* Where "Записатися" leads — the same link as on the pricing page. */
 var ZAPYS_URL = "https://ig.me/m/slovak.learn";
-var PASS = 6;            /* correct answers out of 8 needed to move to the next module */
-var LS = "slovaklearn-diag";
+var PASS = 8;            /* correct answers out of 12 needed to count a level as mastered */
+var PART = 6;            /* 6–7 of 12: the level is partly known */
+var LS = "slovaklearn-diag2";
 
+var LV = [
+  {id:"A1", ua:"Початковий рівень", note:"уроки 1–30"},
+  {id:"A2", ua:"Базовий рівень", note:"уроки 31–60"},
+  {id:"B1", ua:"Середній рівень", note:"індивідуальний план"},
+  {id:"B2", ua:"Вище середнього", note:"індивідуальний план"}
+];
 var MODS = [
   {n:1, title:"Prvé kroky", ua:"Перші кроки", from:1},
   {n:2, title:"V meste", ua:"У місті", from:7},
   {n:3, title:"Domov", ua:"Дім", from:13},
   {n:4, title:"Úrady a služby", ua:"Установи й послуги", from:19},
-  {n:5, title:"Práca a voľný čas", ua:"Робота й дозвілля", from:25}
+  {n:5, title:"Práca a voľný čas", ua:"Робота й дозвілля", from:25},
+  {n:6, title:"Môj príbeh", ua:"Моя історія", from:31},
+  {n:7, title:"Ľudia okolo mňa", ua:"Люди навколо мене", from:37},
+  {n:8, title:"Mesto a služby", ua:"Місто й послуги", from:43},
+  {n:9, title:"Práca a štúdium", ua:"Робота й навчання", from:49},
+  {n:10, title:"Voľný čas a Slovensko", ua:"Дозвілля і Словаччина", from:55}
 ];
+function modOfLesson(l){ var m = MODS[0]; MODS.forEach(function(x){ if(x.from <= l) m = x; }); return m; }
 var LESSON = {1:"Pozdravy a zoznámenie",2:"Odkiaľ som a kde bývam",3:"Čísla a kontakty",4:"Moja práca",5:"Na kurze a online",6:"Opakovanie 1",
   7:"Kde je…?",8:"Doprava",9:"Čas a dni",10:"V obchode",11:"V kaviarni",12:"Opakovanie 2",
   13:"Hľadám byt",14:"Rodina",15:"Môj deň",16:"Jedlo a varenie",17:"V reštaurácii",18:"Opakovanie 3",
   19:"Na úrade",20:"U lekára",21:"Deti a škola",22:"Telefón a e-mail",23:"Banka a pošta",24:"Opakovanie 4",
-  25:"Hľadám prácu",26:"V práci",27:"Voľný čas",28:"Počasie a oblečenie",29:"Opakovanie 5",30:"Čo si robil?"};
+  25:"Hľadám prácu",26:"V práci",27:"Voľný čas",28:"Počasie a oblečenie",29:"Opakovanie 5",30:"Čo si robil?",
+  31:"Môj životopis",32:"Cestovanie a dovolenka",33:"Keď som bol malý",34:"Už som to vybavil",35:"Plány a sľuby",36:"Opakovanie 6",
+  37:"Ako vyzerá?",38:"Lepší alebo horší?",39:"Sviatky a darčeky",40:"Susedia",41:"Aký je tvoj názor?",42:"Opakovanie 7",
+  43:"Ako sa dostanem…?",44:"Vlakom a autobusom",45:"Oblečenie a reklamácia",46:"Pokazilo sa to",47:"Zdravie a poistenie",48:"Opakovanie 8",
+  49:"Pracovný pohovor",50:"E-mail a porada",51:"Zmluva a výplata",52:"Štúdium a kurzy",53:"Úrady a listy",54:"Opakovanie 9",
+  55:"Šport a pohyb",56:"Film, kniha, koncert",57:"Výlety po Slovensku",58:"Správy a médiá",59:"Opakovanie 10",60:"Môj život o rok"};
 var SKILL = {g:"Граматика", v:"Лексика й ситуації", r:"Читання", l:"Слухання"};
 
-/* Item bank. The first option is always the correct one; options are shuffled on screen.
-   k: g grammar · v vocabulary/situation · r reading · l listening.  L: lesson the item checks. */
+/* Item bank: 4 blocks (A1, A2, B1, B2) × 12 items. The first option is always the correct one; options are shuffled on screen.
+   k: g grammar · v vocabulary/situation · r reading · l listening.  L: course lesson the item checks (A1 and A2 only). */
 var TEXTS = {
-  t1:"Ahoj! Volám sa Oksana. Som z Ukrajiny, zo Ľvova. Teraz bývam na Slovensku, v Košiciach. Pracujem ako kuchárka v reštaurácii. Hovorím po ukrajinsky, po anglicky a trochu po slovensky. Mám tridsaťdva rokov.",
   t2:"Milá Jana,\nzajtra ideme do kina. Film začína o siedmej večer. Stretneme sa o pol siedmej pred kinom na Hlavnej ulici. Do mesta pôjdem električkou, lebo autobus v nedeľu nechodí často.\nPeter",
-  t3:"Prenajmem 2-izbový byt v Nitre. Byt má obývačku, spálňu, kuchyňu a kúpeľňu s vaňou. Je zariadený: v spálni je posteľ a veľká skriňa, v kuchyni chladnička a sporák. Byt je na treťom poschodí, výťah v dome nie je. Cena: 550 € mesačne + energie. Volajte po 17.00.",
   t4:"Dobrý deň, pani učiteľka,\nmôj syn Marko je dnes chorý, má teplotu a bolí ho hrdlo. Dnes ani zajtra nepríde do školy. Domácu úlohu mu, prosím, pošlite e-mailom.\nĎakujem.\nS pozdravom\nIryna Kovalenková",
-  t5:"Ahoj Mária!\nMinulý víkend som bol s rodinou v Tatrách. V sobotu bolo pekne a slnečno, tak sme išli na túru. V nedeľu pršalo, preto sme boli v múzeu. Budúci mesiac začnem novú prácu v hoteli. Budem pracovať na recepcii.\nTvoj Oleh"
+  a2:"Vážení cestujúci,\nod 1. marca sa mení cestovný poriadok. Ranný vlak do Košíc bude odchádzať o 7.15, nie o 6.50. Cestovné lístky si môžete kúpiť aj v mobilnej aplikácii. Študenti a seniori majú zľavu 50 %.",
+  b1:"Mestský úrad informuje, že od pondelka bude Hlavná ulica pre opravu kanalizácie uzavretá pre autá. Autobusy liniek 5 a 7 budú jazdiť obchádzkou cez Školskú ulicu a zastávka „Námestie“ sa dočasne presúva pred poštu. Práce by mali trvať približne tri týždne. Ďakujeme za trpezlivosť.",
+  b2:"Hoci sa podiel ľudí pracujúcich z domu po pandémii mierne znížil, mnohé firmy si hybridný model ponechali. Zamestnanci oceňujú najmä úsporu času na cestovaní, zamestnávatelia zas nižšie náklady na kancelárske priestory. Kritici však upozorňujú, že dlhodobá práca na diaľku môže oslabiť tímovú spoluprácu a sťažiť zaškolenie nových kolegov."
 };
 var BANK = [
- [ /* Modul 1 */
+ [ /* A1 */
   {id:"1a",k:"g",L:1,q:"Ja ___ z Ukrajiny.",o:["som","si","je","sme"]},
-  {id:"1b",k:"g",L:2,q:"Bývam ___ Bratislave.",o:["v","vo","na","z"]},
-  {id:"1c",k:"g",L:3,q:"Mám dvadsaťpäť ___.",o:["rokov","roky","rok","roka"]},
-  {id:"1d",k:"g",L:4,q:"Moja sestra je ___.",o:["učiteľka","učiteľ","učitelia","učiteľom"]},
-  {id:"1e",k:"v",L:5,task:"Na lekcii nerozumiete. Čo poviete lektorovi?",o:["Prosím, zopakujte to.","Dobrú chuť!","Na zdravie!","Teší ma."]},
-  {id:"1f",k:"r",L:2,t:"t1",q:"Kde Oksana teraz býva?",o:["V Košiciach.","Vo Ľvove.","V Bratislave.","V Kyjeve."]},
-  {id:"1g",k:"r",L:4,t:"t1",q:"Kde Oksana pracuje?",o:["V reštaurácii.","V škole.","V nemocnici.","V obchode."]},
-  {id:"1h",k:"l",L:3,say:"Volám sa Pavol a mám tridsaťpäť rokov.",q:"Koľko rokov má Pavol?",o:["35","25","53","45"]}
- ],
- [ /* Modul 2 */
-  {id:"2a",k:"g",L:7,q:"Obchod je na ___.",o:["námestí","námestie","námestia","námestím"]},
+  {id:"1h",k:"l",L:3,say:"Volám sa Pavol a mám tridsaťpäť rokov.",q:"Koľko rokov má Pavol?",o:["35","25","53","45"]},
   {id:"2b",k:"g",L:8,q:"Do práce chodím ___.",o:["autobusom","autobus","autobusu","autobuse"]},
-  {id:"2c",k:"g",L:9,q:"___ sobotu nepracujem.",o:["V","Na","O","Od"]},
-  {id:"2d",k:"g",L:10,q:"V obchode kúpim mlieko, chlieb a ___.",o:["kávu","káva","kávy","káve"]},
   {id:"2e",k:"v",L:11,task:"Ste v kaviarni. Čašník sa pýta: „Čo si dáte?“ Čo odpoviete?",o:["Dám si kapučíno, prosím.","Mám sa dobre, ďakujem.","Volám sa Anna.","Kde je kapučíno?"]},
   {id:"2f",k:"r",L:9,t:"t2",q:"Kedy začína film?",o:["O 19.00.","O 18.30.","O 17.00.","O 7.00 ráno."]},
-  {id:"2g",k:"r",L:8,t:"t2",q:"Ako pôjde Peter do mesta?",o:["Električkou.","Autobusom.","Autom.","Pešo."]},
-  {id:"2h",k:"l",L:10,say:"Tieto jablká stoja dve eurá päťdesiat centov.",q:"Koľko stoja jablká?",o:["2,50 €","2,15 €","12,50 €","5,20 €"]}
- ],
- [ /* Modul 3 */
-  {id:"3a",k:"g",L:13,q:"Kuchyňa je ___, ale obývačka je veľká.",o:["malá","malý","malé","malú"]},
-  {id:"3b",k:"g",L:14,q:"To je ___ sestra Anna.",o:["moja","môj","moje","moju"]},
-  {id:"3c",k:"g",L:15,q:"Ráno ___ umývam zuby.",o:["si","sa","seba","sebe"]},
   {id:"3d",k:"g",L:16,q:"Kúpim kilo ___.",o:["zemiakov","zemiaky","zemiakmi","zemiakoch"]},
   {id:"3e",k:"v",L:17,task:"Ste v reštaurácii a chcete platiť. Čo poviete čašníkovi?",o:["Zaplatím, prosím.","Dobrú chuť!","Máte voľný stôl?","Na zdravie!"]},
-  {id:"3f",k:"r",L:13,t:"t3",q:"Čo v dome nie je?",o:["Výťah.","Kuchyňa.","Posteľ.","Vaňa."]},
-  {id:"3g",k:"r",L:13,t:"t3",q:"Kedy môžete volať?",o:["Popoludní po piatej.","Iba ráno.","Iba cez víkend.","Kedykoľvek."]},
-  {id:"3h",k:"l",L:15,say:"Vstávam o šiestej, raňajkujem a o siedmej idem do práce.",q:"Kedy ide do práce?",o:["O siedmej.","O šiestej.","O ôsmej.","O pol siedmej."]}
- ],
- [ /* Modul 4 */
-  {id:"4a",k:"g",L:19,q:"Dnes je ___ marca.",o:["desiateho","desiaty","desať","desiatom"]},
   {id:"4b",k:"g",L:20,q:"Bolí ___ hlava.",o:["ma","ja","môj","moja"]},
-  {id:"4c",k:"g",L:21,q:"Som chorý, dnes ___ ísť do školy.",o:["nemôžem","nemôže","nemám","nie môžem"]},
-  {id:"4d",k:"g",L:22,q:"Dobrý deň, ___ by som hovoriť s pani Novákovou.",o:["chcel","chcem","chce","chceli"]},
-  {id:"4e",k:"v",L:23,task:"Chcete poslať balík. Kam idete?",o:["Na poštu.","Do lekárne.","Do kina.","Do reštaurácie."]},
   {id:"4f",k:"r",L:20,t:"t4",q:"Prečo Marko nepríde do školy?",o:["Je chorý.","Cestuje.","Má prázdniny.","Nemá domácu úlohu."]},
-  {id:"4g",k:"r",L:21,t:"t4",q:"Čo chce mama od učiteľky?",o:["Poslať domácu úlohu e-mailom.","Zavolať lekára.","Dať Markovi lepšiu známku.","Stretnúť sa v škole."]},
-  {id:"4h",k:"l",L:22,say:"Dobrý deň, tu je Ján Kováč. Môžem prísť vo štvrtok o desiatej?",q:"Kedy chce pán Kováč prísť?",o:["Vo štvrtok o 10.00.","V utorok o 10.00.","Vo štvrtok o 12.00.","V stredu o 10.00."]}
- ],
- [ /* Modul 5 */
+  {id:"4h",k:"l",L:22,say:"Dobrý deň, tu je Ján Kováč. Môžem prísť vo štvrtok o desiatej?",q:"Kedy chce pán Kováč prísť?",o:["Vo štvrtok o 10.00.","V utorok o 10.00.","Vo štvrtok o 12.00.","V stredu o 10.00."]},
   {id:"5a",k:"g",L:25,q:"___ dobre variť a hovorím po anglicky.",o:["Viem","Môžem","Mám","Poznám"]},
-  {id:"5b",k:"g",L:26,q:"Peter, ___ mi, prosím, ten papier!",o:["podaj","podáš","podať","podám"]},
-  {id:"5c",k:"g",L:27,q:"V sobotu idem do kina ___.",o:["s kamarátom","s kamarát","s kamaráta","s kamarátovi"]},
-  {id:"5d",k:"g",L:30,q:"Včera sme ___ celý deň doma.",o:["boli","sme","budeme","sú"]},
-  {id:"5e",k:"v",L:28,task:"Vonku prší. Čo si zoberiete?",o:["Dáždnik.","Slnečné okuliare.","Plavky.","Sandále."]},
-  {id:"5f",k:"r",L:30,t:"t5",q:"Čo robil Oleh s rodinou v nedeľu?",o:["Boli v múzeu.","Išli na túru.","Pracovali v hoteli.","Boli na pláži."]},
-  {id:"5g",k:"r",L:30,t:"t5",q:"Čo bude Oleh robiť budúci mesiac?",o:["Bude pracovať na recepcii.","Pôjde do Tatier.","Bude hľadať prácu.","Bude študovať."]},
-  {id:"5h",k:"l",L:25,say:"Hľadáme predavača. Práca je od pondelka do piatku a plat je tisícdvesto eur.",q:"Aký je plat?",o:["1 200 €","2 100 €","1 020 €","200 €"]}
+  {id:"5c",k:"g",L:27,q:"V sobotu idem do kina ___.",o:["s kamarátom","s kamarát","s kamaráta","s kamarátovi"]}
+ ],
+ [ /* A2 */
+  {id:"a2a",k:"g",L:31,q:"Minulý rok ___ do Bratislavy.",o:["sme sa presťahovali","sme presťahovali","sa sme presťahovali","sme sa presťahujeme"]},
+  {id:"a2b",k:"g",L:34,q:"Konečne som ___ všetky e-maily, môžeme ísť.",o:["poslal","posielal","posielam","pošlem"]},
+  {id:"a2c",k:"g",L:35,q:"Zajtra ti ___, sľubujem.",o:["zavolám","budem zavolať","zavolal","volal"]},
+  {id:"a2d",k:"g",L:38,q:"Tento byt je ___ ako ten druhý.",o:["lacnejší","lacný","najlacnejší","lacnejšie"]},
+  {id:"a2e",k:"g",L:39,q:"Na narodeniny som ___ kúpila kvety.",o:["mame","mama","mamu","mamou"]},
+  {id:"a2f",k:"g",L:51,q:"V kancelárii pracuje päť ___.",o:["žien","ženy","ženách","ženami"]},
+  {id:"a2g",k:"v",L:46,task:"V prenajatom byte sa vám pokazila práčka. Komu zavoláte?",o:["Majiteľovi bytu.","Kaderníčke.","Učiteľke.","Čašníkovi."]},
+  {id:"a2h",k:"v",L:47,task:"Lekár hovorí: „Mali by ste viac odpočívať.“ Čo to znamená?",o:["Radí vám viac oddychovať.","Musíte ísť hneď do nemocnice.","Môžete ísť do práce.","Nesmiete spať."]},
+  {id:"a2i",k:"r",L:44,t:"a2",q:"O koľkej bude odchádzať ranný vlak do Košíc?",o:["O 7.15.","O 6.50.","O 7.50.","O 6.15."]},
+  {id:"a2j",k:"r",L:44,t:"a2",q:"Kto má zľavu?",o:["Študenti a seniori.","Všetci cestujúci.","Iba deti.","Iba zamestnanci."]},
+  {id:"a2k",k:"l",L:37,say:"Môj brat je vysoký, má krátke čierne vlasy a nosí okuliare.",q:"Ako vyzerá brat?",o:["Je vysoký a nosí okuliare.","Je nízky a má dlhé vlasy.","Má blond vlasy a fúzy.","Je vysoký a má dlhé vlasy."]},
+  {id:"a2l",k:"l",L:43,say:"Choďte rovno, na druhej križovatke odbočte doľava. Pošta je vedľa banky.",q:"Kde je pošta?",o:["Vedľa banky.","Oproti banke.","Za bankou.","Pred kostolom."]}
+ ],
+ [ /* B1 */
+  {id:"b1a",k:"g",q:"Keby som mal viac času, ___ by som sa viac po slovensky.",o:["učil","učím","naučím","učiť"]},
+  {id:"b1b",k:"g",q:"To je kolega, ___ som ti hovoril.",o:["o ktorom","ktorý","ktorého","s ktorým"]},
+  {id:"b1c",k:"g",q:"Tento most ___ v roku 1972.",o:["bol postavený","postavil","je postavil","bude postaviť"]},
+  {id:"b1d",k:"g",q:"Povedal mi, že zajtra ___ neskôr.",o:["príde","prišiel","prichádzal","prísť"]},
+  {id:"b1e",k:"g",q:"Napriek tomu, ___ pršalo, išli sme na túru.",o:["že","ktoré","aby","keby"]},
+  {id:"b1f",k:"g",q:"Učiteľka chce, ___ sme sa pripravili na test.",o:["aby","že","keď","lebo"]},
+  {id:"b1g",k:"v",task:"Na pohovore sa vás pýtajú na vaše „silné stránky“. Čo chcú vedieť?",o:["V čom ste dobrý.","Koľko zarábate.","Kde bývate.","Aké máte zdravie."]},
+  {id:"b1h",k:"v",task:"Kolega píše: „Mohli by sme poradu presunúť na budúci týždeň?“ Čo chce?",o:["Zmeniť termín porady.","Zrušiť poradu navždy.","Poradu predĺžiť.","Mať poradu ešte dnes."]},
+  {id:"b1i",k:"r",t:"b1",q:"Prečo bude ulica uzavretá?",o:["Opravuje sa kanalizácia.","Bude tam festival.","Stavia sa nový most.","Je tam veľa áut."]},
+  {id:"b1j",k:"r",t:"b1",q:"Kde bude dočasne zastávka „Námestie“?",o:["Pred poštou.","Na Školskej ulici.","Na Hlavnej ulici.","Pri mestskom úrade."]},
+  {id:"b1k",k:"l",say:"Prepáčte, vlak do Žiliny mešká asi dvadsať minút, pretože sa opravuje trať.",q:"Prečo vlak mešká?",o:["Opravuje sa trať.","Je zlé počasie.","Chýba rušňovodič.","Je veľa cestujúcich."]},
+  {id:"b1l",k:"l",say:"Ďakujem za pozvanie, ale tento víkend nemôžem. Sestra sa vydáva, tak idem na svadbu.",q:"Prečo nemôže prísť?",o:["Ide na svadbu sestry.","Je chorá.","Musí pracovať.","Sestra má narodeniny."]}
+ ],
+ [ /* B2 */
+  {id:"b2a",k:"g",q:"Keby som to bol vedel skôr, ___ inak.",o:["bol by som sa rozhodol","rozhodol som sa by","by som sa rozhodnem","rozhodnem sa"]},
+  {id:"b2b",k:"g",q:"Firma hľadá zamestnanca ___ po nemecky.",o:["hovoriaceho","hovoriaci","hovorí","hovoriť"]},
+  {id:"b2c",k:"g",q:"Nebol by si taký unavený, ___ si išiel spať skôr.",o:["keby","aby","ak","že"]},
+  {id:"b2d",k:"g",q:"Bez ohľadu na to, ___ sa rozhodnete, budeme vás podporovať.",o:["ako","aby","keby","pretože"]},
+  {id:"b2e",k:"g",q:"Po ___ tlačiva ho odovzdajte v podateľni.",o:["vyplnení","vyplniť","vyplnený","vyplnením"]},
+  {id:"b2f",k:"g",q:"Zmluva musí byť podpísaná ___ 31. decembra.",o:["najneskôr do","najneskôr o","aspoň do","až po"]},
+  {id:"b2g",k:"v",task:"Čo znamená „Ide mi to ako po masle“?",o:["Darí sa mi to bez problémov.","Mám rád maslo.","Robím to veľmi pomaly.","Mám s tým problémy."]},
+  {id:"b2h",k:"v",task:"V e-maile vedúcej chcete zdvorilo odmietnuť jej návrh. Čo napíšete?",o:["Vážim si váš návrh, no obávam sa, že ho nemôžeme prijať.","To je hlúposť.","Nechcem.","Návrh je zlý, nerobte to."]},
+  {id:"b2i",k:"r",t:"b2",q:"Čo oceňujú zamestnanci na práci z domu?",o:["Ušetria čas na cestovaní.","Vyššiu mzdu.","Lepšiu tímovú spoluprácu.","Nižšie dane."]},
+  {id:"b2j",k:"r",t:"b2",q:"Na aké riziko upozorňujú kritici?",o:["Horšia spolupráca a zaškolenie nováčikov.","Vyššie náklady firiem.","Viac cestovania.","Nedostatok kancelárií."]},
+  {id:"b2k",k:"l",say:"Vzhľadom na nepriaznivú predpoveď počasia sa sobotný koncert presúva z amfiteátra do mestskej športovej haly. Zakúpené vstupenky zostávajú v platnosti.",q:"Čo sa stane so sobotným koncertom?",o:["Bude v športovej hale.","Zruší sa.","Bude o týždeň neskôr.","Vstupenky treba vymeniť."]},
+  {id:"b2l",k:"l",say:"Hoci som sa na tú prednášku veľmi tešila, nakoniec ma sklamala. Prednášajúci len čítal z prezentácie a na otázky nemal čas.",q:"Aká bola prednáška podľa nej?",o:["Sklamala ju.","Bola výborná.","Bola veľmi zábavná.","Bola krátka, ale zaujímavá."]}
  ]
 ];
+var PER = 12, NB = BANK.length, TOTAL = PER * NB;
 
 var app = document.getElementById("app");
 var st = load() || fresh();
@@ -260,41 +286,30 @@ function speak(text, slow){ if(!("speechSynthesis" in window)) return; try{ spee
 /* ---------- scoring ---------- */
 function blockScore(b){ var c = 0, n = 0; BANK[b].forEach(function(it){ var a = st.ans[it.id]; if(a){ n++; if(a.ok) c++; } }); return {c:c, n:n}; }
 function outcome(){
-  var mods = [], stop = null;
-  for(var b=0; b<5; b++){
-    var s = blockScore(b);
-    if(s.n < 8){ mods.push({b:b, c:s.c, n:s.n, state:"skip"}); continue; }
-    var pass = s.c >= PASS;
-    mods.push({b:b, c:s.c, n:s.n, state: pass ? "pass" : "fail"});
-    if(!pass && stop === null) stop = b;
-  }
-  var wrong = [];
-  for(var k in st.ans){ if(!st.ans[k].ok) wrong.push(st.ans[k].L); }
-  wrong = wrong.filter(function(x,i){ return wrong.indexOf(x) === i; }).sort(function(a,b){ return a-b; });
-  var start, a2 = false, early = null;
-  mods.forEach(function(x){ if(x.state === "skip" && early === null) early = x.b; });
-  if(stop === null && early === null){ a2 = true; start = null; }
-  else if(stop === null){ stop = early; start = MODS[early].from; }
-  else {
-    var m = MODS[stop], s2 = blockScore(stop);
-    var inMod = wrong.filter(function(l){ return l >= m.from && l < m.from + 6; });
-    start = (stop === 0 && s2.c <= 3) ? 1 : (inMod.length ? inMod[0] : m.from);
-  }
+  var lv = LV.map(function(l, b){ var s = blockScore(b); return {b:b, id:l.id, c:s.c, n:s.n, state: s.c >= PASS ? "pass" : (s.c >= PART ? "part" : "fail")}; });
+  var reached = -1; for(var b=0; b<lv.length; b++){ if(lv[b].state === "pass") reached = b; else break; }
+  function wrongIn(b){ var w = []; BANK[b].forEach(function(it){ var a = st.ans[it.id]; if(a && !a.ok && it.L) w.push(it.L); }); return w.filter(function(x,i){ return w.indexOf(x) === i; }).sort(function(a,b){ return a-b; }); }
+  var wrong = wrongIn(0).concat(wrongIn(1));
+  var start = 0;
+  if(reached < 0){ var w0 = wrongIn(0); start = lv[0].c <= 4 || !w0.length ? 1 : modOfLesson(w0[0]).from; }
+  else if(reached === 0){ var w1 = wrongIn(1); start = lv[1].c <= 4 || !w1.length ? 31 : modOfLesson(w1[0]).from; }
+  var nx = lv[reached + 1], between = !!(nx && nx.state === "part");
+  var label = reached < 0 ? "A1" : LV[reached].id;
   var sk = {}; Object.keys(SKILL).forEach(function(k){ sk[k] = {c:0, n:0}; });
   BANK.forEach(function(bl){ bl.forEach(function(it){ var a = st.ans[it.id]; if(!a) return; var k = (it.k === "l" && a.noaudio) ? "r" : it.k; sk[k].n++; if(a.ok) sk[k].c++; }); });
-  return {mods:mods, stop:stop, start:start, a2:a2, wrong:wrong, skills:sk};
+  return {lv:lv, reached:reached, start:start, label:label, between:between, wrong:wrong, skills:sk, a2: reached >= 0};
 }
 
 /* ---------- views ---------- */
 function vIntro(){
   return '<div class="stack">' +
   '<div class="hero"><div class="txt"><span class="eyebrow">Безкоштовно · без реєстрації</span>' +
-  '<h1>Тест рівня словацької A1</h1>' +
-  '<p class="muted" style="font-size:18px">За 15–20 хвилин дізнаєтеся, які теми рівня A1 ви вже знаєте і з якого уроку курсу вам варто почати.</p></div>' +
+  '<h1>Тест рівня словацької A1–B2</h1>' +
+  '<p class="muted" style="font-size:18px">Приблизно за 30 хвилин дізнаєтеся свій рівень словацької — від A1 до B2 — і з якого уроку курсу вам варто почати.</p></div>' +
   '<img src="img/think.webp" alt="" width="150" height="150"></div>' +
   '<ul class="facts">' +
-  '<li><b>5 блоків</b><span class="muted">по одному на кожен модуль курсу A1</span></li>' +
-  '<li><b>Від простого до складного</b><span class="muted">тест зупиниться там, де теми ще нові</span></li>' +
+  '<li><b>4 блоки по 12 завдань</b><span class="muted">рівні A1, A2, B1 і B2</span></li>' +
+  '<li><b>Від простого до складного</b><span class="muted">пройдіть усі блоки: складні завдання наприкінці — це нормально</span></li>' +
   '<li><b>Граматика, лексика, читання, слухання</b><span class="muted">увімкніть звук</span></li></ul>' +
   '<div class="card"><p>Не підглядайте у словник і не вгадуйте навмання: якщо не знаєте відповіді, оберіть найімовірнішу. Так рекомендація буде точною.</p>' +
   '<div class="row">' + '<button class="btn" data-act="self">Почати тест</button>' + '</div></div>' +
@@ -313,12 +328,12 @@ function vZero(){
 }
 function curItem(){ return BANK[st.block][st.idx]; }
 function vQ(){
-  var it = curItem(), ord = st.ord[it.id] || (st.ord[it.id] = shuffled(it.o.length));
-  var num = st.block * 8 + st.idx + 1;
-  var segs = '<div class="segs" aria-hidden="true">' + MODS.map(function(m,b){
-    var w = b < st.block ? 100 : (b === st.block ? Math.round(st.idx / 8 * 100) : 0);
+  var it = curItem(), ord = st.ord[it.id] || (st.ord[it.id] = shuffled(it.o.length)), L = LV[st.block];
+  var num = st.block * PER + st.idx + 1;
+  var segs = '<div class="segs" aria-hidden="true">' + LV.map(function(m,b){
+    var w = b < st.block ? 100 : (b === st.block ? Math.round(st.idx / PER * 100) : 0);
     return '<span class="seg' + (b < st.block ? ' ok' : '') + '"><i style="width:' + w + '%"></i></span>'; }).join("") + '</div>';
-  var h = '<div class="stack"><div class="prog"><div class="top"><span>Модуль ' + (st.block+1) + ' з 5 · ' + MODS[st.block].title + '</span><span>Питання ' + (st.idx+1) + ' / 8</span></div>' + segs + '</div>';
+  var h = '<div class="stack"><div class="prog"><div class="top"><span>Блок ' + (st.block+1) + ' з ' + NB + ' · ' + L.id + ' · ' + L.ua + '</span><span>Питання ' + (st.idx+1) + ' / ' + PER + '</span></div>' + segs + '</div>';
   h += '<div class="card"><span class="qtag">' + SKILL[it.k] + '</span>';
   if(it.k === "g") h += '<p class="qtask">Оберіть правильний варіант.</p><p class="qtext">' + esc(it.q).replace("___", '<span class="gap" aria-label="пропуск"></span>') + '</p>';
   else if(it.k === "v") h += '<p class="qtext" style="font-size:19px">' + esc(it.task) + '</p>';
@@ -332,26 +347,33 @@ function vQ(){
   }
   h += '<div class="choices" role="group" aria-label="Варіанти відповіді" lang="sk">' + ord.map(function(oi, i){
     return '<button class="choice" data-opt="' + oi + '" aria-pressed="' + (st.sel === oi ? "true" : "false") + '"><span class="k">' + "ABCD"[i] + '</span><span>' + esc(it.o[oi]) + '</span></button>'; }).join("") + '</div>';
-  h += '<div class="foot"><span class="muted" style="font-size:14px">' + num + ' з 40 максимум</span><button class="btn" data-act="next"' + (st.sel === null ? " disabled" : "") + '>' + (st.idx === 7 ? "Завершити блок" : "Далі") + '</button></div></div></div>';
+  var last = st.idx === PER - 1;
+  h += '<div class="foot"><span class="muted" style="font-size:14px">' + num + ' з ' + TOTAL + '</span><button class="btn" data-act="next"' + (st.sel === null ? " disabled" : "") + '>' + (last ? (st.block === NB - 1 ? "Завершити тест" : "Завершити блок") : "Далі") + '</button></div></div></div>';
   return h;
 }
 function vBlock(){
-  var s = blockScore(st.block), m = MODS[st.block + 1];
-  return '<div class="card" style="align-items:flex-start"><img src="img/party.webp" alt="" width="110" height="110"><span class="eyebrow">Модуль ' + (st.block+1) + ' · ' + MODS[st.block].title + '</span>' +
-    '<h2 class="h2">Чудово, цей блок ви знаєте!</h2><p class="muted">Правильних відповідей: ' + s.c + ' з 8. Далі теми модуля ' + m.n + ' «' + m.title + '» (' + m.ua.toLowerCase() + ').</p>' +
-    '<div class="row"><button class="btn" data-act="nextblock">Далі: модуль ' + m.n + '</button><button class="linkbtn" data-act="finish">Завершити й побачити результат</button></div></div>';
+  var m = LV[st.block + 1];
+  return '<div class="card" style="align-items:flex-start"><img src="img/party.webp" alt="" width="110" height="110"><span class="eyebrow">Блок ' + (st.block+1) + ' з ' + NB + ' · ' + LV[st.block].id + ' завершено</span>' +
+    '<h2 class="h2">Далі: рівень ' + m.id + ' · ' + m.ua.toLowerCase() + '</h2><p class="muted">Завдання стануть складнішими. Це нормально, якщо частину відповідей ви не знаєте: обирайте найімовірніший варіант і йдіть далі. Так результат буде точним.</p>' +
+    '<div class="row"><button class="btn" data-act="nextblock">Далі: блок ' + (st.block+2) + ' · ' + m.id + '</button></div></div>';
 }
 function pct(x){ return x.n ? Math.round(x.c / x.n * 100) : null; }
 function resultText(o){
   var d = new Date(st.date || Date.now());
-  var lines = ["Slovak Learn · Diagnostika A1 · " + d.toLocaleDateString("sk-SK")];
-  lines.push(o.a2 ? "Odporúčanie: A1 zvládnuté → A2" : "Odporúčaný štart: lekcia " + o.start + " (" + LESSON[o.start] + ")");
-  lines.push("Moduly: " + o.mods.filter(function(m){ return m.state !== "skip"; }).map(function(m){ return "M" + (m.b+1) + " " + m.c + "/8"; }).join(" · "));
+  var lines = ["Slovak Learn · Diagnostika A1–B2 · " + d.toLocaleDateString("sk-SK")];
+  lines.push("Úroveň: " + levelName(o));
+  lines.push(o.start ? "Odporúčaný štart: lekcia " + o.start + " (" + LESSON[o.start] + ")" : "Odporúčanie: individuálny plán " + (o.reached + 1 < LV.length ? LV[o.reached + 1].id : "B2+"));
+  lines.push("Úrovne: " + o.lv.map(function(x){ return x.id + " " + x.c + "/" + PER; }).join(" · "));
   var sk = []; Object.keys(SKILL).forEach(function(k){ var p = pct(o.skills[k]); if(p !== null) sk.push({g:"gramatika",v:"slovná zásoba",r:"čítanie",l:"počúvanie"}[k] + " " + p + " %"); });
   lines.push("Zručnosti: " + sk.join(" · "));
   if(o.wrong.length) lines.push("Chyby v lekciách: " + o.wrong.join(", "));
   lines.push("Samohodnotenie: " + ({zero:"začiatočník", some:"pozná slová a frázy", talk:"trochu komunikuje"}[st.self] || "—"));
   return lines.join("\n");
+}
+function levelName(o){
+  if(o.reached < 0) return o.lv[0].state === "part" ? "A1 (časť tém zvládnutá)" : "A1 (začiatok)";
+  var n = LV[o.reached].id;
+  return o.between ? n + "–" + LV[o.reached + 1].id : n;
 }
 var CH = [["telegram","Telegram","@нік або номер телефону"],["instagram","Instagram","@нік"],["whatsapp","WhatsApp","+421 …"],["viber","Viber","+421 …"],["email","E-mail","name@example.com"],["phone","Телефон","+421 …"]];
 var GOALS = [["work","Робота"],["study","Навчання / вступ"],["life","Побут і документи"],["other","Інше"]];
@@ -388,27 +410,37 @@ function sendLead(){
   var hp = app.querySelector(".hp");
   form.busy = true; rerenderForm();
   fetch("/api/app", {method:"POST", headers:{"content-type":"application/json"}, body: JSON.stringify({action:"lead", hp: hp ? hp.value : "", name:d.name, channel:d.channel, contact:d.contact, goal:d.goal, when:d.when, consent:true,
-    result: o ? {text: resultText(o), start: o.start || 0, a2: o.a2, self: st.self || ""} : {text:"", start:1, a2:false, self: st.self || "zero"}})})
+    result: o ? {text: resultText(o), start: o.start || 0, a2: o.a2, level: levelName(o), self: st.self || ""} : {text:"", start:1, a2:false, level:"A1", self: st.self || "zero"}})})
     .then(function(r){ if(!r.ok) throw new Error(r.status); form.busy = false; st.sent = true; st.sentCh = d.channel; save(); rerenderForm(); })
     .catch(function(){ form.busy = false; form.err = "Не вдалося надіслати заявку. Спробуйте ще раз або напишіть нам в Instagram."; rerenderForm(); });
 }
 function rerenderForm(){ render(); var n = document.getElementById("next"); if(n) n.scrollIntoView({block:"start"}); var e = app.querySelector(".err,.sent"); if(e && e.focus){ e.setAttribute("tabindex","-1"); e.focus({preventScroll:true}); } }
 function vResult(){
-  var o = outcome(), h = '<div class="stack">';
-  if(o.a2){
-    h += '<div class="res-hero"><div class="txt"><span class="eyebrow">Ваш результат</span><h1>Рівень A1 ви знаєте впевнено</h1><p>Рекомендуємо переходити до рівня A2. ' + (o.wrong.length ? 'Перед цим варто коротко повторити теми, де були помилки.' : 'Помилок майже немає, чудова робота!') + '</p></div><img src="img/party.webp" alt="" width="110" height="110"></div>';
+  var o = outcome(), h = '<div class="stack">', nx = LV[o.reached + 1];
+  var title, txt, img = "wave";
+  if(o.reached < 0){
+    var m = modOfLesson(o.start);
+    title = 'Рівень A1 · старт з уроку ' + o.start;
+    txt = 'Урок ' + o.start + ' «' + LESSON[o.start] + '», модуль ' + m.n + ' · ' + m.title + ' (' + m.ua.toLowerCase() + '). ' + (o.start === 1 ? 'Найкраще почати курс з самого початку.' : 'Частину тем A1 ви вже знаєте.');
+  } else if(o.reached === 0){
+    var m2 = modOfLesson(o.start); img = "party";
+    title = 'Рівень A1 ви знаєте · старт з уроку ' + o.start;
+    txt = 'Наступний крок — рівень A2. Рекомендуємо почати з уроку ' + o.start + ' «' + LESSON[o.start] + '», модуль ' + m2.n + ' · ' + m2.title + '.' + (o.between ? ' Частину тем A2 ви вже знаєте.' : '');
   } else {
-    var m = MODS[o.stop], known = o.stop > 0 ? (o.stop === 1 ? "Теми модуля 1 ви вже знаєте." : "Теми модулів 1–" + o.stop + " ви вже знаєте.") : (o.start === 1 ? "Найкраще почати курс з самого початку." : "Основи ви знаєте, але частину тем модуля 1 варто пройти.");
-    h += '<div class="res-hero"><div class="txt"><span class="eyebrow">Рекомендований старт</span><h1>Урок ' + o.start + ' · ' + LESSON[o.start] + '</h1><p>Модуль ' + m.n + ' · ' + m.title + ' (' + m.ua.toLowerCase() + '). ' + known + '</p></div><img src="img/wave.webp" alt="" width="110" height="110"></div>';
+    img = "party";
+    title = 'Ваш рівень — ' + levelName(o);
+    txt = nx ? 'Рівні до ' + LV[o.reached].id + ' ви знаєте впевнено. Наступний крок — ' + nx.id + ': лектор складе для вас індивідуальний план занять.' : 'Ви впевнено пройшли всі рівні тесту. Лектор запропонує заняття для подальшого розвитку мови.';
   }
-  h += '<div class="card"><h2 class="h2">Результати за модулями</h2><div class="mods">' + o.mods.map(function(x){
-    var md = MODS[x.b], w = x.state === "skip" ? 0 : Math.round(x.c / 8 * 100);
-    var tag = x.state === "pass" ? '<span class="pill pass">знаєте</span>' : (x.state === "fail" ? '<span class="pill fail">варто пройти</span>' : '');
-    return '<div class="mod ' + x.state + '"><span class="nm">' + md.n + '. ' + md.title + ' <span>· уроки ' + md.from + '–' + (md.from+5) + '</span>' + tag + '</span><span class="sc">' + (x.state === "skip" ? "—" : x.c + " / 8") + '</span><span class="meter" aria-hidden="true"><i style="width:' + w + '%"></i></span></div>'; }).join("") +
-    '</div>' + (o.stop !== null && o.mods[o.stop].state === "skip" ? '<p class="muted" style="font-size:14px">Ви завершили тест достроково, тож модулі від ' + (o.stop+1) + '-го не перевірялися. Лектор уточнить це на розмові.</p>' : (o.stop !== null && o.stop < 4 ? '<p class="muted" style="font-size:14px">Блоки після модуля ' + (o.stop+1) + ' не показувались: теми там будуються на попередніх.</p>' : '')) + '</div>';
+  h += '<div class="res-hero"><div class="txt"><span class="eyebrow">Ваш результат</span><h1>' + esc(title) + '</h1><p>' + esc(txt) + '</p></div><img src="img/' + img + '.webp" alt="" width="110" height="110"></div>';
+  h += '<div class="card"><h2 class="h2">Результати за рівнями</h2><div class="mods">' + o.lv.map(function(x){
+    var l = LV[x.b], w = Math.round(x.c / PER * 100);
+    var tag = x.state === "pass" ? '<span class="pill pass">знаєте</span>' : (x.state === "part" ? '<span class="pill part">частково</span>' : '<span class="pill fail">ще нове</span>');
+    return '<div class="mod ' + x.state + '"><span class="nm">' + l.id + ' · ' + l.ua + ' <span>· ' + l.note + '</span>' + tag + '</span><span class="sc">' + x.c + ' / ' + PER + '</span><span class="meter" aria-hidden="true"><i style="width:' + w + '%"></i></span></div>'; }).join("") +
+    '</div><p class="muted" style="font-size:14px">Рівень зараховується від ' + PASS + ' з ' + PER + ' правильних відповідей. Говоріння онлайн-тест не перевіряє — це лектор уточнить на розмові.</p></div>';
   h += '<div class="card"><h2 class="h2">Ваші навички</h2><div class="skills">' + Object.keys(SKILL).map(function(k){
     var p = pct(o.skills[k]); return '<div class="skill"><b>' + (p === null ? "—" : p + " %") + '</b><span>' + SKILL[k] + '</span></div>'; }).join("") + '</div>';
-  if(o.wrong.length) h += '<p class="muted" style="font-size:14px">Помилки були в темах: ' + o.wrong.map(function(l){ return l + " " + LESSON[l]; }).join(" · ") + '.</p>';
+  var ww = o.wrong.filter(function(l){ return o.reached < 0 ? l <= 30 : l > 30; });
+  if(ww.length && o.reached < 1) h += '<p class="muted" style="font-size:14px">Помилки були в темах: ' + ww.map(function(l){ return l + " " + LESSON[l]; }).join(" · ") + '.</p>';
   h += '</div>';
   h += nextBox(o);
   h += '<div class="row"><button class="linkbtn" data-act="restart">Пройти тест ще раз</button></div></div>';
@@ -444,9 +476,8 @@ function answer(){
   var it = curItem(); if(st.sel === null) return;
   st.ans[it.id] = {ok: st.sel === 0, L: it.L, noaudio: !!st.show[it.id]};
   st.sel = null;
-  if(st.idx < 7){ st.idx++; return go("q"); }
-  var s = blockScore(st.block);
-  if(s.c >= PASS && st.block < 4) return go("block");
+  if(st.idx < PER - 1){ st.idx++; return go("q"); }
+  if(st.block < NB - 1) return go("block");
   finish();
 }
 function finish(){ st.date = Date.now(); go("result"); }
