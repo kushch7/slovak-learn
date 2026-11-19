@@ -2408,7 +2408,7 @@ function leadCard(l){
   var meta=[];if(l.goal)meta.push("Мета: <b>"+esc(GOAL_TXT[l.goal]||l.goal)+"</b>");if(l.when)meta.push("Зручний час: <b>"+esc(l.when)+"</b>");
   if(meta.length)h+='<p class="lmeta">'+meta.join(" · ")+'</p>';
   if(l.msg)h+='<p class="lmsg">'+esc(l.msg)+'</p>';
-  if(r){h+='<div class="lres"><b>'+(r.a2?"A1 zvládnuté → A2":(r.start?"Odporúčaný štart: lekcia "+r.start:"Bez testu"))+'</b>'+(r.text?'<details><summary>Výsledok testu</summary><pre>'+esc(r.text)+'</pre></details>':'')+'</div>';}
+  if(r){h+='<div class="lres"><b>'+(r.level?"Úroveň "+esc(r.level)+(r.start?" · štart: lekcia "+r.start:""):(r.a2?"A1 zvládnuté → A2":(r.start?"Odporúčaný štart: lekcia "+r.start:"Bez testu")))+'</b>'+(r.text?'<details><summary>Výsledok testu</summary><pre>'+esc(r.text)+'</pre></details>':'')+'</div>';}
   else h+='<div class="lres"><b>Bez výsledku testu</b></div>';
   h+='<div class="lctl"><label>Stav<select data-lstatus="'+esc(l.id)+'">'+LEAD_ST.map(function(o){return '<option value="'+o[0]+'"'+(o[0]===l.status?' selected':'')+'>'+o[1]+'</option>';}).join("")+'</select></label>'+
     '<button class="btn sm" type="button" data-lacc="'+esc(l.id)+'">Vytvoriť účet</button>'+

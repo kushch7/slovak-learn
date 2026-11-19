@@ -229,7 +229,7 @@ export default async function handler(req, res) {
       const lead = {
         id: "d_" + Date.now().toString(36) + crypto.randomBytes(3).toString("hex"),
         name, contact, channel, goal: str(body.goal, 40), when: str(body.when, 200), msg: str(body.msg, 600),
-        result: r ? { text: str(r.text, 1500), start: Math.max(0, Math.min(60, parseInt(r.start, 10) || 0)), a2: !!r.a2, self: str(r.self, 10) } : null,
+        result: r ? { text: str(r.text, 1500), start: Math.max(0, Math.min(60, parseInt(r.start, 10) || 0)), a2: !!r.a2, level: str(r.level, 40), self: str(r.self, 10) } : null,
         status: "new", note: "", createdAt: Date.now()
       };
       await writeOne(leadPath(lead.id), lead);
