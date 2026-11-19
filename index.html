@@ -1843,7 +1843,57 @@ var LESSONS=[
    {ua:"Що ти йому подаруєш?",a:"Čo mu daruješ?"},
    {ua:"Ми привітаємо його зранку.",a:"Zablahoželáme mu ráno."},
    {ua:"Бажаю тобі здоров’я і щастя.",a:"Prajem ti veľa zdravia a šťastia."},
-   {ua:"Усього найкращого з іменинами!",a:"Všetko najlepšie k meninám!"}]}]}
+   {ua:"Усього найкращого з іменинами!",a:"Všetko najlepšie k meninám!"}]}]},
+ {n:40,mod:7,title:"Susedia",sets:[
+  {id:"l40-slova",type:"vocab",title:"V dome",ua:"Картки: знаю / ще ні",items:[
+   {sk:"sused",g:"ten",ua:"сусід",ex:"Môj sused je veľmi milý."},{sk:"susedka",g:"tá",ua:"сусідка",ex:"Susedka mi požičala vŕtačku."},
+   {sk:"vchod",g:"ten",ua:"під’їзд, вхід",ex:"Neparkujte pred vchodom."},{sk:"výťah",g:"ten",ua:"ліфт",ex:"Výťah nefunguje."},
+   {sk:"pivnica",g:"tá",ua:"підвал",ex:"Bicykle sú v pivnici."},{sk:"schodisko",g:"to",ua:"сходи",ex:"Na schodisku je tma."},
+   {sk:"poschodie",g:"to",ua:"поверх",ex:"Bývam na treťom poschodí."},{sk:"hluk",g:"ten",ua:"шум",ex:"Ten hluk ma ruší."},
+   {sk:"domový poriadok",g:"ten",ua:"правила будинку",ex:"Tak je to v domovom poriadku."},{sk:"správca",g:"ten",ua:"управитель будинку",ex:"Kontaktujte správcu."},
+   {sk:"požičať",g:"",ua:"позичити",ex:"Mohli by ste mi požičať vŕtačku?"},{sk:"rušiť",g:"",ua:"турбувати, заважати",ex:"Prepáčte, že vás ruším."},
+   {sk:"pozvať",g:"",ua:"запросити",ex:"Chceli by sme vás pozvať."},{sk:"sťažovať sa",g:"",ua:"скаржитися",ex:"Sused sa sťažuje na hluk."}]},
+  {id:"l40-akuzativ",type:"choice",title:"Ma, ťa, ho, ju",ua:"Виберіть займенник",items:[
+   {q:"Poznáš novú susedku? — Áno, poznám ___ .",opts:["ju","jej","ňu"],a:"ju",why:"poznať koho? ona → ju"},
+   {q:"Kde je Peter? Nevidím ___ .",opts:["ho","mu","jeho"],a:"ho",why:"vidieť koho? on → ho"},
+   {q:"Chceli by sme ___ pozvať na oslavu.",opts:["vás","vám","vy"],a:"vás",why:"pozvať koho? → vás"},
+   {q:"Prepáčte, že ___ ruším.",opts:["vás","vám","váš"],a:"vás",why:"rušiť koho? → vás"},
+   {q:"Susedia sú hluční. Počujem ___ celú noc.",opts:["ich","im","nich"],a:"ich",why:"počuť koho? oni → ich"},
+   {q:"Ten darček je pre ___ . (on)",opts:["neho","ho","jeho"],a:"neho",why:"po predložke → pre neho"},
+   {q:"Zavolaj ___ , keď budeš doma. (ja)",opts:["mi","ma","mňa"],a:"mi",why:"zavolať komu? → mi"}]},
+  {id:"l40-zdvorilo",type:"choice",title:"Mohli by ste…?",ua:"Виберіть увічливу форму",items:[
+   {q:"___ by ste mi pomôcť?",opts:["Mohli","Mohol","Môžete"],a:"Mohli",why:"vy → mohli by ste"},
+   {q:"Prepáčte, ___ by som si požičať rebrík? (žena)",opts:["mohla","mohol","mohli"],a:"mohla",why:"žena → mohla by som"},
+   {q:"___ by sme vás pozvať na kávu.",opts:["Chceli","Chcel","Chcela"],a:"Chceli",why:"my → chceli by sme"},
+   {q:"Mohli by ste byť trochu ___ ?",opts:["tichšie","tichý","tichšia"],a:"tichšie",why:"byť ako? → tichšie"},
+   {q:"Ďakujem za ___ .",opts:["pochopenie","pochopiť","pochopený"],a:"pochopenie",why:"ďakujem za + čo?"},
+   {q:"Prepáčte, už sa to ___ .",opts:["nestane","nestáva","nestal"],a:"nestane",why:"už sa to nestane"},
+   {q:"Mohol by ___ mi dať soľ? (ty, muž)",opts:["si","ste","som"],a:"si",why:"ty → mohol by si"}]},
+  {id:"l40-tvary",type:"type",title:"Koho? Komu?",ua:"Напишіть займенник",items:[
+   {q:"Vidíš Janu? — Áno, vidím ___ .",hint:"ona, koho?",a:["ju"],why:"vidieť koho? → ju"},
+   {q:"Petrovi je zle. Zavolám ___ lekára.",hint:"on, komu?",a:["mu"],why:"zavolať komu? → mu"},
+   {q:"Susedia nás pozvali. Pozveme ___ tiež.",hint:"oni, koho?",a:["ich"],why:"pozvať koho? → ich"},
+   {q:"Prepáčte, že ___ ruším.",hint:"vy, koho?",a:["vás"],why:"rušiť koho? → vás"},
+   {q:"To je pre ___ . (ona)",hint:"po predložke",a:["ňu"],why:"pre ňu"},
+   {q:"Požičiate ___ vŕtačku?",hint:"ja, komu?",a:["mi"],why:"požičať komu? → mi"},
+   {q:"Poznáš ___ ? Sme tvoji noví susedia.",hint:"my, koho?",a:["nás"],why:"poznať koho? → nás"},
+   {q:"Nepočujem ___ , hovor hlasnejšie!",hint:"ty, koho?",a:["ťa"],why:"počuť koho? → ťa"}]},
+  {id:"l40-chyby",type:"error",title:"Nájdi chybu",ua:"Натисніть на слово з помилкою",items:[
+   {q:"Poznáš jej? Býva vedľa nás.",opts:["Poznáš","jej","Býva","vedľa","nás"],a:"jej",why:"poznať koho? → ju"},
+   {q:"Pozvem vám na oslavu.",opts:["Pozvem","vám","na","oslavu"],a:"vám",why:"pozvať koho? → vás"},
+   {q:"Prepáčte, že vám ruším.",opts:["Prepáčte","že","vám","ruším"],a:"vám",why:"rušiť koho? → vás"},
+   {q:"Ten darček je pre ho.",opts:["Ten","darček","je","pre","ho"],a:"ho",why:"po predložke → pre neho"},
+   {q:"Mohol by ste mi pomôcť?",opts:["Mohol","by","ste","mi","pomôcť"],a:"Mohol",why:"vy → Mohli by ste"},
+   {q:"Nevidel som jeho dnes.",opts:["Nevidel","som","jeho","dnes"],a:"jeho",why:"bez dôrazu → ho"}]},
+  {id:"l40-frazy",type:"match",title:"So susedmi",ua:"З’єднайте пари",labels:["Slovensky","Po ukrajinsky"],pairs:[
+   ["Prepáčte, že vás ruším.","Вибачте, що турбую."],["Mohli by ste…?","Чи не могли б ви…?"],["Chceli by sme vás pozvať.","Ми хотіли б вас запросити."],
+   ["Je to v poriadku.","Усе гаразд."],["Nebojte sa.","Не хвилюйтеся."],["Ďakujem za pochopenie.","Дякую за розуміння."],["Už sa to nestane.","Більше не повториться."]]},
+  {id:"l40-vety",type:"order",title:"Prosba a pozvanie",ua:"Складіть речення зі слів",items:[
+   {ua:"Чи не могли б ви позичити мені дриль?",a:"Mohli by ste mi požičať vŕtačku?"},
+   {ua:"Ми хотіли б вас запросити.",a:"Chceli by sme vás pozvať."},
+   {ua:"Вибачте, що турбую вас.",a:"Prepáčte, že vás ruším."},
+   {ua:"Я її не знаю.",a:"Nepoznám ju."},
+   {ua:"Цей подарунок для нього.",a:"Ten darček je pre neho."}]}]}
 ];
 var TYPE_LABEL={chyby:"Chyby",choice:"Výber",type:"Písanie",match:"Spájanie",order:"Poradie slov",listen:"Počúvanie",cards:"Kartičky",odd:"Čo nepatrí?",error:"Nájdi chybu",mixed:"Mix",test:"Test"};
 var MODULES=[{n:1,level:"A1",title:"Prvé kroky",ua:"Перші кроки"},{n:2,level:"A1",title:"V meste",ua:"У місті"},{n:3,level:"A1",title:"Domov",ua:"Дім"},{n:4,level:"A1",title:"Úrady a služby",ua:"Установи й послуги"},{n:5,level:"A1",title:"Práca a voľný čas",ua:"Робота й дозвілля"},{n:6,level:"A2",title:"Môj príbeh",ua:"Моя історія"},{n:7,level:"A2",title:"Ľudia okolo mňa",ua:"Люди навколо мене"}];
@@ -2496,9 +2546,9 @@ function statusPill(account){var a=advice(account),s=summary(account);
 /* ================= teacher: views ================= */
 var CL="https://claude.ai/artifact/";
 /* Матеріали: PDF видає захищений сервер (/api/file) — учень отримує лише шпаргалку й ДЗ відкритих уроків, лектор — усе */
-var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15,16,17,19,20,21,22,23,25,26,27,28,30,31,32,33,34,35,37,38,39].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};MATERIALS[18]={deck:"l18-prezentacia"};MATERIALS[24]={deck:"l24-prezentacia"};MATERIALS[29]={deck:"l29-prezentacia"};MATERIALS[36]={deck:"l36-prezentacia"};for(var _n=1;_n<=39;_n++)MATERIALS[_n].ex="l"+_n+"-precvicovanie";
+var MATERIALS={};[1,2,3,4,5,7,8,9,10,11,13,14,15,16,17,19,20,21,22,23,25,26,27,28,30,31,32,33,34,35,37,38,39,40].forEach(function(n){MATERIALS[n]={deck:"l"+n+"-prezentacia",cheat:"l"+n+"-tahak",hw:"l"+n+"-domaca-uloha"};});MATERIALS[6]={deck:"l6-prezentacia"};MATERIALS[12]={deck:"l12-prezentacia"};MATERIALS[18]={deck:"l18-prezentacia"};MATERIALS[24]={deck:"l24-prezentacia"};MATERIALS[29]={deck:"l29-prezentacia"};MATERIALS[36]={deck:"l36-prezentacia"};for(var _n=1;_n<=40;_n++)MATERIALS[_n].ex="l"+_n+"-precvicovanie";
 var TEST_MAT={t1:{test:"test1",key:"test1-kluc",label:"Test 1"},t2:{test:"test2",key:"test2-kluc",label:"Test 2"},t3:{test:"test3",key:"test3-kluc",label:"Test 3"},t4:{test:"test4",key:"test4-kluc",label:"Test 4"},t5:{test:"test5",key:"test5-kluc",label:"Test 5"},t6:{test:"test6",key:"test6-kluc",label:"Test 6"},ta1:{test:"test-a1",key:"test-a1-kluc",label:"Záverečný test A1"}};
-var DECK_GD={"1":"1Nvjqbqbw3gKn0ED9GN69juoSQKbULq2c","2":"1-YjPOJgrfF-Q6HCNfA23gd-JbwEETk8Y","3":"1_WKOXAuoonRLEW6OARO9oAJYAfp2-pFt","4":"13S4EaYPRAi-HkdDorNxSBSj18AtWUFfR","5":"1afNXHRjIxSis70CfuLn5Q7OftbqEe2A8","6":"1ldBz_a0ef463oWeuIWoM_4Cnm-7UA1m5","7":"110ap7U3sqOBl5O7LFk106MmYALVrQwu_","8":"12dlWkQ9odkdAWCbqQXpg6pKtU1Wage8q","9":"17sXzHcZTnl5jhME0qJbsek6UEuZ8WWom","10":"1qHUrjITUP3nWFj6tb0cFQycZqxcqAZ8u","11":"1YdWAeEs1lzAtDEo4w_wzd-i-hDkoL5US","12":"1Gl8nrjqc0gumd2C55ohG7vUztZ8hGsBf","13":"1snTMob2vbJby9sXk1dvhv1Cs3h5el-eG","14":"1vzms-7w3a-mV7_y9-EmP3tDbJpQhZH1i","15":"1XfRSw6jBfrCg-0hYNAlb8DXis_WiQf0w","16":"1-v2h7nq_RBBtRHBNy4NVR6AOkSJRSnID","17":"15Cor9zbXZIgo_P648_FLdXbR91jR_bys","18":"1FnAsZ3zukpMxZiHNBRmEymbFx5y6EFZ1","19":"1N6sKFPuyOwgoby_2JxUMbqC7UoPJBJs2","20":"1xKUlgrSGvf78ze3lNtFZqY6am_xdqg4U","21":"1zmx-GiLoduOvZeMo8V0_UBitDG6PaRuP","22":"14498XPCln75qUv9avD2ZT6-kkk2qctSb","23":"12UI34K8W9QG3qaZ43aaXtZ1tCxTunVRC","24":"1h-2gh3X4r20OGtDGuqfw8l9OB358OdnK","25":"1BLBlogbW_NAY-Bh8QJvGApCSXHLlDmBY","26":"1q_4MVQph9w2UEJGP2bRqupjLQbQKSFXO","27":"1UVgkbK8XjuaEYH1Tmi-XhS7U_fqsVT6F","28":"13e-W-vGIk7atFpDsHOevJXgdQFzuRj6i","29":"1Z8mYZbUvU-E47OFauZNp92LeGMvtczeK","30":"15qX0qqHEly_xC8Qa0UUFL-7rnhfTyfEa"};var DECK_ART={"31":"8fq9n7PsqC91sAnmRbafJL","32":"DjbgFtGvRB3s6CgbrnBREE","33":"CFGy7L1EXcNArZw9PPUa3b","34":"PkrXg6gpPa17hvwKT5ajG3","35":"9GFa5zu9gdyCsJNZzAVreB","36":"FuDruoqe4HTKHa8M2miz4S","37":"RnkVS9JPw1arvzHEbJh95u","38":"C8jYsgqoTaHB9NZc9oLMLF","39":"Ff3YHwsAAnDHG2TpbELyFs"};
+var DECK_GD={"1":"1Nvjqbqbw3gKn0ED9GN69juoSQKbULq2c","2":"1-YjPOJgrfF-Q6HCNfA23gd-JbwEETk8Y","3":"1_WKOXAuoonRLEW6OARO9oAJYAfp2-pFt","4":"13S4EaYPRAi-HkdDorNxSBSj18AtWUFfR","5":"1afNXHRjIxSis70CfuLn5Q7OftbqEe2A8","6":"1ldBz_a0ef463oWeuIWoM_4Cnm-7UA1m5","7":"110ap7U3sqOBl5O7LFk106MmYALVrQwu_","8":"12dlWkQ9odkdAWCbqQXpg6pKtU1Wage8q","9":"17sXzHcZTnl5jhME0qJbsek6UEuZ8WWom","10":"1qHUrjITUP3nWFj6tb0cFQycZqxcqAZ8u","11":"1YdWAeEs1lzAtDEo4w_wzd-i-hDkoL5US","12":"1Gl8nrjqc0gumd2C55ohG7vUztZ8hGsBf","13":"1snTMob2vbJby9sXk1dvhv1Cs3h5el-eG","14":"1vzms-7w3a-mV7_y9-EmP3tDbJpQhZH1i","15":"1XfRSw6jBfrCg-0hYNAlb8DXis_WiQf0w","16":"1-v2h7nq_RBBtRHBNy4NVR6AOkSJRSnID","17":"15Cor9zbXZIgo_P648_FLdXbR91jR_bys","18":"1FnAsZ3zukpMxZiHNBRmEymbFx5y6EFZ1","19":"1N6sKFPuyOwgoby_2JxUMbqC7UoPJBJs2","20":"1xKUlgrSGvf78ze3lNtFZqY6am_xdqg4U","21":"1zmx-GiLoduOvZeMo8V0_UBitDG6PaRuP","22":"14498XPCln75qUv9avD2ZT6-kkk2qctSb","23":"12UI34K8W9QG3qaZ43aaXtZ1tCxTunVRC","24":"1h-2gh3X4r20OGtDGuqfw8l9OB358OdnK","25":"1BLBlogbW_NAY-Bh8QJvGApCSXHLlDmBY","26":"1q_4MVQph9w2UEJGP2bRqupjLQbQKSFXO","27":"1UVgkbK8XjuaEYH1Tmi-XhS7U_fqsVT6F","28":"13e-W-vGIk7atFpDsHOevJXgdQFzuRj6i","29":"1Z8mYZbUvU-E47OFauZNp92LeGMvtczeK","30":"15qX0qqHEly_xC8Qa0UUFL-7rnhfTyfEa"};var DECK_ART={"31":"8fq9n7PsqC91sAnmRbafJL","32":"DjbgFtGvRB3s6CgbrnBREE","33":"CFGy7L1EXcNArZw9PPUa3b","34":"PkrXg6gpPa17hvwKT5ajG3","35":"9GFa5zu9gdyCsJNZzAVreB","36":"FuDruoqe4HTKHa8M2miz4S","37":"RnkVS9JPw1arvzHEbJh95u","38":"C8jYsgqoTaHB9NZc9oLMLF","39":"Ff3YHwsAAnDHG2TpbELyFs","40":"T1CEi2XxkyCLCaHN3X1Ur4"};
 function deckHref(n){var id=DECK_GD[n];if(id)return "https://docs.google.com/presentation/d/"+id+"/edit?rtpof=true&sd=true";var ar=DECK_ART[n];return ar?"https://claude.ai/artifact/"+ar:"";}
 var MAT="materials/";function fileHref(name){return API.fileUrl?API.fileUrl(name):MAT+name+".pdf";}
 var GUIDES={student:"prirucka-student",teacher:"prirucka-lektor"};
